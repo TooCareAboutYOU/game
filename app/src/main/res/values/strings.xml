@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">咔洽</string>
+
+    <string name="title_activity_splash">引导页</string>
+    <string name="title_activity_main">首页</string>
+    <string name="title_activity_login">登录页</string>
+    <string name="title_activity_edit_user">编辑个人资料</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

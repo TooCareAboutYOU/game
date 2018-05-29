@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.game.GameActivity">
+    <com.github.lzyzsd.jsbridge.BridgeWebView
+        android:id="@+id/bridgeWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/cl_top"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_uid"
+            android:layout_width="80dp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:textColor="@color/colorPrimary"
+            android:inputType="number"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/acBtn_load"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:text="load"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/acBtn_match"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:text="match"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_Status"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_margin="10dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/holo_red_light"
+            android:text="null"/>
+    </LinearLayout>
+
+</FrameLayout>
