@@ -20,7 +20,7 @@ android {
                 abiFilters 'armeabi-v7a'
             }
         }
-//        multiDexEnabled true
+        multiDexEnabled true
 
     }
     buildTypes {
@@ -91,7 +91,7 @@ dependencies {
     implementation project(':lib-data')
     api(name: 'janusgateway-debug', ext: 'aar')
 
-//    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:multidex:1.0.3'
     //内存检测
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 //    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'

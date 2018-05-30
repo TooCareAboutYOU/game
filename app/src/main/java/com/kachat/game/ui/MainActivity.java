@@ -32,7 +32,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onInitData(@Nullable Bundle savedInstanceState) {
         findViewById(R.id.sample_text).setOnClickListener(v -> startActivity(new Intent(this, PersonInfoActivity.class)));
-        getBack().setOnClickListener(v -> startActivity(new Intent(this, GameActivity.class)));
+        getBack().setOnClickListener(v -> {
+            startActivity(new Intent(this, GameActivity.class));
+        });
     }
 
 

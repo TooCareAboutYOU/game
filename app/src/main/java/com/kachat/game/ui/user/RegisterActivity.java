@@ -8,13 +8,16 @@ import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.model.UserBean;
 import com.kachat.game.libdata.mvp.OnPresenterListener;
 import com.kachat.game.libdata.mvp.presenters.CaptchaPresenter;
+import com.kachat.game.libdata.mvp.presenters.RegisterPresenter;
 
 
 public class RegisterActivity extends BaseActivity {
 
     private CaptchaPresenter mCaptchaPresenter;
+    private RegisterPresenter mRegisterPresenter;
 
     @Override
     protected int onSetResourceLayout() {
@@ -25,6 +28,8 @@ public class RegisterActivity extends BaseActivity {
     protected void onInitView() {
 //        mCaptchaPresenter=new CaptchaPresenter(new RequestCaptcha());
 //        mCaptchaPresenter.attachPresenter("");
+        mRegisterPresenter=new RegisterPresenter(new RegisterCallBack());
+        mRegisterPresenter.attachPresenter("","","","","");
     }
 
     @Override
@@ -32,28 +37,38 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
-    private class RequestCaptcha implements OnPresenterListener.OnViewListener<BaseBean<GetCaptchaBean>>{
+    private class RequestCaptcha implements OnPresenterListener.OnViewListener<GetCaptchaBean>{
+
         @Override
         public void onSuccess(BaseBean<GetCaptchaBean> result) {
-            if (result != null) {
-                if (result.getCode() == CodeType.REQUEST_SUCCESS) {
 
-                }else {
-                    if (result.getError() != null) {
-                        for (String s : result.getError().getMessage()) {
-                            Toast(s);
-                        }
-                    }
-                    // 10001,10002,10003,10400
-                }
-            }
         }
 
         @Override
-        public void onFailed(Throwable throwable) {
-            if (throwable != null) {
-                Toast(throwable.getMessage());
-            }
+        public void onFailed(BaseBean<GetCaptchaBean> result) {
+
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+
+        }
+    }
+
+    private class RegisterCallBack implements OnPresenterListener.OnViewListener<UserBean>{
+        @Override
+        public void onSuccess(BaseBean<UserBean> result) {
+
+        }
+
+        @Override
+        public void onFailed(BaseBean<UserBean> result) {
+
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+
         }
     }
 

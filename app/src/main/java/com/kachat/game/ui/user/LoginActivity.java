@@ -81,29 +81,22 @@ public class LoginActivity extends BaseActivity {
         mLoginPresenter.attachPresenter(mobile,password);
     }
 
-    private class RequestLogin implements OnPresenterListener.OnViewListener<BaseBean<UserBean>>{
+    private class RequestLogin implements OnPresenterListener.OnViewListener<UserBean>{
+
 
         @Override
         public void onSuccess(BaseBean<UserBean> result) {
-            if (result != null) {
-                if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                    // TODO: 2018/5/29 保存用户信息 关键是token 
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }else {
-                    if (result.getError() != null) {
-                        for (String s : result.getError().getMessage()) {
-                            Toast(s);
-                        }
-                    }
-                }
-            }
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
 
         @Override
-        public void onFailed(Throwable throwable) {
-            if (throwable != null) {
-                Toast(throwable.getMessage());
-            }
+        public void onFailed(BaseBean<UserBean> result) {
+
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+
         }
     }
 

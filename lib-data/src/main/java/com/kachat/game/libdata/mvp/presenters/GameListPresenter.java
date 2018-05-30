@@ -3,6 +3,7 @@ package com.kachat.game.libdata.mvp.presenters;
 
 import android.support.annotation.NonNull;
 
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GameTypeBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
@@ -13,26 +14,30 @@ import com.kachat.game.libdata.mvp.models.GameListModel;
 public class GameListPresenter {
 
     private GameListModel mModel;
-    private OnPresenterListener.OnViewListener<BaseBean<GameTypeBean>> mView;
+    private OnPresenterListener.OnViewListener<GameTypeBean> mView;
 
-    public GameListPresenter(OnPresenterListener.OnViewListener<BaseBean<GameTypeBean>> view) {
+    public GameListPresenter(OnPresenterListener.OnViewListener<GameTypeBean> view) {
         this.mModel=new GameListModel();
         this.mView = view;
     }
 
     public void attachPresenter(){
-        this.mModel.requestGameList(new OnPresenterListener.OnModelListener<BaseBean<GameTypeBean>>() {
+        this.mModel.requestGameList(new OnPresenterListener.OnModelListener<GameTypeBean>() {
             @Override
             public void onSuccess(BaseBean<GameTypeBean> result) {
-                if (result != null) {
-                    if (mView != null) GameListPresenter.this.mView.onSuccess(result);
+                if (mView != null) {
+                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                        GameListPresenter.this.mView.onSuccess(result);
+                    }else {
+                        GameListPresenter.this.mView.onFailed(result);
+                    }
                 }
             }
 
             @Override
-            public void onFailed(Throwable throwable) {
+            public void onError(Throwable throwable) {
                 if (throwable != null) {
-                    if (mView != null) mView.onFailed(throwable);
+                    if (mView != null) mView.onError(throwable);
                 }
             }
         });

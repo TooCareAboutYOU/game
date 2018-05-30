@@ -3,6 +3,7 @@ package com.kachat.game.libdata.mvp.models;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.ApiServices.UserApi;
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.http.BaseModel;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
@@ -18,7 +19,8 @@ public class ResetPwdModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void resetPwd(@NonNull String mobile, @NonNull String captcha, @NonNull String password, final OnPresenterListener.OnModelListener<BaseBean<MessageBean>> listener){
+    public void resetPwd(@NonNull String mobile, @NonNull String captcha, @NonNull String password,
+                         final OnPresenterListener.OnModelListener<MessageBean> listener){
         mSubscription= UserApi.requestResetPwd(mobile, captcha, password, new Observer<BaseBean<MessageBean>>() {
             @Override
             public void onCompleted() {
@@ -28,7 +30,7 @@ public class ResetPwdModel extends BaseModel {
             public void onError(final Throwable e) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
-                        listener.onFailed(e);
+                        listener.onError(e);
                     }
                 });
 

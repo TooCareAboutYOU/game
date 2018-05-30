@@ -53,7 +53,6 @@
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -63,7 +62,7 @@
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.user.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />
         <activity
@@ -75,22 +74,16 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.game.GameActivity" />
 
-        <!-- &lt;!&ndash;此broadcastReceiver能否接收其他App的发出的广播&ndash;&gt; -->
-        <!-- &lt;!&ndash;默认值是由receiver中有无intent-filter决定的：如果有intent-filter，默认值为true，否则为false&ndash;&gt; -->
-        <!-- <receiver android:name=".events.broadcasts.NetConnectBroadCast"> -->
-        <!-- <intent-filter android:priority="200"> -->
-        <!-- <action -->
-        <!-- android:name="android.net.conn.CONNECTIVITY_CHANGE" -->
-        <!-- tools:ignore="BatteryLife" /> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
+        <service android:name=".events.services.NetConnectService" android:enabled="true" />
 
-        <service
-            android:name=".events.services.NetConnectService"
-            android:enabled="true" />
+        <activity
+            android:name=".ui.user.RegisterActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.user.RegisterActivity"></activity>
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:theme="@style/FullscreenTheme"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

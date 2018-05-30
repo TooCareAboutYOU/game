@@ -17,10 +17,18 @@
         android:layout_height="50dp"
         android:orientation="horizontal">
         <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/et_uid"
-            android:layout_width="80dp"
+            android:id="@+id/et_Url"
+            android:layout_width="50dp"
             android:layout_height="?android:attr/actionBarSize"
             android:textColor="@color/colorPrimary"
+            android:hint="url"
+            android:inputType="number"/>
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_uid"
+            android:layout_width="50dp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:textColor="@color/colorPrimary"
+            android:hint="uid"
             android:inputType="number"/>
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/acBtn_load"

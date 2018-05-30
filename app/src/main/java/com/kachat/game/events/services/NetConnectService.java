@@ -6,23 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.blankj.utilcode.util.NetworkUtils;
-import com.kachat.game.events.broadcasts.NetConnectBroadCast;
+import com.kachat.game.Config;
+import com.kachat.game.Constant;
 
 import java.util.Objects;
 
 public class NetConnectService extends Service {
 
-    private static final String TAG = "initNetWork";
     private NetWorkBroadCastReceiver mCastReceiver;
 
-    public NetConnectService() {
-    }
+    public NetConnectService() { }
 
     @Override
     public IBinder onBind(Intent intent) { return null; }
@@ -30,7 +27,6 @@ public class NetConnectService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "onCreate: ");
         mCastReceiver=new NetWorkBroadCastReceiver();
         IntentFilter filter=new IntentFilter();
         filter.addAction(NetWorkBroadCastReceiver.CONNECTIVITY_ACTION);
@@ -40,7 +36,6 @@ public class NetConnectService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy: ");
         unregisterReceiver(mCastReceiver);
     }
 
@@ -64,6 +59,7 @@ public class NetConnectService extends Service {
 
         }
     }
+
 
 
 }

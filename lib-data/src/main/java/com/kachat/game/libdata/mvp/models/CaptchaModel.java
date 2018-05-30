@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.ApiServices.UserApi;
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.http.BaseModel;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
@@ -19,7 +20,7 @@ import rx.Subscription;
 public class CaptchaModel extends BaseModel {
     private Subscription mSubscription;
 
-    public void getCaptcha(@NonNull String mobile, final OnPresenterListener.OnModelListener<BaseBean<GetCaptchaBean>> listener){
+    public void getCaptcha(@NonNull String mobile, final OnPresenterListener.OnModelListener<GetCaptchaBean> listener){
 
         mSubscription= UserApi.requestCaptcha(mobile,new Observer<BaseBean<GetCaptchaBean>>() {
             @Override
@@ -30,7 +31,7 @@ public class CaptchaModel extends BaseModel {
             public void onError(final Throwable e) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
-                        listener.onFailed(e);
+                        listener.onError(e);
                     }
                 });
 
@@ -39,9 +40,9 @@ public class CaptchaModel extends BaseModel {
             @Override
             public void onNext(final BaseBean<GetCaptchaBean> bean) {
                 LocalHandler().post(() -> {
-                if (listener != null) {
-                    listener.onSuccess(bean);
-                }
+                    if (listener != null) {
+                        listener.onSuccess(bean);
+                    }
                 });
             }
         });

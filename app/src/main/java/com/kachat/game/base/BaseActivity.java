@@ -79,6 +79,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             onInitData(savedInstanceState);
         }else if(getIntent() != null && getIntent().getExtras() != null) {
             onInitData(savedInstanceState);
+        }else {
+            onInitData(null);
         }
 
         if (getToolbar() != null) {

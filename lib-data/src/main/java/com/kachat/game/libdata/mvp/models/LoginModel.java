@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.ApiServices.UserApi;
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.http.BaseModel;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.UserBean;
@@ -19,7 +20,7 @@ public class LoginModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void login(@NonNull String mobile,@NonNull String pwd, final OnPresenterListener.OnModelListener<BaseBean<UserBean>> listener){
+    public void login(@NonNull String mobile,@NonNull String pwd, final OnPresenterListener.OnModelListener<UserBean> listener){
         mSubscription= UserApi.requestLogin(mobile, pwd, new Observer<BaseBean<UserBean>>() {
             @Override
             public void onCompleted() {
@@ -29,17 +30,17 @@ public class LoginModel extends BaseModel {
             public void onError(final Throwable e) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
-                        listener.onFailed(e);
+                        listener.onError(e);
                     }
                 });
 
             }
 
             @Override
-            public void onNext(final BaseBean<UserBean> userBeanBaseBean) {
+            public void onNext(final BaseBean<UserBean> bean) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
-                        listener.onSuccess(userBeanBaseBean);
+                        listener.onSuccess(bean);
                     }
                 });
             }

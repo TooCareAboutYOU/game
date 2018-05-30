@@ -20,6 +20,16 @@ public interface UserService {
     @POST("/captcha/register")
     Observable<BaseBean<GetCaptchaBean>> postPhoneCaptchaImpl(@Field("mobile") String mobile);
 
+    //注册
+    @FormUrlEncoded
+    @POST("/users")
+    Observable<BaseBean<UserBean>> postRegister(@Field("mobile") String mobile,
+                                              @Field("password") String password,
+                                              @Field("gender") String gender,
+                                              @Field("age") String age,
+                                              @Field("username") String username,
+                                              @Field("system") int system);
+
     // 重置密码请求验证码
     @FormUrlEncoded
     @POST("/captcha/reset")

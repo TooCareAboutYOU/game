@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.ApiServices.GameApi;
 import com.kachat.game.libdata.ApiServices.UserApi;
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.http.BaseModel;
 import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GameTypeBean;
@@ -20,7 +21,7 @@ public class GameListModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void requestGameList(final OnPresenterListener.OnModelListener<BaseBean<GameTypeBean>> listener){
+    public void requestGameList(final OnPresenterListener.OnModelListener<GameTypeBean> listener){
         mSubscription= GameApi.requestGameList(new Observer<BaseBean<GameTypeBean>>() {
             @Override
             public void onCompleted() {
@@ -30,7 +31,7 @@ public class GameListModel extends BaseModel {
             public void onError(final Throwable e) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
-                        listener.onFailed(e);
+                        listener.onError(e);
                     }
                 });
 

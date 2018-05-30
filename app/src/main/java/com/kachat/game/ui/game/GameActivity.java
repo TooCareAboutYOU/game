@@ -43,6 +43,7 @@ import com.github.lzyzsd.jsbridge.DefaultHandler;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.events.VAGameEventMessage;
+import com.kachat.game.ui.game.fragments.Live2DModeListFragment;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,8 +57,11 @@ public class GameActivity extends BaseActivity {
 
     @BindView(R.id.bridgeWebView)
     BridgeWebView mBridgeWebView;
+    @BindView(R.id.et_Url)
+    AppCompatEditText mEtUrl;
     @BindView(R.id.btn_Status)
     AppCompatButton mBtnStatus;
+
     private WebSettings mWebSettings;
 
     @Override
@@ -91,7 +95,7 @@ public class GameActivity extends BaseActivity {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //            mBridgeWebView.evaluateJavascript(js,null);
 //        }else {
-            mBridgeWebView.loadUrl("http://demo.e3webrtc.com:9002");
+//            mBridgeWebView.loadUrl("http://demo.e3webrtc.com:9004");
 //            mBridgeWebView.reload();
 //        }
     }
@@ -113,6 +117,7 @@ public class GameActivity extends BaseActivity {
         findViewById(R.id.acBtn_load).setOnClickListener(v -> {
             String uid=editText.getText().toString().trim();
             if (!uid.isEmpty()) {
+                mBridgeWebView.loadUrl("http://demo.e3webrtc.com:900"+mEtUrl.getText().toString().trim());
                 VAGameAPI.getInstance().connect(gateUrl, uid, "");
             }
         });

@@ -13,6 +13,7 @@ public class UserInfoBean implements Serializable {
     private String gender;
     private int uid;
     private int age;
+    private int system;
     private UserDetailBean detail;
 
     public UserInfoBean() {
@@ -48,6 +49,14 @@ public class UserInfoBean implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getSystem() {
+        return system;
+    }
+
+    public void setSystem(int system) {
+        this.system = system;
     }
 
     public UserDetailBean getDetail() {
