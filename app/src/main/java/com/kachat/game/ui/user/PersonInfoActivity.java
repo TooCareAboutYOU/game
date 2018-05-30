@@ -12,7 +12,7 @@ import com.kachat.game.ui.user.fragment.UserMenuListFragment;
 public class PersonInfoActivity extends BaseActivity {
 
 
-    private final Fragment mFragment=UserMenuListFragment.getInstance();
+    private Fragment mFragment;
     private FragmentTransaction transaction;
 
     @Override
@@ -22,9 +22,10 @@ public class PersonInfoActivity extends BaseActivity {
 
     @Override
     protected void onInitView() {
-        transaction=getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fl_MenuList, mFragment);
-        transaction.commit();
+//        mFragment=UserMenuListFragment.getInstance();
+//        transaction=getSupportFragmentManager().beginTransaction();
+//        transaction.add(R.id.fl_MenuList, mFragment);
+//        transaction.commit();
     }
 
 
@@ -35,7 +36,7 @@ public class PersonInfoActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        transaction.remove(mFragment);
+//        transaction.remove(mFragment);
         super.onDestroy();
     }
 

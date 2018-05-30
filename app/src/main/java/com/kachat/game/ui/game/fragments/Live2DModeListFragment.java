@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -24,6 +26,7 @@ public class Live2DModeListFragment extends BaseFragment {
 
     @BindView(R.id.rv_switch_bg)
     RecyclerView mRvSwitchBg;
+    private List<String> mList;
 
     public Live2DModeListFragment(){}
     public static Live2DModeListFragment getInstance(){
@@ -48,6 +51,10 @@ public class Live2DModeListFragment extends BaseFragment {
 
     @Override
     public void onInitView(@NonNull View view) {
+        mList=new ArrayList<>();
+        mList.add("cobori10");
+        mList.add("miku_f");
+        mList.add("miyo");
         LinearLayoutManager manager=new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
         mRvSwitchBg.setLayoutManager(manager);
         mRvSwitchBg.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()),DividerItemDecoration.HORIZONTAL));
@@ -71,14 +78,14 @@ public class Live2DModeListFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull BgBackGround holder, int position) {
             holder.itemView.setOnClickListener(v -> {
                 if (mSwitchListener != null) {
-                    mSwitchListener.onEvent("文件路径：","，名称：");
+                    mSwitchListener.onEvent("",mList.get(position));
                 }
             });
         }
 
         @Override
         public int getItemCount() {
-            return 10;
+            return (mList.size() > 0) ? mList.size() : 0;
         }
 
         class BgBackGround extends RecyclerView.ViewHolder{

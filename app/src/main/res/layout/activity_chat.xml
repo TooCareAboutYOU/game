@@ -18,6 +18,23 @@
         android:layout_height="wrap_content"
         android:text="Bg1"/>
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/acBtn_switch_hudj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:text="Hjd"/>
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:min="1"
+        android:max="50"
+        android:background="@color/colorPrimaryDark"
+        tools:targetApi="o" />
+
     <FrameLayout
         android:id="@+id/fl_Live2DList"
         android:layout_width="match_parent"

@@ -123,7 +123,6 @@ public class GameActivity extends BaseActivity {
         });
 
         findViewById(R.id.acBtn_match).setOnClickListener(v -> {
-            Toast.makeText(this, "点击了match", Toast.LENGTH_SHORT).show();
             VAGameAPI.getInstance().startGameMatch(1);
         });
     }

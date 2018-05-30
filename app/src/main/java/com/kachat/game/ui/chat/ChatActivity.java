@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.RtcVideoProcess.FaceRigItf;
@@ -24,6 +25,8 @@ import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.ui.game.fragments.Live2DModeListFragment;
 
+import java.util.HashMap;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,12 +36,15 @@ public class ChatActivity extends BaseActivity implements Live2DModeListFragment
     FrameLayout mClFullscreenView;
     @BindView(R.id.fl_Live2DList)
     FrameLayout mFlLive2DList;
+    @BindView(R.id.seekbar)
+    SeekBar mSeekBar;
+
 
     private RenderProxy fullRenderProxy;
     private SurfaceView localSFView;
     private FaceRigItf faceRigItf=null;
     private boolean SwitchBg=false;
-
+    private boolean isHide=false;
     @Override
     protected int onSetResourceLayout() { return R.layout.activity_chat; }
 
@@ -47,6 +53,7 @@ public class ChatActivity extends BaseActivity implements Live2DModeListFragment
         Config.SdkConnect("", "");
         fullRenderProxy = SharedRTCEnv.getInstance().createRenderProxy(getApplicationContext());
         fullRenderProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
+        fullRenderProxy.setEnableMirror(true);
         localSFView = fullRenderProxy.getDisplay();
         mClFullscreenView.addView(localSFView);
         VAChatAPI.getInstance().startPreview(localSFView);
@@ -63,16 +70,17 @@ public class ChatActivity extends BaseActivity implements Live2DModeListFragment
         if (!isEnabled) {
             faceRigItf = videoProcessorToCamera.native_faceRigItf();
             String path = getApplicationInfo().sourceDir;
-//                String path = Uri.parse("android.resource://" + _context.getPackageName() + "/raw/").getPath() ;
-//            faceRigItf.native_setLive2DModel("miyo", "miyo");
+            faceRigItf.native_setLive2DModel("", "miyo");
             faceRigItf.native_showFaceTrack(false);
             faceRigItf.native_setModelOuputSize(360, 640);
             faceRigItf.native_setDetectFPS(5);
 
             faceRigItf.native_setOnFaceDetectListener( have -> {
                 Log.i("", have ? "yes" : "no" );
+                // TODO: 2018/5/30 检测人脸 5s后为检测到人脸 弹提示，需转主线程
             });
             faceRigItf.native_setModelZoomFraction(2.0f); // 缩放
+//            faceRigItf.native_modelZoomFraction()
             faceRigItf.native_setModelBackgroundImage("", "bg1.png");
         }
 
@@ -91,6 +99,34 @@ public class ChatActivity extends BaseActivity implements Live2DModeListFragment
                 faceRigItf.native_setModelBackgroundImage("", "bg1.png");
             }
         });
+
+
+        findViewById(R.id.acBtn_switch_hudj).setOnClickListener(v -> {
+            HashMap cfg = new HashMap<String, Boolean>() {{
+                put("hudiejie1", isHide);
+                put("hudiejie2", isHide);
+                put("hudiejie3", isHide);
+            }};
+            faceRigItf.native_setModelVisibilityConfig(cfg);
+            isHide =!isHide;
+        });
+//        mSeekBar.setSecondaryProgress(0);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                faceRigItf.native_setModelZoomFraction(progress); // 缩放
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     @Override
@@ -100,6 +136,6 @@ public class ChatActivity extends BaseActivity implements Live2DModeListFragment
 
     @Override
     public void onEvent(String filePath, String fileName) {
-        faceRigItf.native_setLive2DModel("miyo", "miyo");
+        faceRigItf.native_setLive2DModel("", fileName);
     }
 }

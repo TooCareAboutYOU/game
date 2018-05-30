@@ -17,6 +17,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.ui.chat.ChatActivity;
 import com.kachat.game.ui.game.GameActivity;
+import com.kachat.game.utils.MyUtils;
+import com.kachat.game.utils.OnMultiClickListener;
 
 //        WindowManager.LayoutParams params=getWindow().getAttributes();
 //        params.systemUiVisibility=View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -80,10 +82,14 @@ public class SplashActivity extends AppCompatActivity implements PermissionUtils
         imgBg.setVisibility(View.VISIBLE);
         Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
         imgBg.setImageURI(uri);
-        imgBg.setOnClickListener(v -> {
-            Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
-            startActivity(intent);
-            this.finish();
+
+        imgBg.setOnClickListener(new OnMultiClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         });
     }
 
