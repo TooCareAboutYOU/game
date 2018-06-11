@@ -24,6 +24,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:text="Hjd"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/acBtn_switch_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="200dp"
+        android:text="List"/>
 
     <SeekBar
         android:id="@+id/seekbar"
@@ -33,7 +39,8 @@
         android:min="1"
         android:max="50"
         android:background="@color/colorPrimaryDark"
-        tools:targetApi="o" />
+        tools:targetApi="o"
+        android:visibility="invisible"/>
 
     <FrameLayout
         android:id="@+id/fl_Live2DList"

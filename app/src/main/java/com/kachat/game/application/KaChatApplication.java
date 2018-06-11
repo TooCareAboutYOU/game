@@ -16,7 +16,6 @@ public class KaChatApplication extends MultiDexApplication {
     private static KaChatApplication instance;
 
     public static Intent intent;
-//    public static
 
     @Override
     public void onCreate() {

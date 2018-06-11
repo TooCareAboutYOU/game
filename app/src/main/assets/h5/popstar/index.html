@@ -1,0 +1,258 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <title>消除星星</title>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no"/>
+  <link href="css/popstar.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/external.css?439584039583">
+</head>
+
+<body>
+<div class="wrapper">
+  <canvas class="popstar"></canvas>
+  <!-- 用户界面 -->
+  <div class="popstar_menu" id="menu">
+    <!--<div class="popstar_high_score" id="highScore"></div>-->
+    <a class="popstar_btn" href="javascript:;" id="newGame" style="margin-top: 40%">新 游 戏</a>
+    <!--<a class="popstar_btn disabled" href="javascript:;" id="resumeGame">继续游戏</a>-->
+    <!-- <a class="popstar_btn" href="https://zhuanlan.zhihu.com/snsgame?group_id=909745245186072576" target="_blank">关注我们</a> -->
+    <!-- <a class="popstar_btn" href="https://aotu.io/" target="_blank">凹凸官网</a> -->
+  </div>
+  <!-- 暂停时的广告 -->
+  <div class="popstar_ad" id="popstarAd">
+    <a href="//jd.com"><img src="images/ad@2x.jpg"/></a>
+    <div class="popstar_ad_close" id="popstarAdClose"></div>
+  </div>
+  <!--等待-->
+  <div class="popstar_wait_model" id="popstar_wait_model">
+    <div class="popstar_wait_mask"></div>
+    <!--<img class="popstar_wait_bg" src="./images/boxbg.png" alt="">-->
+    <div class="popstar_wait_main">
+      <div class="title">等待队友复活自己</div>
+      <div class="score" id="failedSource"></div>
+      <div class="popstar_wait_btn">
+        <img src="./images/wait.png" alt="" id="js-wait">
+        <div class="popstar_wait_btn_text">等待对方完成后一起评分结算</div>
+      </div>
+      <div class="popstar_exit_btn">
+        <img src="./images/exit.png" alt="" id="js-exit">
+        <div class="popstar_exit_btn_text">现在退出，且以当前层数结算自己的结果</div>
+      </div>
+    </div>
+  </div>
+  <!--结束-->
+  <div class="popstar_over_model" id="popstar_over_model">
+    <div class="popstar_over_mask"></div>
+    <!--<img class="popstar_wait_bg" src="./images/boxbg.png" alt="">-->
+    <div class="popstar_over_main">
+      <div class="title">游戏结束</div>
+      <div class="score" id="gameOverSource"></div>
+      <div class="popstar_over_btn">
+        <img src="./images/exit.png" alt="" id="js-over">
+      </div>
+    </div>
+  </div>
+  <!--倒计时-->
+  <div class="count_down_model" id="count_down_model">
+    <div class="count_down_mask"></div>
+    <div class="count_down_main">
+      <div>准备开始</div>
+      <div id="count">3</div>
+    </div>
+  </div>
+  <!--等待-->
+  <div id="wait">
+    <div class="mask"></div>
+    <div class="waitContent">
+      <p>等待中</p>
+      <div id="back-to_wait-model">返回</div>
+    </div>
+  </div>
+
+</div>
+<script type="text/javascript" src="script/lib/pixi.js"></script>
+<script type="text/javascript" src="script/lib/gsap/TweenMax.js"></script>
+<!--<script type="text/javascript" src="script/Popstar.js"></script>-->
+<script type="text/javascript" src="script/Popstar.js?98896a23627eb087a89a"></script></body>
+<script type="text/javascript">
+PIXI.utils.skipHello();
+
+// 用户界面不属于游戏部分，直接在这里实现
+var record;
+
+// 初始化用户界面
+var initUI = function () {
+  // 获取 localStorage 信息
+  record = JSON.parse(localStorage.getItem("popstar-record")) || {total: 0, level: 0, highScore: 0}
+  // highScore.innerHTML = "最高分：" + record.highScore;
+  // resumeGame.className = record.level > 0 ? "popstar_btn" : "popstar_btn disabled";
+}
+
+initUI();
+
+// 初始化游戏
+var popstar = new Popstar(
+  {
+    view: document.querySelector(".popstar"),
+    // 当前总分数
+    total: record.total
+  }
+);
+
+// 新游戏
+newGame.addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  // 记录分数置 0
+  record.total = record.level = 0;
+  popstar.view.total = 0
+  // 记录到 localStorage
+  localStorage.setItem("popstar-record", JSON.stringify(record));
+  menu.className = "popstar_menu hide";
+  setTimeout(function () {
+    popstar.enter(0);
+  }, 300);
+});
+
+// 继续游戏
+// resumeGame.addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+//   if (record.level < 1) return;
+//   menu.className = "popstar_menu hide";
+//   setTimeout(function () {
+//     popstar.enter(record.level);
+//   }, 300);
+// });
+
+// 关闭广告
+popstarAdClose.addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  popstar.resume();
+  popstarAd.style.display = "none";
+});
+// 等待队友
+document.getElementById('js-wait').addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  document.getElementById('popstar_wait_model').style.display = 'none'
+  document.getElementById('wait').style.display = 'block'
+  TweenMax.from(document.querySelector('.waitContent'),.6, {opacity: '0.5',ease: Linear.easeInOut})
+  TweenMax.to(document.querySelector('.waitContent'),.6, {opacity: '1',ease: Linear.easeInOut})
+  TweenMax.from(document.querySelector('.waitContent p'),.6, {transform: 'translateX(150px)',ease: Back.easeOut})
+  TweenMax.from(document.querySelector('.waitContent div'),.6, {transform: 'translateX(-150px)',ease: Back.easeOut,onComplete: function () {
+
+    }})
+});
+
+// 退出游戏
+document.getElementById('js-exit').addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  window.pObserver.next({leave: true})
+});
+// 结束游戏
+document.getElementById('js-over').addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  window.pObserver.next({leave: true})
+});
+// 返回等待
+document.getElementById('back-to_wait-model').addEventListener("ontouchstart" in document ? "touchend" : "click", function () {
+  TweenMax.to(document.querySelector('.waitContent'),.3, {opacity:'.5',ease: Linear.easeInOut,onComplete: function () {
+      document.getElementById('popstar_wait_model').style.display = 'block'
+      document.getElementById('wait').style.display = 'none'
+      TweenMax.from(document.querySelector('.popstar_wait_model .popstar_wait_btn'),.6, {transform: 'translateX(-150px)',ease: Back.easeOut})
+      TweenMax.from(document.querySelector('.popstar_wait_model .popstar_exit_btn'),.6, {transform: 'translateX(150px)',ease: Back.easeOut})
+    }})
+})
+
+popstar.showWait = function () {
+  document.getElementById('popstar_wait_model').style.display = 'block'
+  document.getElementById('failedSource').innerText = popstar.view.total
+  TweenMax.from(document.querySelector('.popstar_wait_model .popstar_wait_btn'),.6, {transform: 'translateX(-150px)',ease: Back.easeOut})
+  TweenMax.from(document.querySelector('.popstar_wait_model .popstar_exit_btn'),.6, {transform: 'translateX(150px)',ease: Back.easeOut})
+}
+
+popstar.showOver = function () {
+  document.getElementById('popstar_over_model').style.display = 'block'
+  document.getElementById('popstar_wait_model').style.display = 'none'
+  document.getElementById('wait').style.display = 'none'
+  document.getElementById('gameOverSource').innerText = popstar.view.total
+}
+
+var hasTimer = false
+popstar.showCountDown = function (fn) {
+  document.getElementById('popstar_wait_model').style.display = 'none'
+  document.getElementById('wait').style.display = 'none'
+  var countDownModel = document.getElementById('count_down_model')
+  countDownModel.style.display = 'block'
+  if (!hasTimer) {
+    var number = 3
+    var countSpan = document.getElementById('count')
+    // countSpan.classList.add('cd')
+    var timer = setInterval(function () {
+      document.getElementById('popstar_wait_model').style.display = 'none'
+      document.getElementById('wait').style.display = 'none'
+      countSpan.innerHTML = (--number).toString()
+      if (number === 0) {
+        if (fn) fn()
+        hasTimer = false
+        countDownModel.style.display = 'none'
+        document.getElementById('popstar_wait_model').style.display = 'none'
+        document.getElementById('wait').style.display = 'none'
+        // countSpan.classList.remove('cd')
+        popstar.resume()
+        // 记录当前的得分
+        record.total = popstar.total;
+        // 记录最高分
+        record.highScore = Math.max(record.highScore, record.total);
+        // 下一关
+        popstar.enter(record.level);
+        // 记录最新关卡
+        record.level = popstar.level;
+        // 记录到 localStorage
+        localStorage.setItem("popstar-record", JSON.stringify(record));
+        clearInterval(timer)
+      }
+    }, 1000)
+    hasTimer = true
+  }
+}
+
+// 用户按下暂停按钮
+popstar.event.on("pause", function () {
+  popstar.pause();
+  // popstarAd.style.display = "block";
+});
+
+// 用户按下恢复按钮
+popstar.event.on("resume", function () {
+  popstar.resume();
+  popstarAd.style.display = "none";
+});
+
+// 通关
+popstar.event.on("pass", function () {
+  // 记录当前的得分
+  record.total = popstar.total;
+  // 记录最高分
+  record.highScore = Math.max(record.highScore, record.total);
+  // 下一关
+  popstar.next();
+  // 记录最新关卡
+  record.level = popstar.level;
+  // 记录到 localStorage
+  localStorage.setItem("popstar-record", JSON.stringify(record));
+});
+
+// 游戏结束
+popstar.event.on("gameover", function () {
+  // 把关卡信息重置为 0
+  record.level = 0;
+  // 记录最高分
+  record.highScore = Math.max(record.highScore, popstar.total);
+  // 记录到 localStorage
+  localStorage.setItem("popstar-record", JSON.stringify(record));
+  // alert("游戏结束");
+  popstar.destroy();
+  menu.className = "popstar_menu";
+  // 重置信息
+  initUI();
+});
+
+</script>
+</html>
+
+
