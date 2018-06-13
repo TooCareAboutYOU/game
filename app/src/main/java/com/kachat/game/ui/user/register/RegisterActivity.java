@@ -56,7 +56,7 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.acTv_Timer)
     AppCompatTextView mAcTvTimer;
 
-    private String mobile;
+    private String mobile = DaoQuery.queryUserData().getMobile();
 
     CountDownTimer mTimer = new CountDownTimer(60 * 1000, 1000) {
         @SuppressLint("SetTextI18n")
@@ -98,14 +98,14 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         mToolbarBase.setBackgroundResource(R.color.colorNormal);
-        getBack().setOnClickListener(View::forceLayout);
+        getToolBarBack().setOnClickListener(View::forceLayout);
 
 
         ((AppCompatTextView) findViewById(R.id.atv_ToolBar_Base_Title)).setText("注册");
 
         mPresenter = new VerifyCaptchaPresenter(new VerifyCaptchaCallBack());
 
-        mobile = Objects.requireNonNull(DaoQuery.queryUserData()).getMobile();
+
         mAcTvMobile.setText("短信已发送至:" + mobile);
 
 

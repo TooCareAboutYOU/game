@@ -4,10 +4,25 @@
     <string name="title_activity_splash">引导页</string>
     <string name="title_activity_main">首页</string>
     <string name="title_activity_login">登录页</string>
-    <string name="title_activity_edit_user">编辑个人资料</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_person_info">个人资料</string>
+    <string name="title_activity_reset_password">设置新密码</string>
+    <string name="hint_nick_name">昵称</string>
+    <string name="hint_set_password">设置密码(6位数以上)</string>
+    <string name="register_success">恭喜你注册成功!</string>
+    <string name="toast_mobile_is_null">手机号码不能为空!</string>
+    <string name="toast_mobile_format_is_error">手机号码格式错误!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_input_mobile">请输入手机号</string>
+    <string name="welcome_msg">欢迎来到咔洽世界</string>
+    <string name="hint_input_password">请输入密码</string>
+    <string name="toast_pwd_is_null">密码不能为空!</string>
+    <string name="game_introductions">游戏说明</string>
+    <string name="game_introductions_details">本人/单位(姓名/单位名称)于(时间)委托(委托人或单位)申 请购买了(产品名称)，由于(概述问题)，本人/单位 (姓名/单位名称)现申请获得(产品名称)的管理权。为了避免权属纠纷，特做如下说明：(姓名/单位名称)是(产品名称)的真正所有者，今后由(产品名称)引起的纠纷和造成的一切后果，其责任概由(姓名/单位名称)承担，与(委托人或单位)无关。特此声明!</string>
+    <string name="title_activity_grschooladuate">研究所</string>
+    <string name="title_activity_shop">商城</string>
+    <string name="title_activity_game_center">游戏中心</string>
+    <string name="title_activity_register">注册</string>
+    <string name="title_activity_user_info">个人档案</string>
 
 
 </resources>

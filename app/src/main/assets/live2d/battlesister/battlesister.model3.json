@@ -1,0 +1,9 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "battlesister.moc3",
+		"Textures": [
+			"battlesister.png"
+		]
+	}
+}

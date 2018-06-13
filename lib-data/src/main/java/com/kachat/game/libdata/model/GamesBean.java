@@ -2,48 +2,89 @@ package com.kachat.game.libdata.model;
 
 import com.alibaba.fastjson.JSON;
 
-import java.io.Serializable;
+import java.util.List;
 
 /**
  *
  */
-public class GamesBean implements Serializable {
+public class GamesBean extends BaseBeans{
 
-    private int game_id;
-    private String name;
-    private int price;
-    private int category;
+    private ResultBean result;
 
-    public int getGame_id() {
-        return game_id;
+    public ResultBean getResult() {
+        return result;
     }
 
-    public void setGame_id(int game_id) {
-        this.game_id = game_id;
+    public void setResult(ResultBean result) {
+        this.result = result;
     }
 
-    public String getName() {
-        return name;
-    }
+    public static class ResultBean {
+        private List<GameBean> games;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public List<GameBean> getGames() {
+            return games;
+        }
 
-    public int getPrice() {
-        return price;
-    }
+        public void setGames(List<GameBean> games) {
+            this.games = games;
+        }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
+        public static class GameBean {
+            /**
+             * name : 六芒星
+             * price : 2
+             * category : 0
+             * index : 902
+             */
 
-    public int getCategory() {
-        return category;
-    }
+            private String name;
+            private int price;
+            private int category;
+            private int index;
 
-    public void setCategory(int category) {
-        this.category = category;
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public int getPrice() {
+                return price;
+            }
+
+            public void setPrice(int price) {
+                this.price = price;
+            }
+
+            public int getCategory() {
+                return category;
+            }
+
+            public void setCategory(int category) {
+                this.category = category;
+            }
+
+            public int getIndex() {
+                return index;
+            }
+
+            public void setIndex(int index) {
+                this.index = index;
+            }
+
+            @Override
+            public String toString() {
+                return JSON.toJSONString(this);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return JSON.toJSONString(this);
+        }
     }
 
     @Override

@@ -5,7 +5,14 @@ import com.alibaba.fastjson.JSON;
 import java.io.Serializable;
 
 /**
- *
+     level: 等级
+     hp: 体力值
+     exp_to_level_up: 升级还需经验
+     exp: 经验
+     number: 唯一游戏号，用于添加好友
+     diamond: 钻石
+     charm: 魅力值
+     gold: 金币数
  */
 public class UserDetailBean implements Serializable {
 
@@ -13,9 +20,10 @@ public class UserDetailBean implements Serializable {
     private int hp;
     private int exp_to_level_up;
     private int exp;
-    private int number;
+    private String number;
     private int diamond;
     private int charm;
+    private int gold;
 
     public UserDetailBean() {
     }
@@ -52,11 +60,11 @@ public class UserDetailBean implements Serializable {
         this.exp = exp;
     }
 
-    public int getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
@@ -74,6 +82,14 @@ public class UserDetailBean implements Serializable {
 
     public void setCharm(int charm) {
         this.charm = charm;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
     }
 
     @Override

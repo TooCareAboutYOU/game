@@ -3,6 +3,7 @@ package com.kachat.game.libdata.http;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.facebook.stetho.Stetho;
@@ -39,7 +40,7 @@ import rx.schedulers.Schedulers;
 public class HttpManager {
 
     private static final String TAG = "HttpManager";
-    private volatile static HttpManager singleton;
+    private volatile static HttpManager singleton=null;
 
     public static synchronized HttpManager getInstance() {
         if (singleton == null) {
@@ -57,8 +58,7 @@ public class HttpManager {
     private static final long DEFAULT_WRITE_TIME_OUT=10;  //超时时间
     private static final long DEFAULT_READ_TIME_OUT=10;  //超时时间
 
-    private static Retrofit mRetrofit;
-
+    private static Retrofit mRetrofit=null;
 
     public static void init(Context context,String baseUrl) {
         if (TextUtils.isEmpty(baseUrl)) {
@@ -82,13 +82,9 @@ public class HttpManager {
 //                new SetCookieCache(), new SharedPrefsCookiePersistor(context));
 //                client.cookieJar(cookieJar)
 
-
 //        Gson mGson=new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-        HttpLoggingInterceptor mHttpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-//                Log.i(TAG, "log: "+message.toString());
-            }
+        HttpLoggingInterceptor mHttpLoggingInterceptor = new HttpLoggingInterceptor(message -> {
+            Log.w("UpLoadBugLogService","--->>" + message.toString());
         });
         mHttpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -111,7 +107,6 @@ public class HttpManager {
 
     public <T>T create(Class<T> service) {  return mRetrofit.create(service); }
 
-
     protected static <T> Subscription setSubscribe(Observable<T> observable, Observer<T> observer){
         return observable
                 .subscribeOn(Schedulers.io())
@@ -121,43 +116,26 @@ public class HttpManager {
     }
 
 
-    /**
-     * 网络请求公共头信息插入器
-     */
+    /** 网络请求公共头信息插入器 */
     private static class HttpHeaderInterceptor implements Interceptor {
         @Override
         public Response intercept(@NonNull Chain chain) throws IOException {
-            Request original=chain.request();
-            Request request=original.newBuilder()
+            Request original = chain.request();
+            Request request = original.newBuilder()
 //                    .header("Allow","POST,OPTION S")
-                    .header("Content-type","application/json")
-                    .header("Connection","keep-alive")
-                    .header("Server","gunicorn/19.7.1")
+//                    .header("Content-type", "multipart/form-data")
+//                    .header("Connection", "keep-alive")
+//                    .header("Server", "gunicorn/19.7.1")
 //                    .header("Vary","Accept")
 //                    .header("Allow","GET, PUT, HEAD, OPTIONS")
 //                    .header("Vary","Accept,Cookie")
-                    .method(original.method(),original.body())
+                    .method(original.method(), original.body())
                     .build();
+            Log.d(TAG, "original.url():" + original.url());
+            Log.i(TAG, "intercept: "+request.url());
             return chain.proceed(request);
         }
     }
-
-//    private class HttpHeaderInterceptor implements Interceptor{
-//
-//        @Override
-//        public Response intercept(Chain chain) throws IOException {
-//            Request original=chain.request();
-//            Request request=original.newBuilder()
-//                    .header("User-Agent","Adndroid,xxx")
-//                    .header("Accept","application/json")
-//                    .header("Content-type","application/json")
-//                    .header("Vary","Accept")
-//                    .method(original.method(),original.body())
-//                    .build();
-//            return chain.proceed(request);
-//        }
-//    }
-
 
     /**   公共参数  */
     private class CommonParamsInterceptor implements Interceptor{
@@ -168,7 +146,7 @@ public class HttpManager {
             if (request.method().equals("GET")) {
                 HttpUrl httpUrl=request.url().newBuilder()
                         .addQueryParameter("version","xxx")
-                        .addQueryParameter("device","Adnroid")
+                        .addQueryParameter("device","Android")
                         .addQueryParameter("timestamp", String.valueOf(System.currentTimeMillis()))
                         .build();
                 request=request.newBuilder().url(httpUrl).build();

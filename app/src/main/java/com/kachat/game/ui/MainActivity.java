@@ -1,25 +1,27 @@
 package com.kachat.game.ui;
 
-import android.Manifest;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
-
 import com.kachat.game.R;
-import com.kachat.game.application.KaChatApplication;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.services.UpLoadBugLogService;
+import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.ui.chat.ChatActivity;
 import com.kachat.game.ui.game.GameActivity;
-import com.kachat.game.ui.user.PersonInfoActivity;
+import com.kachat.game.ui.graduate.GraduateSchoolActivity;
+import com.kachat.game.ui.shop.ShopActivity;
+import com.kachat.game.ui.user.MeActivity;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TAG = "MainActivity";
+    public static void getInstance(Context context){
+        Intent intent=new Intent(context,MainActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected int onSetResourceLayout() {
@@ -27,14 +29,44 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected boolean onSetStatusBar() {
+        return true;
+    }
+
+    @Override
+    protected void initImmersionBar() {
+        super.initImmersionBar();
+        if (getImmersionBar() != null) {
+            getImmersionBar().transparentStatusBar().init();
+        }
+    }
+
+    @Override
     protected void onInitView() {
+        findViewById(R.id.btn_graduate).setOnClickListener(v -> {
+            GraduateSchoolActivity.newInstance(this);
+        });
+
+        findViewById(R.id.btn_Live2D).setOnClickListener(v -> {
+            ChatActivity.newInstance(this);
+        });
+
+        findViewById(R.id.btn_H5Game).setOnClickListener(v -> {
+            GameActivity.newInstance(this);
+        });
+        findViewById(R.id.btn_Me).setOnClickListener(v -> {
+            MeActivity.newInstance(this);
+        });
+        findViewById(R.id.btn_Shop).setOnClickListener(v -> {
+//            ShopActivity.newInstance(this);
+            UpLoadBugLogService.toZip(DaoQuery.queryUserData().getMobile());
+        });
 
     }
 
     @Override
     protected void onInitData(@Nullable Bundle savedInstanceState) {
-        findViewById(R.id.sample_text).setOnClickListener(v -> startActivity(new Intent(this, GameActivity.class)));
-        getBack().setOnClickListener(v -> startActivity(new Intent(this, GameActivity.class)));
+
     }
 
 
@@ -59,4 +91,5 @@ public class MainActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 }

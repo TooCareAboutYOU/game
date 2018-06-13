@@ -13,10 +13,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.services.UpLoadBugLogService;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.OnMultiClickListener;
@@ -41,6 +43,7 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA
+
     };
     private int PERMISSION_REQUEST_CODE = 1;
 
@@ -58,10 +61,10 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     }, UI_TO_MAIN_ACTIVITY);
 
     private final Runnable mHideRunnable = () -> {
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.hide();
-//        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         mHideHandler.removeCallbacks(mHidePart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
@@ -70,6 +73,7 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+//        BarUtils.isNavBarVisible(this);
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, UI_START_DELAY);
     }
@@ -90,11 +94,19 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
         }
     }
 
+
     @Override
     protected void onInitView() {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    int i=1;
     @OnClick(R.id.img_bg)
     public void Onclick(View v){
         Intent intent=null;
@@ -111,6 +123,7 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
         imgBg.setVisibility(View.VISIBLE);
         Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
         imgBg.setImageURI(uri);
+
     }
 
     @Override
@@ -126,6 +139,9 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     public void onPermissionGranted() {  //用户同意时调用
         Log.e(TAG, "onPermissionGranted: ");
         RequestNetWork();
+//        UpLoadBugLogService.startActionFoo(this,"1","2");
+        UpLoadBugLogService.startActionBaz(this,"3","4");
+//        UpLoadBugLogService.initLog();
     }
 
     @Override

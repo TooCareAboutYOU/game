@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.kachat.game.R;
 
 import butterknife.ButterKnife;
@@ -23,7 +24,7 @@ public abstract class BaseFragment extends Fragment {
     
     public abstract int onSetResourceLayout();
     public abstract void onInitView(@NonNull View view);
-    public abstract void onActivityCreate(@Nullable Bundle savedInstanceState);
+    public  void onActivityCreate(@Nullable Bundle savedInstanceState){}
     
 
     private View rootView;
@@ -53,6 +54,18 @@ public abstract class BaseFragment extends Fragment {
             return rootView;
         }
     }
+
+    /*回退*/
+    public void getBackPrevious(){
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        }else {
+            getActivity().finish();
+        }
+    }
+
+
+
     private Unbinder mUnbinder;
 
 
@@ -81,9 +94,6 @@ public abstract class BaseFragment extends Fragment {
             onInVisible();
         }
     }
-
-
-
 
 
     @Override
@@ -126,4 +136,8 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroyView();
         mUnbinder.unbind();
     }
+
+
+    public void Toast(String msg){  ToastUtils.showShort(msg);  }
+    public void Toast(int msg){  ToastUtils.showShort(msg);  }
 }

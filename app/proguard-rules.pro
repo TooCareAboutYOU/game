@@ -48,3 +48,7 @@
 #Gradle Retrolambda混淆规则
  -dontwarn java.lang.invoke.*
  -dontwarn **$$Lambda$*
+
+ #Bugly
+ -dontwarn com.tencent.bugly.**
+ -keep public class com.tencent.bugly.**{*;}

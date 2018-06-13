@@ -10,6 +10,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
@@ -24,13 +25,6 @@ import butterknife.ButterKnife;
 
 public class ShopActivity extends BaseActivity {
 
-
-    @BindView(R.id.sdv_ToolBar_Base_Back)
-    SimpleDraweeView mSdvToolBarBaseBack;
-    @BindView(R.id.atv_ToolBar_Base_Title)
-    AppCompatTextView mAtvToolBarBaseTitle;
-    @BindView(R.id.sdv_Menu)
-    SimpleDraweeView mSdvMenu;
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
 
@@ -60,8 +54,9 @@ public class ShopActivity extends BaseActivity {
 
     @Override
     protected void onInitView() {
-        getBack().setOnClickListener(v -> finish());
         mToolbarBase.setBackgroundResource(R.color.colorNormal);
+        getToolBarBack().setOnClickListener(v -> finish());
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_Container,GoldsFragment.getInstance()).commit();
 

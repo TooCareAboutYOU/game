@@ -1,0 +1,9 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "zhishi.moc3",
+		"Textures": [
+			"zhishi.png"
+		]
+	}
+}

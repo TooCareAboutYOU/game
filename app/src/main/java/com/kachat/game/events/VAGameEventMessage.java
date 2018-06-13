@@ -1,5 +1,6 @@
 package com.kachat.game.events;
 
+
 /**
  *
  */
@@ -13,7 +14,10 @@ public class VAGameEventMessage {
         VAGAME_JOIN_FAILED,
         VAGAME_LEAVE,
         VAGAME_MATCH_SUCCESS,
-        VAGAME_MESSAGE
+        VAGAME_MESSAGE,
+        VAGAME_VIDEO_START,
+        VAGAME_VIDEO_FAILED,
+        VAGAME_VIDEO_STOP
     }
 
     String msg;
@@ -31,6 +35,5 @@ public class VAGameEventMessage {
     public VAGameEvent getType() {  return mType;  }
 
     public String getMsg() {  return msg;  }
-
 
 }

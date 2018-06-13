@@ -1,35 +1,30 @@
 package com.kachat.game.libdata.mvp.presenters;
 
 
-import android.support.annotation.NonNull;
-
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.BaseBean;
-import com.kachat.game.libdata.model.GameTypeBean;
-import com.kachat.game.libdata.model.GetCaptchaBean;
-import com.kachat.game.libdata.mvp.OnPresenterListener;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.model.GamesBean;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.GameListModel;
 
 public class GameListPresenter {
 
     private GameListModel mModel;
-    private OnPresenterListener.OnViewListener<GameTypeBean> mView;
+    private OnPresenterListeners.OnViewListener<GamesBean> mView;
 
-    public GameListPresenter(OnPresenterListener.OnViewListener<GameTypeBean> view) {
+    public GameListPresenter(OnPresenterListeners.OnViewListener<GamesBean> view) {
         this.mModel=new GameListModel();
         this.mView = view;
     }
 
     public void attachPresenter(){
-        this.mModel.requestGameList(new OnPresenterListener.OnModelListener<GameTypeBean>() {
+        this.mModel.requestGameList(new OnPresenterListeners.OnModelListener<GamesBean>() {
             @Override
-            public void onSuccess(BaseBean<GameTypeBean> result) {
+            public void onSuccess(GamesBean result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.REQUEST_SUCCESS) {
                         GameListPresenter.this.mView.onSuccess(result);
                     }else {
-                        GameListPresenter.this.mView.onFailed(result);
+                        GameListPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

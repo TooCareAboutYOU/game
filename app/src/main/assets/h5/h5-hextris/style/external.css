@@ -1,0 +1,61 @@
+#bothScore {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /*text-align: center;*/
+    width: 100%;
+    color: #2c3e50;
+    margin-bottom: 7px;
+    margin-left: 11px;
+}
+
+#partnerScoreLabel {
+    color: #bdc3c7;
+    vertical-align: middle;
+}
+
+#partnerScoreText {
+    font-size: 2rem;
+    vertical-align: middle;
+
+}
+
+#totalScoreLabel {
+    color: #bdc3c7;
+    vertical-align: middle;
+}
+
+#totalScoreLabel > span {
+    display: inline-block;
+}
+
+#totalScoreLabel > span:nth-child(2) {
+    text-indent: 2em;
+}
+
+#totalScoreText {
+    vertical-align: middle;
+    font-size: 2rem;
+}
+
+#game-over-model {
+    display: none;
+}
+
+#waiting {
+    display: none;
+}
+#countDown {
+    display: none;
+}
+#resurgence {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    color: #bdc3c7;
+    padding-left: 11px;
+}
+
+#resurgenceText {
+    color: #232323;
+}

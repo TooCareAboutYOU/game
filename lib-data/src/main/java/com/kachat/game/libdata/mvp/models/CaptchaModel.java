@@ -1,31 +1,26 @@
 package com.kachat.game.libdata.mvp.models;
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import com.kachat.game.libdata.ApiServices.UserApi;
-import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
-import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
-import com.kachat.game.libdata.model.UserBean;
-import com.kachat.game.libdata.mvp.OnPresenterListener;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
 import rx.Observer;
 import rx.Subscription;
 
-/**
- *
- */
+
 public class CaptchaModel extends BaseModel {
+
+    private static final String TAG = "CheckMobileFragment";
+
     private Subscription mSubscription;
 
-    public void getCaptcha(@NonNull String mobile, final OnPresenterListener.OnModelListener<GetCaptchaBean> listener){
-
-        mSubscription= UserApi.requestCaptcha(mobile,new Observer<BaseBean<GetCaptchaBean>>() {
+    public void getCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<GetCaptchaBean> listener){
+        mSubscription= UserApi.requestCaptcha(mobile,new Observer<GetCaptchaBean>() {
             @Override
-            public void onCompleted() {
-            }
+            public void onCompleted() { }
 
             @Override
             public void onError(final Throwable e) {
@@ -34,11 +29,10 @@ public class CaptchaModel extends BaseModel {
                         listener.onError(e);
                     }
                 });
-
             }
 
             @Override
-            public void onNext(final BaseBean<GetCaptchaBean> bean) {
+            public void onNext(final GetCaptchaBean bean) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onSuccess(bean);

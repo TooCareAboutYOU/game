@@ -7,18 +7,55 @@ import java.io.Serializable;
 /**
  *
  */
-public class MessageBean implements Serializable {
-    private String message;
+public class MessageBean extends BaseBeans {
 
-    public MessageBean() {
+    private ResultBean result;
+
+    public ResultBean getResult() {
+        return result;
     }
 
-    public String getMessage() {
-        return message;
+    public void setResult(ResultBean result) {
+        this.result = result;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public static class ResultBean implements Serializable {
+        private String message;
+        private int ticket;
+        private int hp;
+
+        public ResultBean() {
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public int getTicket() {
+            return ticket;
+        }
+
+        public void setTicket(int ticket) {
+            this.ticket = ticket;
+        }
+
+
+        public int getHp() {
+            return hp;
+        }
+
+        public void setHp(int hp) {
+            this.hp = hp;
+        }
+
+        @Override
+        public String toString() {
+            return JSON.toJSONString(this);
+        }
     }
 
     @Override
@@ -26,3 +63,4 @@ public class MessageBean implements Serializable {
         return JSON.toJSONString(this);
     }
 }
+

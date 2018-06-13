@@ -92,7 +92,7 @@ public class CheckMobileFragment extends BaseFragment {
         DaoInsert.insertUser(new DbUserBean(null,"",mobile,"","",
                 0,0,0,0,
                 0,0,0,"",0,0,0));
-
+        Log.i(TAG, "Check: "+mobile);
         mCaptchaPresenter.attachPresenter(mobile);
 
     }

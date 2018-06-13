@@ -1,54 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.game.GameActivity">
-    <com.github.lzyzsd.jsbridge.BridgeWebView
-        android:id="@+id/bridgeWebView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/cl_top"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl__"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/et_Url"
-            android:layout_width="50dp"
-            android:layout_height="?android:attr/actionBarSize"
-            android:textColor="@color/colorPrimary"
-            android:hint="url"
-            android:inputType="number"/>
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/et_uid"
-            android:layout_width="50dp"
-            android:layout_height="?android:attr/actionBarSize"
-            android:textColor="@color/colorPrimary"
-            android:hint="uid"
-            android:inputType="number"/>
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/acBtn_load"
+        android:layout_height="164dp"
+        android:background="#02DAF4">
+        <!--返回、编辑-->
+        <include layout="@layout/base_toolbar"/>
+        <!--头像-->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv_UserLogo"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            app:layout_editor_absoluteX="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:roundAsCircle="true"
+            app:roundedCornerRadius="27dp"
+            app:actualImageScaleType="fitCenter"
+            android:background="@mipmap/ic_launcher"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_base"
+            tools:ignore="UnknownIdInLayout" />
+        <!--昵称、等级-->
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/ll_1"
             android:layout_width="wrap_content"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="load"/>
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/acBtn_match"
-            android:layout_width="wrap_content"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="match"/>
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_Status"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_margin="10dp"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_red_light"
-            android:text="null"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/margin_10dp"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_base"
+            app:layout_constraintLeft_toRightOf="@+id/sdv_UserLogo"
+            tools:ignore="UnknownIdInLayout">
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/acTv_UserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:singleLine="true"
+                android:lines="1"
+                android:ellipsize="end"
+                android:text="null" />
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/acTv_UserLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_5dp"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintLeft_toRightOf="@+id/acTv_UserName"
+                android:textSize="14sp"
+                android:text="null"/>
+        </android.support.v7.widget.LinearLayoutCompat>
+        <!--详细信息-->
+        <android.support.v7.widget.LinearLayoutCompat
 
-</FrameLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/ll_1"
+            app:layout_constraintLeft_toRightOf="@+id/sdv_UserLogo">
+            <!--钻石-->
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@mipmap/ic_launcher"
+                    android:layout_gravity="center_vertical"/>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/acTv_UserDiamonds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:textSize="14sp"
+                    android:text="null"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+            <!--运动-->
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@mipmap/ic_launcher"
+                    android:layout_gravity="center_vertical"/>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/acTv_UserSport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:textSize="14sp"
+                    android:text="null"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+            <!--星星-->
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@mipmap/ic_launcher"
+                    android:layout_gravity="center_vertical"/>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/acTv_UserGold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:textSize="14sp"
+                    android:text="null"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+            <!--星星-->
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@mipmap/ic_launcher"
+                    android:layout_gravity="center_vertical"/>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/acTv_UserCharm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:textSize="14sp"
+                    android:text="null"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+        </android.support.v7.widget.LinearLayoutCompat>
+        
+    </android.support.constraint.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_GameList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+        <include layout="@layout/base_loading"/>
+
+    </FrameLayout>
+
+
+</android.support.v7.widget.LinearLayoutCompat>

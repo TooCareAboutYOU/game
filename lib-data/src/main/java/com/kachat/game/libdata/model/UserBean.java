@@ -3,27 +3,51 @@ package com.kachat.game.libdata.model;
 import java.io.Serializable;
 
 
-public class UserBean implements Serializable {
+public class UserBean extends BaseBeans {
 
-    private String token;
-    private UserInfoBean user;
+    private ResultBean result;
 
-    public UserBean() {
+    public ResultBean getResult() {
+        return result;
     }
 
-    public String getToken() {
-        return token;
+    public void setResult(ResultBean result) {
+        this.result = result;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+    public static class ResultBean implements Serializable {
 
-    public UserInfoBean getUser() {
-        return user;
-    }
+        private String token;
+        private UserInfoBean user;
 
-    public void setUser(UserInfoBean user) {
-        this.user = user;
+        public ResultBean() {
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public UserInfoBean getUser() {
+            return user;
+        }
+
+        public void setUser(UserInfoBean user) {
+            this.user = user;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("{");
+            sb.append("\"token\":\"")
+                    .append(token).append('\"');
+            sb.append(",\"user\":")
+                    .append(user.toString());
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }

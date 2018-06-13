@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hint_nick_name">昵称</string>
+    <string name="hint_set_password">设置密码(6位数以上)</string>
+    <string name="register_success">恭喜你注册成功!</string>
+    <string name="toast_mobile_is_null">手机号码不能为空!</string>
+    <string name="toast_mobile_format_is_error">手机号码格式错误!</string>
+    <string name="hint_input_mobile">请输入手机号</string>
+    <string name="welcome_msg">欢迎来到咔洽世界</string>
+    <string name="hint_input_password">请输入密码</string>
+    <string name="toast_pwd_is_null">密码不能为空!</string>
+    <string name="title_activity_grschooladuate">研究所</string>
+    <string name="title_activity_shop">商城</string>
+    <string name="title_activity_game_center">游戏中心</string>
+    <string name="title_activity_register">注册</string>
+    <string name="title_activity_user_info">个人档案</string>
+</resources>

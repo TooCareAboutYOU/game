@@ -4,32 +4,31 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
-import com.kachat.game.libdata.model.UserBean;
-import com.kachat.game.libdata.mvp.OnPresenterListener;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.CaptchaModel;
-import com.kachat.game.libdata.mvp.models.LoginModel;
 
 public class CaptchaPresenter {
 
-    private CaptchaModel mModel;
-    private OnPresenterListener.OnViewListener<GetCaptchaBean> mView;
+    private static final String TAG = "CheckMobileFragment";
 
-    public CaptchaPresenter(OnPresenterListener.OnViewListener<GetCaptchaBean> view) {
+    private CaptchaModel mModel;
+    private OnPresenterListeners.OnViewListener<GetCaptchaBean> mView;
+
+    public CaptchaPresenter(OnPresenterListeners.OnViewListener<GetCaptchaBean> view) {
         this.mModel=new CaptchaModel();
         this.mView = view;
     }
 
     public void attachPresenter(@NonNull String mobile){
-        this.mModel.getCaptcha(mobile, new OnPresenterListener.OnModelListener<GetCaptchaBean>() {
+        this.mModel.getCaptcha(mobile, new OnPresenterListeners.OnModelListener<GetCaptchaBean>() {
             @Override
-            public void onSuccess(BaseBean<GetCaptchaBean> result) {
+            public void onSuccess(GetCaptchaBean result) { // BaseBean<GetCaptchaBean>
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
                         CaptchaPresenter.this.mView.onSuccess(result);
                     }else {
-                        CaptchaPresenter.this.mView.onFailed(result);
+                        CaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }
