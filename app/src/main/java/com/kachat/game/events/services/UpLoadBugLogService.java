@@ -5,6 +5,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Environment;
+import android.os.Process;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,6 +50,7 @@ import static android.provider.CallLog.Calls.TYPE;
  * 上传日志
  */
 public class UpLoadBugLogService extends IntentService {
+
     private static final String TAG = "UpLoadBugLogService";
 
     private static final String ACTION_FOO = "com.kachat.game.events.services.action.FOO";
@@ -98,11 +101,11 @@ public class UpLoadBugLogService extends IntentService {
     }
 
     private void handleActionFoo(String param1, String param2) {
-        Log.i(TAG, "handleActionFoo: param1=="+param1+"\t\tparam2=="+param2);
+        Log.i(TAG, "handleActionFoo: param1==" + param1 + "\t\tparam2==" + param2);
     }
 
     private void handleActionBaz(String param1, String param2) {
-        Log.i(TAG, "handleActionBaz: param1=="+param1+"\t\tparam2=="+param2);
+        Log.i(TAG, "handleActionBaz: param1==" + param1 + "\t\tparam2==" + param2);
         initLog();
     }
 
@@ -111,13 +114,14 @@ public class UpLoadBugLogService extends IntentService {
         super.onDestroy();
         Log.i(TAG, "onDestroy: ");
     }
-//    private static String filePath="/sdcard/log.txt";
-    private static String filePath=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ALog/log.txt";
-    private static String zipFilePath=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ALog/log.zip";
-    private static File mFile=null;
 
-    public static boolean initLog(){
-        Log.i(TAG, "判断文件是否存在，存在则在创建之前删除");
+    //    private static String filePath="/sdcard/log.txt";
+    private static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ALog/log.txt";
+    private static String zipFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ALog/log.zip";
+    private static File mFileZIP = null;
+
+    private static boolean initLog() {
+        Log.i(TAG, "判断文件夹是否存在，存在则删除");
         if (FileUtils.getFileByPath(zipFilePath) != null) {
             FileUtils.deleteFile(zipFilePath);
         }
@@ -125,11 +129,7 @@ public class UpLoadBugLogService extends IntentService {
         if (FileUtils.createFileByDeleteOldFile(filePath)) { // 判断文件是否存在，存在则在创建之前删除
             Log.i(TAG, "根据文件路径获取文件");
             if (FileUtils.getFileByPath(filePath) != null) { // 根据文件路径获取文件
-//                mFile=FileUtils.getFileByPath(filePath);
                 Log.i(TAG, "创建成功");
-                for (int i = 1; i < 10; i++) {
-                    writeLog("第" + i + "次");
-                }
                 return true;
             }
         }
@@ -137,7 +137,11 @@ public class UpLoadBugLogService extends IntentService {
         return false;
     }
 
-    public static boolean writeLog(String txt){
+    public enum DeBugType {
+        err, warn, info, debug
+    }
+
+    public static boolean writeLog(@IntegerRes int processID, @IntegerRes int threadID, @NonNull DeBugType deBugType, String content) {
         Log.i(TAG, "正在写入.... ");
         try {
             File file = new File(filePath);
@@ -146,27 +150,38 @@ public class UpLoadBugLogService extends IntentService {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
+
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
             Date date = new Date(System.currentTimeMillis());
-//            time1.setText("Date获取当前日期时间"+simpleDateFormat.format(date));
-            String logTXT=simpleDateFormat.format(date)+"--->>>"+txt+"\r\n";
+            String type = "null";
+            switch (deBugType) {
+                case err:   type = "err";   break;
+                case warn:  type = "warn";   break;
+                case debug:  type = "debug";  break;
+                case info:   type = "info";  break;
+                default:   type = "null";   break;
+            }
+
+            String logTXT = "[" + simpleDateFormat.format(date) + "]-[" + type + "]-[" + processID + " : " + threadID + "]--->>>" + content + "\r\n";
+
             if (FileIOUtils.writeFileFromString(file, logTXT, true)) {
-                Log.i(TAG, "writeLog: 写入成功："+logTXT);
+                Log.i(TAG, "writeLog: 写入成功：" + logTXT);
                 return true;
             }
-        }catch (Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public static void toZip(String mobile){
+    public static void toZip(String mobile) {
         if (initLog()) {
             try {
-               boolean isZip= ZipUtils.zipFile(filePath,zipFilePath);
+                boolean isZip = ZipUtils.zipFile(filePath, zipFilePath);
                 if (isZip && FileUtils.getFileByPath(zipFilePath) != null) {
-                    mFile=FileUtils.getFileByPath(zipFilePath);
+                    mFileZIP = FileUtils.getFileByPath(zipFilePath);
                     Log.i(TAG, "压缩: 上传");
                     uploadFile(mobile);
                 }
@@ -176,25 +191,23 @@ public class UpLoadBugLogService extends IntentService {
         }
     }
 
-    private static void uploadFile(String mobile){
-        Log.w(TAG, "uploadFile: mobile=="+mobile);
-        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), mFile); // multipart/form-data
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", mFile.getName(), fileBody);
+    private static void uploadFile(String mobile) {
+        Log.w(TAG, "uploadFile: mobile==" + mobile);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), mFileZIP);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", mFileZIP.getName(), fileBody);
         Log.i(TAG, "uploadFile: ");
         FileApi.postLogFile(part, mobile, 0, new Observer<String>() {
             @Override
             public void onCompleted() {
                 Log.i(TAG, "onCompleted: ");
             }
-
             @Override
             public void onError(Throwable e) {
-                Log.i(TAG, "onError: "+e.getMessage());
+                Log.i(TAG, "onError: " + e.getMessage());
             }
-
             @Override
             public void onNext(String s) {
-                Log.i(TAG, "onNext: "+s);
+                Log.i(TAG, "onNext: " + s);
             }
         });
     }

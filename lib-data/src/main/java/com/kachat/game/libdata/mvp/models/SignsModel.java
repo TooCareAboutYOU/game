@@ -5,33 +5,35 @@ import android.util.Log;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
-import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.model.FeedBacksBean;
+import com.kachat.game.libdata.model.SingsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.orhanobut.logger.Logger;
 
 import rx.Observer;
 import rx.Subscription;
 
+/**
+ *
+ */
+public class SignsModel extends BaseModel {
 
-public class CaptchaModel extends BaseModel {
-
-    private static final String TAG = "CaptchaModel";
+    private static final String TAG = "LoginModel";
 
     private Subscription mSubscription;
 
-    public void getCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<GetCaptchaBean> listener){
-        mSubscription= UserApi.requestCaptcha(mobile,new Observer<GetCaptchaBean>() {
+    public void requestSigns(@NonNull String uid, @NonNull String deviceId, final OnPresenterListeners.OnModelListener<SingsBean> listener){
+        mSubscription= UserApi.requestSigns(uid,deviceId, new Observer<SingsBean>() {
             @Override
             public void onCompleted() { }
 
             @Override
             public void onError(final Throwable e) {
-                if (listener != null) { listener.onError(e);  }
+                if (listener != null) { listener.onError(e); }
             }
 
             @Override
-            public void onNext(final GetCaptchaBean bean) {
-                if (listener != null) { listener.onSuccess(bean); }
+            public void onNext(final SingsBean result) {
+                if (listener != null) { listener.onSuccess(result); }
             }
         });
 

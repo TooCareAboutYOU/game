@@ -7,7 +7,11 @@ import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.http.HttpManager;
 import com.kachat.game.libdata.model.FeedBacksBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.MessageBean;
+import com.kachat.game.libdata.model.PropsBean;
+import com.kachat.game.libdata.model.ScenesBean;
+import com.kachat.game.libdata.model.SingsBean;
 import com.kachat.game.libdata.model.UserBean;
 
 import java.util.Objects;
@@ -68,4 +72,25 @@ public class UserApi extends HttpManager {
     public static Subscription getUserTicket(@NonNull String uid, Observer<MessageBean> observer) {
         return setSubscribe(mUserService.getUserTickets(uid), observer);
     }
+
+    //用户拥有场景
+    public static Subscription getUserScenes(@NonNull String uid, Observer<ScenesBean> observer) {
+        return setSubscribe(mUserService.getUserScenes(uid), observer);
+    }
+
+    //用户道具表
+    public static Subscription getUserProps(@NonNull String uid, Observer<PropsBean> observer) {
+        return setSubscribe(mUserService.getUserProps(token,uid), observer);
+    }
+
+    //用户道具表
+    public static Subscription getUserLives(@NonNull String uid, Observer<LivesBean> observer) {
+        return setSubscribe(mUserService.getUserLives(uid), observer);
+    }
+
+    //用户签到
+    public static Subscription requestSigns(@NonNull String uid, @NonNull String deviceId, Observer<SingsBean> observer) {
+        return setSubscribe(mUserService.postSigns(uid,deviceId), observer);
+    }
+
 }

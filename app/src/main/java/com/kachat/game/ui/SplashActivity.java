@@ -21,7 +21,9 @@ import com.kachat.game.base.BaseActivity;
 import com.kachat.game.events.services.UpLoadBugLogService;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.ui.user.login.LoginActivity;
+import com.kachat.game.utils.CalculateException;
 import com.kachat.game.utils.OnMultiClickListener;
+import com.kachat.game.utils.manager.CrashHandlerManager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -123,7 +125,6 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
         imgBg.setVisibility(View.VISIBLE);
         Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
         imgBg.setImageURI(uri);
-
     }
 
     @Override
@@ -139,9 +140,9 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     public void onPermissionGranted() {  //用户同意时调用
         Log.e(TAG, "onPermissionGranted: ");
         RequestNetWork();
-//        UpLoadBugLogService.startActionFoo(this,"1","2");
-        UpLoadBugLogService.startActionBaz(this,"3","4");
-//        UpLoadBugLogService.initLog();
+//        UpLoadBugLogService.startActionBaz(this,"1","2");
+//        int i=0;
+//        Log.i(TAG, "onPermissionGranted: "+(i/0));
     }
 
     @Override

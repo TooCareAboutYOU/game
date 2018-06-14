@@ -28,22 +28,22 @@ public class FeedbacksModel extends BaseModel {
 
             @Override
             public void onError(final Throwable e) {
-                LocalHandler().post(() -> {
+//                LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onError(e);
                     }
-                });
+//                });
 
             }
 
             @Override
             public void onNext(final FeedBacksBean result) {
                 Log.i(TAG, "onNext: "+result.getResult().toString());
-                LocalHandler().post(() -> {
+//                LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onSuccess(result);
                     }
-                });
+//                });
             }
         });
 

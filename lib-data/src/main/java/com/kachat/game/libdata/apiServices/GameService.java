@@ -36,4 +36,10 @@ public interface GameService {
     @GET("/games/toy/rooms")
     Observable<ToyRoomsBean> getToyRooms();
 
+    // 统计进入游戏主页次数
+    @FormUrlEncoded
+    @POST("/stats/pages")
+    Observable<MessageBean> postStatPages( @Field("user") String user, @Field("type") String type);
+
+
 }

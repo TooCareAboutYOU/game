@@ -6,28 +6,35 @@ import android.support.annotation.NonNull;
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
-import com.kachat.game.libdata.mvp.models.TicketModel;
+import com.kachat.game.libdata.mvp.models.HpModel;
+import com.kachat.game.libdata.mvp.models.StatsPagesModel;
 
-public class TicketPresenter {
+public class StatPagesPresenter {
+    private enum StatType{ GAME,CHAT }
 
-    private TicketModel mModel;
+    private StatsPagesModel mModel;
     private OnPresenterListeners.OnViewListener<MessageBean> mView;
 
-    public TicketPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
-        this.mModel=new TicketModel();
+    public StatPagesPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
+        this.mModel=new StatsPagesModel();
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+    public void attachPresenter(@NonNull StatType type, @NonNull String uid){
+        String param="-1";
+        switch (type) {
+            case GAME:param="0";break;
+            case CHAT:param="1";break;
+        }
+
+        this.mModel.postStatPages(param,uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        TicketPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
+                        StatPagesPresenter.this.mView.onSuccess(result); // result.getResult().getHp();
                     }else {
-                        TicketPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        StatPagesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

@@ -5,29 +5,31 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.MessageBean;
+import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.mvp.models.PropsModel;
 import com.kachat.game.libdata.mvp.models.TicketModel;
 
-public class TicketPresenter {
 
-    private TicketModel mModel;
-    private OnPresenterListeners.OnViewListener<MessageBean> mView;
+public class PropsPresenter {
 
-    public TicketPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
-        this.mModel=new TicketModel();
+    private PropsModel mModel;
+    private OnPresenterListeners.OnViewListener<PropsBean> mView;
+
+    public PropsPresenter(OnPresenterListeners.OnViewListener<PropsBean> view) {
+        this.mModel=new PropsModel();
         this.mView = view;
     }
 
     public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<PropsBean>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(PropsBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        TicketPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
+                        PropsPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
                     }else {
-                        TicketPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        PropsPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

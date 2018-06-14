@@ -3,6 +3,7 @@ package com.kachat.game.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import com.kachat.game.ui.game.GameActivity;
 import com.kachat.game.ui.graduate.GraduateSchoolActivity;
 import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
+
+import java.util.Objects;
 
 public class MainActivity extends BaseActivity {
 
@@ -58,8 +61,11 @@ public class MainActivity extends BaseActivity {
             MeActivity.newInstance(this);
         });
         findViewById(R.id.btn_Shop).setOnClickListener(v -> {
-//            ShopActivity.newInstance(this);
-            UpLoadBugLogService.toZip(DaoQuery.queryUserData().getMobile());
+            ShopActivity.newInstance(this);
+//            for (int i = 1; i < 11; i++) {
+//                UpLoadBugLogService.writeLog(Process.myPid(),Process.myTid(), UpLoadBugLogService.DeBugType.info,"这是第"+i+"条新增信息");
+//            }
+//            UpLoadBugLogService.toZip(Objects.requireNonNull(DaoQuery.queryUserData()).getMobile());
         });
 
     }

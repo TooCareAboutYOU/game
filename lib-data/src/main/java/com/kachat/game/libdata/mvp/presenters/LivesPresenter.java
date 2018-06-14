@@ -4,30 +4,31 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.mvp.models.LivesModel;
 import com.kachat.game.libdata.mvp.models.TicketModel;
 
-public class TicketPresenter {
+public class LivesPresenter {
 
-    private TicketModel mModel;
-    private OnPresenterListeners.OnViewListener<MessageBean> mView;
+    private LivesModel mModel;
+    private OnPresenterListeners.OnViewListener<LivesBean> mView;
 
-    public TicketPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
-        this.mModel=new TicketModel();
+    public LivesPresenter(OnPresenterListeners.OnViewListener<LivesBean> view) {
+        this.mModel=new LivesModel();
         this.mView = view;
     }
 
     public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.getUserLives(uid, new OnPresenterListeners.OnModelListener<LivesBean>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(LivesBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        TicketPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
+                        LivesPresenter.this.mView.onSuccess(result);
                     }else {
-                        TicketPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        LivesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

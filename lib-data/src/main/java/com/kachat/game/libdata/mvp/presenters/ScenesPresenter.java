@@ -5,29 +5,30 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.MessageBean;
+import com.kachat.game.libdata.model.ScenesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.mvp.models.ScenesModel;
 import com.kachat.game.libdata.mvp.models.TicketModel;
 
-public class TicketPresenter {
+public class ScenesPresenter {
 
-    private TicketModel mModel;
-    private OnPresenterListeners.OnViewListener<MessageBean> mView;
+    private ScenesModel mModel;
+    private OnPresenterListeners.OnViewListener<ScenesBean> mView;
 
-    public TicketPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
-        this.mModel=new TicketModel();
+    public ScenesPresenter(OnPresenterListeners.OnViewListener<ScenesBean> view) {
+        this.mModel=new ScenesModel();
         this.mView = view;
     }
 
     public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.getUserScenes(uid, new OnPresenterListeners.OnModelListener<ScenesBean>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(ScenesBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        TicketPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
+                        ScenesPresenter.this.mView.onSuccess(result);
                     }else {
-                        TicketPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        ScenesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }
@@ -35,7 +36,9 @@ public class TicketPresenter {
             @Override
             public void onError(Throwable throwable) {
                 if (throwable != null) {
-                    if (mView != null) mView.onError(throwable);
+                    if (mView != null) {
+                        mView.onError(throwable);
+                    }
                 }
             }
         });

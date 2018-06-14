@@ -13,8 +13,6 @@ import rx.Subscription;
 
 public class TicketModel extends BaseModel {
 
-    private static final String TAG = "CheckMobileFragment";
-
     private Subscription mSubscription;
 
     public void getUserTicket(@NonNull String uid, final OnPresenterListeners.OnModelListener<MessageBean> listener){
@@ -24,20 +22,12 @@ public class TicketModel extends BaseModel {
 
             @Override
             public void onError(final Throwable e) {
-                LocalHandler().post(() -> {
-                    if (listener != null) {
-                        listener.onError(e);
-                    }
-                });
+                if (listener != null) { listener.onError(e); }
             }
 
             @Override
             public void onNext(final MessageBean bean) {
-                LocalHandler().post(() -> {
-                    if (listener != null) {
-                        listener.onSuccess(bean);
-                    }
-                });
+                if (listener != null) { listener.onSuccess(bean); }
             }
         });
 

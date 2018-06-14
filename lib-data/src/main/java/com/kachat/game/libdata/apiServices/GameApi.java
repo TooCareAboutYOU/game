@@ -30,4 +30,9 @@ public class GameApi extends HttpManager{
     public static Subscription postHp(String game, String user, Observer<MessageBean> observer){
         return setSubscribe(mGameService.postHp(game,user),observer);
     }
+
+    //统计
+    public static Subscription postStatPages(String type, String user, Observer<MessageBean> observer){
+        return setSubscribe(mGameService.postStatPages(type,user),observer);
+    }
 }

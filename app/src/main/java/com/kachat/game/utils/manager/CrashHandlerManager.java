@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Process;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -23,21 +24,21 @@ public class CrashHandlerManager implements Thread.UncaughtExceptionHandler {
 
     private static final boolean DEBUG=true;
 
-    private static final String PATH= Environment.getExternalStorageDirectory().getPath()+"//CrashInfo/log/";
+    private static final String PATH= Environment.getExternalStorageDirectory().getAbsolutePath()+"/ALog";
     private static final String FIFL_NAME="crash";
-    private static final String FILE_NAME_SUFFIX=".trace";
+    private static final String FILE_NAME_SUFFIX=".txt"; // trace
 
     @SuppressLint("StaticFieldLeak")
     private static CrashHandlerManager sInstance=new CrashHandlerManager();
     private Thread.UncaughtExceptionHandler mUncaughtExceptionHandler;
     private Context mContext;
 
-    private CrashHandlerManager() {
-    }
+    private CrashHandlerManager() { }
 
     public static CrashHandlerManager getInstance(){ return sInstance; }
 
     public void init(Context context){
+        Log.i(TAG, "init: ");
         mContext=context.getApplicationContext();
         mUncaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
@@ -51,6 +52,7 @@ public class CrashHandlerManager implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
+        Log.i(TAG, "uncaughtException: "+throwable.getMessage());
         try {
             //导出异常信息到SD卡中
             dumpExceptionToSDCard(throwable);
@@ -59,9 +61,17 @@ public class CrashHandlerManager implements Thread.UncaughtExceptionHandler {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        throwable.printStackTrace();
+        //如果系统提供了默认的异常处理器，则交给系统结束，否则自己结束
+        if (mUncaughtExceptionHandler != null) {
+            mUncaughtExceptionHandler.uncaughtException(thread,throwable);
+        } else {
+            Process.killProcess(Process.myPid());
+        }
     }
 
     private void dumpExceptionToSDCard(Throwable ex) throws PackageManager.NameNotFoundException {
+        Log.i(TAG, "dumpExceptionToSDCard: ");
         //如果SD卡不存在或者无法使用，则无法把异常信息写入SD卡
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             if (DEBUG) {
@@ -71,13 +81,17 @@ public class CrashHandlerManager implements Thread.UncaughtExceptionHandler {
         }
 
         File dir=new File(PATH);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        if (dir.exists()) {
+            dir.delete();
+            Log.i(TAG, "dir   delete: ");
         }
+        dir.mkdirs();
+
         long current=System.currentTimeMillis();
         @SuppressLint("SimpleDateFormat") String time=new SimpleDateFormat("yyy-MM-dd HH:mm:ss").format(new Date(current));
-        File file=new File(PATH+FIFL_NAME+time+FILE_NAME_SUFFIX);
+        File file=new File(PATH+"/"+FIFL_NAME+time+FILE_NAME_SUFFIX);
         try {
+            Log.i(TAG, "save  : ");
             PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(file)));
             pw.print(time);
             dumpPhoneInfo(pw);
@@ -91,30 +105,31 @@ public class CrashHandlerManager implements Thread.UncaughtExceptionHandler {
     }
 
     private void dumpPhoneInfo(PrintWriter pw) throws PackageManager.NameNotFoundException{
+        Log.i(TAG, "dumpPhoneInfo: ");
         PackageManager pm=mContext.getPackageManager();
         PackageInfo pi=pm.getPackageInfo(mContext.getPackageName(),PackageManager.GET_ACTIVITIES);
-        pw.print("App vision：");
+        pw.print("\nApp vision：");
         pw.print(pi.versionName);
         pw.print("_");
         pw.println(pi.versionCode);
 
         //android版本号
-        pw.print("OS Version：");
+        pw.print("\nOS Version：");
         pw.print(Build.VERSION.RELEASE);
         pw.print("_");
         pw.print(Build.VERSION.SDK_INT);
 
         //手机制造商
-        pw.print("Model：");
+        pw.print("\nModel：");
         pw.print(Build.MODEL);
 
         //CPU架构
-        pw.print("CPU ABI：");
+        pw.print("\nCPU ABI：");
         pw.print(Build.CPU_ABI);
     }
 
     private void uploadExceptionToServer(){
-
+        Log.i(TAG, "uploadExceptionToServer: ");
     }
 
 }

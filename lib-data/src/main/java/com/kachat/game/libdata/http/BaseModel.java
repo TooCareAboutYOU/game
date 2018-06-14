@@ -1,6 +1,7 @@
 package com.kachat.game.libdata.http;
 
 import android.os.Handler;
+import android.util.Log;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

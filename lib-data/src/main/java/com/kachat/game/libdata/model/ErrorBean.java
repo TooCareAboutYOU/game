@@ -1,6 +1,8 @@
 package com.kachat.game.libdata.model;
 
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -33,12 +35,6 @@ public class ErrorBean implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"message\":")
-                .append(message);
-        sb.append(",\"toast\":\"")
-                .append(toast).append('\"');
-        sb.append('}');
-        return sb.toString();
+        return JSON.toJSONString(this);
     }
 }

@@ -20,14 +20,15 @@ android {
                 abiFilters 'armeabi-v7a'
             }
         }
+        //分包
         multiDexEnabled true
-
+        //Vector Asset Studio
         vectorDrawables.useSupportLibrary = true
 
     }
     buildTypes {
         release {
-
+            shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
         }

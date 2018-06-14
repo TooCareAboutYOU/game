@@ -21,7 +21,9 @@ import com.kachat.game.Constant;
 import com.kachat.game.events.VAChatEventMessage;
 import com.kachat.game.events.VADollEventMessage;
 import com.kachat.game.events.VAGameEventMessage;
+import com.kachat.game.events.services.UpLoadBugLogService;
 import com.kachat.game.libdata.HttpLocalDataHelper;
+import com.kachat.game.utils.manager.CrashHandlerManager;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +43,7 @@ public class ApplicationHelper {
         initUtils(application);
         initEvent();
         initKaChatSDK(application.getApplicationContext());
+        initCrash(application);
     }
 
     private static void initImageLoader(@NonNull Context context){   Fresco.initialize(context);   }
@@ -57,6 +60,10 @@ public class ApplicationHelper {
                 .sendNoSubscriberEvent(false)
                 .throwSubscriberException(BuildConfig.DEBUG)
                 .build();
+    }
+
+    private static void initCrash(@NonNull Application application){
+        CrashHandlerManager.getInstance().init(application.getApplicationContext());
     }
 
     private static void initKaChatSDK(@NonNull Context context){

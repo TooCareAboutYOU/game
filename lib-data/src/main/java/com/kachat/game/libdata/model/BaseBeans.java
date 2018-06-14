@@ -1,5 +1,7 @@
 package com.kachat.game.libdata.model;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
 
 /**
@@ -28,12 +30,6 @@ public abstract class BaseBeans implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"code\":")
-                .append(code);
-        sb.append(",\"error\":")
-                .append(error);
-        sb.append('}');
-        return sb.toString();
+        return JSON.toJSONString(this);
     }
 }
