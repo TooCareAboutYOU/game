@@ -2,7 +2,6 @@ package com.kachat.game.libdata.apiServices;
 
 import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
-
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.http.HttpManager;
 import com.kachat.game.libdata.model.FeedBacksBean;
@@ -36,24 +35,24 @@ public class UserApi extends HttpManager {
                                                Observer<UserBean> observer) {
         return setSubscribe(mUserService.postRegister(mobile, pwd, gender, age, username, system), observer);
     }
-//
+
 //    //重置密码请求验证码
-//    public static Subscription requestResetCaptcha(@NonNull String mobile, Observer<BaseBean<GetCaptchaBean>> observer) {
-//        return setSubscribe(mUserService.postPhoneCaptchaResetImpl(mobile), observer);
-//    }
+    public static Subscription requestResetCaptcha(@NonNull String mobile, Observer<GetCaptchaBean> observer) {
+        return setSubscribe(mUserService.postPhoneCaptchaResetImpl(mobile), observer);
+    }
 
     //校验验证码
     public static Subscription requestVerifyCaptcha(@NonNull String mobile, @NonNull String captcha, Observer<MessageBean> observer) {
         return setSubscribe(mUserService.postVerifyCaptcha(mobile, captcha), observer);
     }
-//
-//    //重置密码
-//    public static Subscription requestResetPwd(@NonNull String mobile,
-//                                               @NonNull String captcha,
-//                                               @NonNull String password,
-//                                               Observer<BaseBean<MessageBean>> observer) {
-//        return setSubscribe(mUserService.postResetPwd(mobile, captcha, password), observer);
-//    }
+
+    //重置密码
+    public static Subscription requestResetPwd(@NonNull String mobile,
+                                               @NonNull String captcha,
+                                               @NonNull String password,
+                                               Observer<MessageBean> observer) {
+        return setSubscribe(mUserService.postResetPwd(mobile, captcha, password), observer);
+    }
 
 
     //登录
@@ -88,9 +87,24 @@ public class UserApi extends HttpManager {
         return setSubscribe(mUserService.getUserLives(uid), observer);
     }
 
+    //检查用户
+    public static Subscription getUserSignsStatus(@NonNull String uid, Observer<MessageBean> observer) {
+        return setSubscribe(mUserService.getUserTickets(uid), observer);
+    }
+
     //用户签到
     public static Subscription requestSigns(@NonNull String uid, @NonNull String deviceId, Observer<SingsBean> observer) {
         return setSubscribe(mUserService.postSigns(uid,deviceId), observer);
+    }
+
+    //聊天赠送礼物
+    public static Subscription postChatGifts(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int prop,Observer<MessageBean> observer) {
+        return setSubscribe(mUserService.postChatGifts(userFromId,userToId,prop), observer);
+    }
+
+    //聊天结束统计
+    public static Subscription postChatResult(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int time,Observer<MessageBean> observer) {
+        return setSubscribe(mUserService.postChatResult(userFromId,userToId,time), observer);
     }
 
 }

@@ -1,34 +1,32 @@
 package com.kachat.game.libdata.mvp.presenters;
 
 
-import android.support.annotation.NonNull;
-
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.mvp.models.ExperienceRankModel;
 
-public class CaptchaPresenter {
+public class ExperienceRankPresenter {
 
     private static final String TAG = "CheckMobileFragment";
 
-    private CaptchaModel mModel;
-    private OnPresenterListeners.OnViewListener<GetCaptchaBean> mView;
+    private ExperienceRankModel mModel;
+    private OnPresenterListeners.OnViewListener<RankingListBean> mView;
 
-    public CaptchaPresenter(OnPresenterListeners.OnViewListener<GetCaptchaBean> view) {
-        this.mModel=new CaptchaModel();
+    public ExperienceRankPresenter(OnPresenterListeners.OnViewListener<RankingListBean> view) {
+        this.mModel=new ExperienceRankModel();
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String mobile){
-        this.mModel.getCaptcha(mobile, new OnPresenterListeners.OnModelListener<GetCaptchaBean>() {
+    public void attachPresenter(){
+        this.mModel.getExperience(new OnPresenterListeners.OnModelListener<RankingListBean>() {
             @Override
-            public void onSuccess(GetCaptchaBean result) {
+            public void onSuccess(RankingListBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        CaptchaPresenter.this.mView.onSuccess(result);
+                        ExperienceRankPresenter.this.mView.onSuccess(result);
                     }else {
-                        CaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        ExperienceRankPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

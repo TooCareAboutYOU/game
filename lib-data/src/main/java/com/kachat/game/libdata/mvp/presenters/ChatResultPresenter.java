@@ -1,35 +1,33 @@
 package com.kachat.game.libdata.mvp.presenters;
 
 
-
-import android.support.annotation.NonNull;
+import android.support.annotation.IntegerRes;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.ResetPwdModel;
+import com.kachat.game.libdata.mvp.models.ChatGiftsModel;
+import com.kachat.game.libdata.mvp.models.ChatResultModel;
 
-import java.util.HashMap;
+public class ChatResultPresenter {
 
-public class ResetPwdPresenter {
-
-    private ResetPwdModel mModel;
+    private ChatResultModel mModel;
     private OnPresenterListeners.OnViewListener<MessageBean> mView;
 
-    public ResetPwdPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
-        this.mModel = new ResetPwdModel();
+    public ChatResultPresenter(OnPresenterListeners.OnViewListener<MessageBean> view) {
+        this.mModel=new ChatResultModel();
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String mobile, @NonNull String captcha, @NonNull String pwd) {
-        this.mModel.resetPwd(mobile, captcha, pwd, new OnPresenterListeners.OnModelListener<MessageBean>() {
+    public void attachPresenter(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int time){
+        this.mModel.postChatResult(userFromId,userToId,time, new OnPresenterListeners.OnModelListener<MessageBean>() {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
-                        ResetPwdPresenter.this.mView.onSuccess(result);
+                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                        ChatResultPresenter.this.mView.onSuccess(result);
                     }else {
-                        ResetPwdPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        ChatResultPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }
@@ -43,11 +41,10 @@ public class ResetPwdPresenter {
         });
     }
 
-    public void detachPresenter() {
+    public void detachPresenter(){
         if (mModel != null) {
             mModel.close();
         }
-        HashMap<String, Boolean> map = new HashMap<>();
 
         if (mView != null) {
             mView = null;

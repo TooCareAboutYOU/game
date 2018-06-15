@@ -23,6 +23,7 @@ public class MessageBean extends BaseBeans {
         private String message;
         private int ticket;
         private int hp;
+        private int status;
 
         public ResultBean() {
         }
@@ -50,6 +51,14 @@ public class MessageBean extends BaseBeans {
 
         public void setHp(int hp) {
             this.hp = hp;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
         }
 
         @Override

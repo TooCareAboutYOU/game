@@ -1,34 +1,32 @@
 package com.kachat.game.libdata.mvp.presenters;
 
 
-import android.support.annotation.NonNull;
-
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.model.CategoriesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.CaptchaModel;
+import com.kachat.game.libdata.mvp.models.CategoriesModel;
 
-public class CaptchaPresenter {
+public class CategoriesPresenter {
 
     private static final String TAG = "CheckMobileFragment";
 
-    private CaptchaModel mModel;
-    private OnPresenterListeners.OnViewListener<GetCaptchaBean> mView;
+    private CategoriesModel mModel;
+    private OnPresenterListeners.OnViewListener<CategoriesBean> mView;
 
-    public CaptchaPresenter(OnPresenterListeners.OnViewListener<GetCaptchaBean> view) {
-        this.mModel=new CaptchaModel();
+    public CategoriesPresenter(OnPresenterListeners.OnViewListener<CategoriesBean> view) {
+        this.mModel=new CategoriesModel();
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String mobile){
-        this.mModel.getCaptcha(mobile, new OnPresenterListeners.OnModelListener<GetCaptchaBean>() {
+    public void attachPresenter(){
+        this.mModel.getCategories(new OnPresenterListeners.OnModelListener<CategoriesBean>() {
             @Override
-            public void onSuccess(GetCaptchaBean result) {
+            public void onSuccess(CategoriesBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.REQUEST_SUCCESS) {
-                        CaptchaPresenter.this.mView.onSuccess(result);
+                        CategoriesPresenter.this.mView.onSuccess(result);
                     }else {
-                        CaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());
+                        CategoriesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }
                 }
             }

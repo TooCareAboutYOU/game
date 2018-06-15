@@ -10,32 +10,24 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import rx.Observer;
 import rx.Subscription;
 
-/**
- *
- */
-public class ResetPwdModel extends BaseModel {
+
+public class SignsStatusModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void resetPwd(@NonNull String mobile, @NonNull String captcha, @NonNull String password,
-                         final OnPresenterListeners.OnModelListener<MessageBean> listener) {
-        mSubscription = UserApi.requestResetPwd(mobile, captcha, password, new Observer<MessageBean>() {
+    public void getSignsStatusModel(@NonNull String uid, final OnPresenterListeners.OnModelListener<MessageBean> listener){
+        mSubscription= UserApi.getUserSignsStatus(uid,new Observer<MessageBean>() {
             @Override
-            public void onCompleted() {
-            }
+            public void onCompleted() { }
 
             @Override
             public void onError(final Throwable e) {
-                if (listener != null) {
-                    listener.onError(e);
-                }
+                if (listener != null) { listener.onError(e); }
             }
 
             @Override
             public void onNext(final MessageBean bean) {
-                if (listener != null) {
-                    listener.onSuccess(bean);
-                }
+                if (listener != null) { listener.onSuccess(bean); }
             }
         });
 
@@ -45,10 +37,10 @@ public class ResetPwdModel extends BaseModel {
     }
 
 
-    public void close() {
+    public void close(){
         if (mSubscription != null) {
             delCompositeSubscription();
-            mSubscription = null;
+            mSubscription=null;
         }
     }
 
