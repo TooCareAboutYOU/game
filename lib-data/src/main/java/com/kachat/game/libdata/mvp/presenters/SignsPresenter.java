@@ -20,12 +20,12 @@ public class SignsPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid, @NonNull String deviceId){
-        this.mModel.requestSigns(uid,deviceId, new OnPresenterListeners.OnModelListener<SingsBean>() {
+    public void attachPresenter(@NonNull String deviceId){
+        this.mModel.requestSigns(deviceId, new OnPresenterListeners.OnModelListener<SingsBean>() {
             @Override
             public void onSuccess(SingsBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         SignsPresenter.this.mView.onSuccess(result);
                     }else {
                         SignsPresenter.this.mView.onFailed(result.getCode(),result.getError());

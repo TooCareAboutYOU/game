@@ -21,7 +21,7 @@ public class GameListPresenter {
             @Override
             public void onSuccess(GamesBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         GameListPresenter.this.mView.onSuccess(result);
                     }else {
                         GameListPresenter.this.mView.onFailed(result.getCode(),result.getError());

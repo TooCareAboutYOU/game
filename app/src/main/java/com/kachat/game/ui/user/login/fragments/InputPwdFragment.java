@@ -75,7 +75,6 @@ public class InputPwdFragment extends BaseFragment {
                 Toast(R.string.toast_pwd_is_null);
                 return;
             }
-            Log.i(TAG, "onMultiClick: "+mobile+"\t\t"+pwd);
             mPresenter.attachPresenter(mobile,pwd);
             mSdvGo.setEnabled(false);
         });

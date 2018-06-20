@@ -21,12 +21,12 @@ public class PropsPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<PropsBean>() {
+    public void attachPresenter(){
+        this.mModel.getUserTicket(new OnPresenterListeners.OnModelListener<PropsBean>() {
             @Override
             public void onSuccess(PropsBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         PropsPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
                     }else {
                         PropsPresenter.this.mView.onFailed(result.getCode(),result.getError());

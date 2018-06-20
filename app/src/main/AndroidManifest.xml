@@ -40,12 +40,6 @@
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- <uses-permission-sdk-23 android:name="android.permission.READ_LOGS"/> -->
-    <!-- <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
-    <!-- <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> -->
-    <!-- <uses-permission-sdk-23 android:name="android.permission.CAMERA"/> -->
-    <!-- <uses-permission-sdk-23 android:name="android.permission.CAPTURE_VIDEO_OUTPUT"/> -->
-
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -92,7 +86,6 @@
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

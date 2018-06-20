@@ -1,7 +1,6 @@
 package com.kachat.game.ui.game;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,11 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
@@ -22,22 +19,16 @@ import android.webkit.JsResult;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
-import com.dnion.RenderProxy;
-import com.dnion.SharedRTCEnv;
-import com.dnion.VAGameAPI;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
-import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.github.lzyzsd.jsbridge.DefaultHandler;
-import com.kachat.game.Constant;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.events.VAGameEventMessage;
+import com.kachat.game.base.videos.SdkApi;
+import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 
@@ -48,45 +39,43 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Objects;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class GameRoomActivity extends BaseActivity {
 
     private static final String TAG = "GameRoomActivity";
 
     public static final String Html_Url = "html_url";
+    public static final String GAME_TYPE="game_type";
+
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
 
-    @BindView(R.id.cl_Container)
-    LinearLayoutCompat mClContainer;
     @BindView(R.id.bridgeWebView)
     BridgeWebView mBridgeWebView;
     @BindView(R.id.fl_local)
     FrameLayout flLocalView;
     @BindView(R.id.fl_remote)
     FrameLayout flRemoteView;
+
     public static void newInstance(Context context, Bundle bundle) {
         Intent intent = new Intent(context, GameRoomActivity.class);
         if (bundle != null) {
-            Toast.makeText(context, "非空", Toast.LENGTH_SHORT).show();
             intent.putExtras(bundle);
         }
         context.startActivity(intent);
     }
 
-
-    private RenderProxy remoteRenderProxy, localRenderProxy;
-    private SurfaceView remoteSFView, localSFView;
-    private WebSettings mWebSettings;
-
     private DbUserBean mDbUserBean = DaoQuery.queryUserData();
 
     @Override
-    protected int onSetResourceLayout() {    return R.layout.activity_game_room;   }
+    protected int onSetResourceLayout() {
+        return R.layout.activity_game_room;
+    }
 
     @Override
-    protected boolean onSetStatusBar() {    return true;    }
+    protected boolean onSetStatusBar() {
+        return true;
+    }
 
     @Override
     protected void initImmersionBar() {
@@ -96,158 +85,126 @@ public class GameRoomActivity extends BaseActivity {
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onInitView() {
-
         getToolBarBack().setOnClickListener(v -> finish());
         initGameHtml();
-        loadChatVideo();
     }
 
     private void initGameHtml() {
-        mWebSettings = mBridgeWebView.getSettings();
-        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        mWebSettings.setPluginState(WebSettings.PluginState.ON);
-        mWebSettings.setUseWideViewPort(true);
-        mWebSettings.setLoadWithOverviewMode(true);
-        mWebSettings.setSupportZoom(true);
-        mWebSettings.setBuiltInZoomControls(true);
-        mWebSettings.setDisplayZoomControls(false);
-        mWebSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        mWebSettings.setSupportMultipleWindows(true);
-        mWebSettings.setNeedInitialFocus(true);
-        mWebSettings.setLoadsImagesAutomatically(true);
-        mWebSettings.setDefaultTextEncodingName("utf-8");
-        mWebSettings.setDomStorageEnabled(true);
-        mWebSettings.setAppCacheEnabled(true);
-        mWebSettings.setAppCacheMaxSize(1024 * 1024 * 8);
-        String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
-        mWebSettings.setAppCachePath(appCachePath);
-
-        mBridgeWebView.setDefaultHandler(new DefaultHandler());
-        mBridgeWebView.setWebChromeClient(new MyWebChromeClient());
-        mBridgeWebView.setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            mBridgeWebView.evaluateJavascript(js,null);
-//        }else {
-//            mBridgeWebView.loadUrl("http://demo.e3webrtc.com:9004");
-//            mBridgeWebView.reload();
-//        }
+        SdkApi.getInstance().initGame(this, mBridgeWebView);
+        SdkApi.getInstance().getBridgeWebView().setDefaultHandler(new DefaultHandler());
+        SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
+        SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
 
         //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
-        mBridgeWebView.registerHandler("ToApp", (data, function) -> {
-            //显示接收的消息
+        SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
+            Log.i(TAG, "接受Js消息: ");
+//            显示接收的消息
             handleGameRequest(data);
-            //返回给html的消息
-            function.onCallBack("返回给Toast的alert");
+//            返回给html的消息
+            function.onCallBack("返回给//Toast的alert");
         });
+
+        Bundle bundle = getIntent().getExtras();
+        String url = Objects.requireNonNull(bundle).getString(Html_Url);
+        int type=bundle.getInt(GAME_TYPE);
+
+        if (TextUtils.isEmpty(url)) {
+            Log.i(TAG, "游戏地址为空: ");
+            this.finish();
+        }
+        SdkApi.getInstance().loadGame(url);
+//
+        SdkApi.getInstance().startPreview();
+        SdkApi.getInstance().loadVideoView(this, flLocalView, flRemoteView);
+
+        SdkApi.getInstance().initFaceRigItf("live2d/miyo", "miyo", "", "bg1.png");
+
+        SdkApi.getInstance().startGameMatch(type);
     }
 
     public void handleGameRequest(String msg) {
-        VAGameAPI.getInstance().sendGameMessage(msg);
-        Log.i(TAG, "handleGameRequest: ");
-        Toast.makeText(this, "WebView请求:" + msg, Toast.LENGTH_SHORT).show();
+        SdkApi.getInstance().sendMessage(msg);
+        Log.w(TAG, "handleGameRequest: "+msg);
+//        //Toast.makeText(this, "WebView请求:" + msg, //Toast.LENGTH_SHORT).show();
     }
 
     public void handleGameResponse(String msg) {
-        Log.i(TAG, "handleGameResponse: ");
-        Toast.makeText(this, "WebView应答:" + msg, Toast.LENGTH_SHORT).show();
+        Log.w(TAG, "handleGameResponse: "+msg);
+//        //Toast.makeText(this, "WebView应答:" + msg, //Toast.LENGTH_SHORT).show();
     }
 
     private void signalWebView(String cmd) {
-        Toast.makeText(this, "通知WebView:" + cmd, Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "signalWebView: ");
+        //Toast.makeText(this, "通知WebView:" + cmd, //Toast.LENGTH_SHORT).show();
+        Log.w(TAG, "signalWebView: "+cmd);
         mBridgeWebView.callHandler("ToJS", cmd, data -> handleGameResponse(data));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(VAGameEventMessage event) {
-        switch (event.getType()) {
-            case VAGAME_SUCCESS:
-                Logger("onEvent:SDK连接成功");
-                Toast.makeText(this, "SDK连接成功", Toast.LENGTH_SHORT).show();
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_READY:
+                Logger("onEvent:SESSION_READY");
+                //Toast.makeText(this, "SESSION_READY", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_FAILED:
-                Log.i(TAG, "onEvent: SDK连接失败\t\t" + event.getMsg());
+            case SESSION_BROKEN:
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
                 break;
-            case VAGAME_DISCONNECTED:
-                Log.i(TAG, "onEvent: SDK连接断开\t\t" + event.getMsg());
-                Toast.makeText(this, "SDK连接失败", Toast.LENGTH_SHORT).show();
+            case SESSION_OCCUPY:
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                //Toast.makeText(this, "SESSION_OCCUPY", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_JOIN_SUCCESS:
-                Log.i(TAG, "onEvent: 加入成功");
+            case SESSION_KEEP_ALIVE:
+                Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
+                //Toast.makeText(this, "SESSION_KEEP_ALIVE", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_JOIN_FAILED:
-                Log.i(TAG, "onEvent: 加入失败\t\t" + event.getMsg());
-                Toast.makeText(this, "加入失败", Toast.LENGTH_SHORT).show();
+            case JOIN_SUCCESS:
+                Log.i(TAG, "onEvent: JOIN_SUCCESS");
+                //Toast.makeText(this, "JOIN_SUCCESS", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_LEAVE:
-                Log.i(TAG, "onEvent: 离开");
-                Toast.makeText(this, "离开", Toast.LENGTH_SHORT).show();
+            case JOIN_FAILED:
+                Log.i(TAG, "onEvent: JOIN_FAILED");
+                //Toast.makeText(this, "JOIN_FAILED", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_MATCH_SUCCESS:
-                Log.i(TAG, "onEvent: MATCH 成功");
-                VAGameAPI.getInstance().joinGameRoom();
-                Toast.makeText(this, "MATCH 成功", Toast.LENGTH_SHORT).show();
+            case MATCH_SUCCESS:
+                Log.i(TAG, "onEvent: MATCH_SUCCESS");
+                //Toast.makeText(this, "MATCH_SUCCESS", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_MESSAGE:
-                Log.i(TAG, "onEvent: 消息\t\t" + event.getMsg());
-                Toast.makeText(this, "消息\t\t" + event.getMsg(), Toast.LENGTH_SHORT).show();
-                signalWebView(event.getMsg());
+            case GAME_MESSAGE:
+                Log.i(TAG, "onEvent: GAME_MESSAGE");
+                //Toast.makeText(this, "GAME_MESSAGE", //Toast.LENGTH_SHORT).show();
+                signalWebView(event.getString());
                 break;
-            case VAGAME_VIDEO_START:
-                Toast.makeText(this, "video start", Toast.LENGTH_SHORT).show();
+            case GAME_STAT:
+                Log.i(TAG, "onEvent: GAME_STAT");
+                //Toast.makeText(this, "GAME_STAT", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_VIDEO_STOP:
-                //远端断线  提前退出
-                Toast.makeText(this, "video stop", Toast.LENGTH_SHORT).show();
+            case VIDEO_CHAT_START:  //远端断线  提前退出
+                Log.i(TAG, "onEvent: VIDEO_CHAT_START");
+                //Toast.makeText(this, "VIDEO_CHAT_START", //Toast.LENGTH_SHORT).show();
                 break;
-            case VAGAME_VIDEO_FAILED:
-                Toast.makeText(this, "video failed", Toast.LENGTH_SHORT).show();
+            case VIDEO_CHAT_FINISH:
+                Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
+                //Toast.makeText(this, "VIDEO_CHAT_FINISH", //Toast.LENGTH_SHORT).show();
+                break;
+            case VIDEO_CHAT_TERMINATE:
+                Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
+                //Toast.makeText(this, "VIDEO_CHAT_TERMINATE", //Toast.LENGTH_SHORT).show();
+                break;
+            case VIDEO_CHAT_FAIL:
+                Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
+                //Toast.makeText(this, "VIDEO_CHAT_FAIL", //Toast.LENGTH_SHORT).show();
+                break;
+            case GOT_GIFT:
+                Log.i(TAG, "onEvent: GOT_GIFT");
+                //Toast.makeText(this, "GOT_GIFT", //Toast.LENGTH_SHORT).show();
+                break;
+            case ERROR_MESSAGE:
+                Log.i(TAG, "onEvent: ERROR_MESSAGE");
+                //Toast.makeText(this, "ERROR_MESSAGE", //Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-
-    private void loadChatVideo() {
-        if (mDbUserBean == null) {
-            Toast.makeText(this, "个人信息获取失败", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (mDbUserBean.getUid() == 0 && TextUtils.isEmpty(mDbUserBean.getToken())) {
-            return;
-        }
-        Bundle bundle = getIntent().getExtras();
-        String url = Objects.requireNonNull(bundle).getString(Html_Url);
-        Log.i(TAG, "loadChatVideo: ");
-        if (TextUtils.isEmpty(url)) {
-            Toast.makeText(this, "游戏地址失效", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mBridgeWebView.loadUrl(url); // http://demo.e3webrtc.com:9003
-        VAGameAPI.getInstance().connect(Constant.CHAT_SDK_URL, mDbUserBean.getUid() + "", mDbUserBean.getToken());
-//            VAGameAPI.getInstance().startGameMatch(1);
-
-        localRenderProxy = SharedRTCEnv.getInstance().createRenderProxy(getApplicationContext());
-        localRenderProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        localRenderProxy.setEnableMirror(true);
-        localSFView = localRenderProxy.getDisplay();
-        flLocalView.addView(localSFView);
-
-        remoteRenderProxy = SharedRTCEnv.getInstance().createRenderProxy(getApplicationContext());
-        remoteRenderProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        localRenderProxy.setEnableMirror(true);
-        remoteSFView = remoteRenderProxy.getDisplay();
-        flRemoteView.addView(remoteSFView);
-
-        VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localRenderProxy, remoteRenderProxy);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 
     private class BridgeWebViewClient extends com.github.lzyzsd.jsbridge.BridgeWebViewClient {
@@ -452,65 +409,43 @@ public class GameRoomActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i(TAG, "onStart: ");
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mBridgeWebView.resumeTimers();
-        mBridgeWebView.onResume();
-
+        Log.i(TAG, "onResume: ");
+        SdkApi.getInstance().getBridgeWebView().resumeTimers();
+        SdkApi.getInstance().getBridgeWebView().onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mBridgeWebView.pauseTimers();
-        mBridgeWebView.onPause();
+        Log.i(TAG, "onPause: ");
+        SdkApi.getInstance().getBridgeWebView().pauseTimers();
+        SdkApi.getInstance().getBridgeWebView().onPause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i(TAG, "onStop: ");
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
-        if (remoteRenderProxy != null) {
-            remoteRenderProxy = null;
-        }
-        if (localRenderProxy != null) {
-            localRenderProxy = null;
-        }
-
-
+        Log.i(TAG, "onDestroy: ");
+        SdkApi.getInstance().destroy();
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();
-            localSFView = null;
         }
         if (flRemoteView.getChildCount() > 0) {
             flRemoteView.removeAllViews();
-            remoteSFView = null;
         }
-
-        if (mBridgeWebView != null) {
-
-            if (mWebSettings != null) {
-                mWebSettings = null;
-            }
-
-            mBridgeWebView.clearFormData(); // 仅清除自动完成填充的表单数据
-            mBridgeWebView.clearCache(true); //  清除网页访问留下的缓存,针对整个应用程序
-            mBridgeWebView.clearHistory();              //  清除当前webview访问的历史记录
-            mClContainer.removeView(mBridgeWebView);
-            mBridgeWebView.destroy();
-            mBridgeWebView = null;
-        }
-
-        VAGameAPI.getInstance().leaveGameRoom();
-        VAGameAPI.getInstance().disconnect();
         super.onDestroy();
     }
 

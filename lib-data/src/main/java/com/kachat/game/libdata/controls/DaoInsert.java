@@ -27,10 +27,10 @@ public class DaoInsert {
         }
     }
 
-    public static void insterLogin(boolean state){
-        synchronized (DaoInsert.class){
-            DbLoginBean bean=new DbLoginBean(null,state);
-            GreenDaoHelper.getInstance().readLogin().insert(bean);
-        }
-    }
+//    public static void insterLogin(boolean state){
+//        synchronized (DaoInsert.class){
+//            DbLoginBean bean=new DbLoginBean(null,state);
+//            GreenDaoHelper.getInstance().readLogin().insert(bean);
+//        }
+//    }
 }

@@ -20,12 +20,12 @@ public class LivesPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserLives(uid, new OnPresenterListeners.OnModelListener<LivesBean>() {
+    public void attachPresenter(){
+        this.mModel.getUserLives( new OnPresenterListeners.OnModelListener<LivesBean>() {
             @Override
             public void onSuccess(LivesBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         LivesPresenter.this.mView.onSuccess(result);
                     }else {
                         LivesPresenter.this.mView.onFailed(result.getCode(),result.getError());

@@ -19,12 +19,12 @@ public class TicketPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserTicket(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+    public void attachPresenter(){
+        this.mModel.getUserTicket(new OnPresenterListeners.OnModelListener<MessageBean>() {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         TicketPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
                     }else {
                         TicketPresenter.this.mView.onFailed(result.getCode(),result.getError());

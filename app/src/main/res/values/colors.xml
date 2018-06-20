@@ -12,7 +12,9 @@
     <color name="black">#000000</color>
     <color name="alertdialog_line">#c6c6c6</color>
 
-
     <color name="colorNormal">#02DAF4</color>
+    <color name="colorHalfTransparent">#80000000</color>
+
+    <!--白色半透明：#80FFFFFF-->
 
 </resources>

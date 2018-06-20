@@ -61,7 +61,6 @@ public class CheckMobileFragment extends BaseFragment {
     public void onInitView(@NonNull View view) {
         mCaptchaPresenter = new CaptchaPresenter(new CheckAccount());
         view.findViewById(R.id.sdv_go).setOnClickListener(v-> Check());
-
     }
 
     @Override
@@ -114,7 +113,7 @@ public class CheckMobileFragment extends BaseFragment {
         public void onFailed(int errorCode, ErrorBean error) {
             Log.w(TAG, "onFailed: " + errorCode);
             if (error != null) {
-                if (errorCode == CodeType.REQUEST_INPUT_PWD) {  //  已注册,输入密码登录
+                if (errorCode == CodeType.CODE_RESPONSE_INPUT_PWD) {  //  已注册,输入密码登录
                     mActivity.initInputPwd();
                 }else {
                     Toast(error.getToast());

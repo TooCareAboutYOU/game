@@ -23,7 +23,7 @@ public class ResetCaptchaPresenter {
             @Override
             public void onSuccess(GetCaptchaBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         ResetCaptchaPresenter.this.mView.onSuccess(result);
                     }else {
                         ResetCaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());

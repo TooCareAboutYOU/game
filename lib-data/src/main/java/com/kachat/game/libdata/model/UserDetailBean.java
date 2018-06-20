@@ -16,7 +16,8 @@ import java.io.Serializable;
  */
 public class UserDetailBean implements Serializable {
 
-    private int level;
+    private int level; // 用户更新不包含在此字段
+
     private int hp;
     private int exp_to_level_up;
     private int exp;

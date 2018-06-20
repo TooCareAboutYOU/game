@@ -16,8 +16,8 @@ public class LivesModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserLives(@NonNull String uid, final OnPresenterListeners.OnModelListener<LivesBean> listener){
-        mSubscription= UserApi.getUserLives(uid,new Observer<LivesBean>() {
+    public void getUserLives(final OnPresenterListeners.OnModelListener<LivesBean> listener){
+        mSubscription= UserApi.getUserLives(new Observer<LivesBean>() {
             @Override
             public void onCompleted() { }
 

@@ -1,6 +1,5 @@
 package com.kachat.game.libdata.apiServices;
 
-import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.FeedBacksBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.model.LivesBean;
@@ -8,12 +7,15 @@ import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.model.ScenesBean;
 import com.kachat.game.libdata.model.SingsBean;
+import com.kachat.game.libdata.model.UpdateUserData;
 import com.kachat.game.libdata.model.UserBean;
 
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -58,39 +60,43 @@ public interface UserService {
     @POST("/login")
     Observable<UserBean> postLoginImpl(@Field("mobile") String mobile, @Field("password") String password);
 
+    //更新用户信息
+    @PUT("/users/{uid}")
+    Observable<UpdateUserData> putUserData(@Header("Authorization") String token, @Path("uid") int uid);
+
     //用户反馈
     @FormUrlEncoded
     @POST("/feedbacks")
-    Observable<FeedBacksBean> postFeedBacks(@Field("token") String token, @Field("content") String content);
+    Observable<FeedBacksBean> postFeedBacks(@Header("Authorization") String token, @Field("content") String content);
 
 
     //用户券数
     @GET("/users/{uid}/tickets")
-    Observable<MessageBean> getUserTickets(@Path("uid") String uid);
+    Observable<MessageBean> getUserTickets(@Path("uid") int uid);
 
     //用户拥有场景
     @GET("/users/{uid}/scenes")
-    Observable<ScenesBean> getUserScenes(@Path("uid") String uid);
+    Observable<ScenesBean> getUserScenes(@Path("uid") int uid);
 
     //用户拥有场景
     @GET("/users/{uid}/props")
-    Observable<PropsBean> getUserProps(@Query("token") String token, @Path("uid") String uid);
+    Observable<PropsBean> getUserProps(@Header("Authorization") String token, @Path("uid") int uid);
 
     //  http://api.e3webrtc.com:8004/
     //用户拥有场景
     @GET("/users/{uid}/lives")
-    Observable<LivesBean> getUserLives(@Path("uid") String uid);
+    Observable<LivesBean> getUserLives(@Path("uid") int uid);
 
 
     //检查用户是否签到
     @GET("/signs")
-    Observable<MessageBean> getUserSignsStatus(@Query("uid") String uid);
+    Observable<MessageBean> getUserSignsStatus(@Query("uid") int uid);
 
     // http://api.e3webrtc.com:8004/signs?user=1&user=1
     //用户签到
     @FormUrlEncoded
     @POST("/signs")
-    Observable<SingsBean> postSigns(@Field("user") String uid, @Field("device") String deviceId);
+    Observable<SingsBean> postSigns(@Field("user") int uid, @Field("device") String deviceId);
 
     // http://api.e3webrtc.com:8004/chats/gifts?user_from=1&user_to=1&prop=1
     //聊天赠送礼物

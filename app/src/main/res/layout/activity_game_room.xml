@@ -2,7 +2,6 @@
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -20,13 +19,13 @@
             android:id="@+id/fl_local"
             android:layout_width="128dp"
             android:layout_height="144dp"
-            android:background="@color/colorAccent"
+            android:background="@mipmap/ic_launcher"
             android:layout_marginEnd="@dimen/activity_vertical_margin"/>
         <FrameLayout
             android:id="@+id/fl_remote"
             android:layout_width="128dp"
             android:layout_height="144dp"
-            android:background="@color/colorAccent"/>
+            android:background="@mipmap/ic_launcher"/>
     </LinearLayout>
 
     <com.github.lzyzsd.jsbridge.BridgeWebView

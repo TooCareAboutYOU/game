@@ -23,7 +23,7 @@ public class VerifyCaptchaPresenter {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         VerifyCaptchaPresenter.this.mView.onSuccess(result);
                     }else {
                         VerifyCaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());

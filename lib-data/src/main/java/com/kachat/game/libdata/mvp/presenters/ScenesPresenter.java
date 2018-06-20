@@ -20,12 +20,12 @@ public class ScenesPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getUserScenes(uid, new OnPresenterListeners.OnModelListener<ScenesBean>() {
+    public void attachPresenter(){
+        this.mModel.getUserScenes(new OnPresenterListeners.OnModelListener<ScenesBean>() {
             @Override
             public void onSuccess(ScenesBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         ScenesPresenter.this.mView.onSuccess(result);
                     }else {
                         ScenesPresenter.this.mView.onFailed(result.getCode(),result.getError());

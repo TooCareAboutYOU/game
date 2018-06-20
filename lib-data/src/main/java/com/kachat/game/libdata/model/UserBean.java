@@ -1,5 +1,7 @@
 package com.kachat.game.libdata.model;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
 
 
@@ -39,15 +41,15 @@ public class UserBean extends BaseBeans {
             this.user = user;
         }
 
+
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("{");
-            sb.append("\"token\":\"")
-                    .append(token).append('\"');
-            sb.append(",\"user\":")
-                    .append(user.toString());
-            sb.append('}');
-            return sb.toString();
+            return JSON.toJSONString(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

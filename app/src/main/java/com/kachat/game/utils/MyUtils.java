@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 public class MyUtils {
 
-
     public static boolean isMainThread() {
         return Looper.getMainLooper().getThread().getId() == Thread.currentThread().getId();
     }

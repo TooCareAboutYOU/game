@@ -185,8 +185,9 @@ public class MeActivity extends BaseActivity {
                 tvTitle.setText("目前您暂时没有任何道具，如想使用请到商城购买。");
                 AppCompatTextView acTvtext=containerView.findViewById(R.id.acTv_sure);
                 acTvtext.setText("前往");
-                acTvtext.setOnClickListener(v -> ToastUtils.showShort("确定"));
                 new AlterDialogBuilder(this,"提示",containerView);
+                acTvtext.setOnClickListener(v -> ToastUtils.showShort("确定"));
+
 //                PropsFragment.getInstance().show(getSupportFragmentManager(),"PropsFragment");
                 break;
             }
@@ -218,7 +219,7 @@ public class MeActivity extends BaseActivity {
                 break;
             }
             case 6:{  //退出登录
-                if (DaoDelete.deleteLogin()) {
+                if (DaoDelete.deleteUserAll()) {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
                     ActivityManager.getInstance().removeActivity("MainActivity");
                     LoginActivity.newInstance(MeActivity.this);

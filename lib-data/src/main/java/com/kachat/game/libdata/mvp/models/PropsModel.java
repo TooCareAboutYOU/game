@@ -16,8 +16,8 @@ public class PropsModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserTicket(@NonNull String uid, final OnPresenterListeners.OnModelListener<PropsBean> listener){
-        mSubscription= UserApi.getUserProps(uid,new Observer<PropsBean>() {
+    public void getUserTicket(final OnPresenterListeners.OnModelListener<PropsBean> listener){
+        mSubscription= UserApi.getUserProps(new Observer<PropsBean>() {
             @Override
             public void onCompleted() { }
 

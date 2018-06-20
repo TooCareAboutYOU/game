@@ -15,8 +15,8 @@ public class SignsStatusModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getSignsStatusModel(@NonNull String uid, final OnPresenterListeners.OnModelListener<MessageBean> listener){
-        mSubscription= UserApi.getUserSignsStatus(uid,new Observer<MessageBean>() {
+    public void getSignsStatusModel(final OnPresenterListeners.OnModelListener<MessageBean> listener){
+        mSubscription= UserApi.getUserSignsStatus(new Observer<MessageBean>() {
             @Override
             public void onCompleted() { }
 

@@ -1,6 +1,7 @@
 package com.kachat.game.libdata.apiServices;
 
-import com.kachat.game.libdata.model.CategoriesBean;
+import com.kachat.game.libdata.model.CategoryListBean;
+import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.model.GameRankBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.model.GamesBean;
@@ -10,6 +11,7 @@ import com.kachat.game.libdata.model.ToyRoomsBean;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -46,13 +48,19 @@ public interface GameService {
     @POST("/stats/pages")
     Observable<MessageBean> postStatPages( @Field("user") String user, @Field("type") String type);
 
-    //查询商品列表  http://api.e3webrtc.com:8004/shop/categories
-    @GET("/shop/categories")
-    Observable<CategoriesBean> getCategories();
+    //查询商品列表  http://api.e3webrtc.com:8004/v2/shop/categories
+    @GET("v2/shop/categories")
+    Observable<CategoryTypeBean> getCategories();
 
-    //查询商品列表 http://api.e3webrtc.com:8004/shop/goods
-    @GET("/shop")
-    Observable<CategoriesBean> getCategory(@Query("category") String category);
+    //查询商品列表 http://api.e3webrtc.com:8004/v2/shop/goods?category=1
+    @GET("v2/shop/goods")
+    Observable<CategoryListBean> getGoods(@Query("category") int category);
+
+    // http://api.e3webrtc.com:8004/shop/orders
+    //购买商品
+    @FormUrlEncoded
+    @POST("/shop/orders")
+    Observable<MessageBean> postGoods(@Header("Authorization") String token, @Field("good") int good_id, @Field("amount") int amount);
 
     //魅力排行榜  http://api.e3webrtc.com:8004/ranks/charm
     @GET("/ranks/charm")
@@ -62,8 +70,8 @@ public interface GameService {
     @GET("/ranks/exp")
     Observable<RankingListBean> getExperience();
 
-    //  http://api.e3webrtc.com:8004/ranks/game/901?type=1
 
+    //  http://api.e3webrtc.com:8004/ranks/game/901?type=1
     /**游戏排行榜
      * game_index：游戏编号 900-搭房子，901-消灭星星，902-六芒星
      * 排行榜分类 0-总排行榜，1-周排行榜

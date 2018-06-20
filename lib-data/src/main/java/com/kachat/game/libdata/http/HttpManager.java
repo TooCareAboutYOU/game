@@ -28,15 +28,6 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- /**
- * 登录
- *  private static UserService mUserService  = HttpManager.getInstance().create(UserService.class);
- * public static Subscription getLogin(String mobile, String pwd, Observer<BaseBean<LoginBean>> observer){
- *       return setSubscribe(mUserService.getLoginImpl(mobile,pwd),observer);
- *}
- */
-
 public class HttpManager {
 
     private static final String TAG = "HttpManager";

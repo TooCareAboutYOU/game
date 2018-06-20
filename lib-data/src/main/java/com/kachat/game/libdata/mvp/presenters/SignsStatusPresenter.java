@@ -18,12 +18,12 @@ public class SignsStatusPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull String uid){
-        this.mModel.getSignsStatusModel(uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+    public void attachPresenter(){
+        this.mModel.getSignsStatusModel(new OnPresenterListeners.OnModelListener<MessageBean>() {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         SignsStatusPresenter.this.mView.onSuccess(result);
                     }else {
                         SignsStatusPresenter.this.mView.onFailed(result.getCode(),result.getError());

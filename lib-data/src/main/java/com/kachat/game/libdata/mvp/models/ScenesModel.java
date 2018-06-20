@@ -16,8 +16,8 @@ public class ScenesModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserScenes(@NonNull String uid, final OnPresenterListeners.OnModelListener<ScenesBean> listener){
-        mSubscription= UserApi.getUserScenes(uid,new Observer<ScenesBean>() {
+    public void getUserScenes(final OnPresenterListeners.OnModelListener<ScenesBean> listener){
+        mSubscription= UserApi.getUserScenes(new Observer<ScenesBean>() {
             @Override
             public void onCompleted() { }
 

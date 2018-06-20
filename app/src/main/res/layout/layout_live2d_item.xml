@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:layout_gravity="center"
-    android:background="#4FC8D6">
+    android:background="@drawable/selector_recycview_item">
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/sdv_live2d"
         android:layout_width="34dp"

@@ -24,8 +24,8 @@ public class LoginPresenter {
             @Override
             public void onSuccess(UserBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
-                        DaoInsert.insterLogin(true);
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
+//                        DaoInsert.insterLogin(true);
                         LoginPresenter.this.mView.onSuccess(result);
                     }else {
                         LoginPresenter.this.mView.onFailed(result.getCode(),result.getError());

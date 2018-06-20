@@ -25,7 +25,7 @@ public class FeedBacksPresenter {
             @Override
             public void onSuccess(FeedBacksBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         FeedBacksPresenter.this.mView.onSuccess(result);
                     }else {
                         FeedBacksPresenter.this.mView.onFailed(result.getCode(),result.getError());

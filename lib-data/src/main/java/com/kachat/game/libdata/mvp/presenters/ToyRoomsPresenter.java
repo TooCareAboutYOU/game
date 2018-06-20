@@ -26,7 +26,7 @@ public class ToyRoomsPresenter {
             @Override
             public void onSuccess(ToyRoomsBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         ToyRoomsPresenter.this.mView.onSuccess(result);
                     }else {
                         ToyRoomsPresenter.this.mView.onFailed(result.getCode(),result.getError());

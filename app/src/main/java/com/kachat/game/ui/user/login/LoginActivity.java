@@ -80,7 +80,7 @@ public class LoginActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Toast.makeText(this, "返回", Toast.LENGTH_SHORT).show();
-        if (DaoQuery.queryLoginListSize() == 0) {
+        if (DaoQuery.queryUserListSize() == 0) {
             Toast.makeText(this, "退出", Toast.LENGTH_SHORT).show();
             System.exit(0);
         }

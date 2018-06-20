@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
-
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
@@ -28,10 +26,8 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.GameListPresenter;
 import com.kachat.game.ui.user.MeActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import cn.lemon.view.SpaceItemDecoration;
 
@@ -98,6 +94,8 @@ public class GameActivity extends BaseActivity {
         mRvGameList.setLayoutManager(manager);
         mRvGameList.setAdapter(mAdapter);
         getToolbarMenu().setOnClickListener(v -> MeActivity.newInstance(this));
+
+        mPresenter = new GameListPresenter(new GameListCallBack());
     }
 
     @SuppressLint("SetTextI18n")
@@ -114,16 +112,8 @@ public class GameActivity extends BaseActivity {
             mAcTvUserCharm.setText(dbUserBean.getCharm() + "");
         }
 
-        mPresenter = new GameListPresenter(new GameListCallBack());
         mPresenter.attachPresenter();
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mList.clear();
-    }
-
 
     private class GameListCallBack implements OnPresenterListeners.OnViewListener<GamesBean> {
         @Override
@@ -150,7 +140,6 @@ public class GameActivity extends BaseActivity {
     }
 
     private class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameViewHolder> {
-
         @NonNull
         @Override
         public GameViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -158,14 +147,13 @@ public class GameActivity extends BaseActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull GameViewHolder holder, @SuppressLint("RecyclerView") int position) {
             holder.sdvMark.setOnClickListener(v -> {
                 View containerView = LayoutInflater.from(GameActivity.this).inflate(R.layout.dialog_game_introductions, null);
                 new AlterDialogBuilder(GameActivity.this, "游戏说明", containerView);
             });
 
-            GameURL="http://demo.e3webrtc.com:900"+(position+1);
-            holder.itemView.setOnClickListener(v -> loadH5Game());
+            holder.itemView.setOnClickListener(v -> loadH5Game(position));
         }
 
         @Override
@@ -186,7 +174,7 @@ public class GameActivity extends BaseActivity {
     }
 
 
-    private void loadH5Game() {
+    private void loadH5Game(int pos) {
         @SuppressLint("InflateParams")
         View containerView = LayoutInflater.from(this).inflate(R.layout.dialog_find_friends_condition, null);
         AlterDialogBuilder parentDialog=new AlterDialogBuilder(this, "寻找你的伙伴", containerView);
@@ -238,8 +226,12 @@ public class GameActivity extends BaseActivity {
             rg.setOnCheckedChangeListener((group, checkedId) -> {
                 // TODO: 2018/6/11 选择性别
                 switch (checkedId) {
-                    case R.id.acRbtn_Male:{break;}
-                    case R.id.acRbtn_Remale:{break;}
+                    case R.id.acRbtn_Male:{
+                        break;
+                    }
+                    case R.id.acRbtn_Remale:{
+                        break;
+                    }
                 }
             });
 
@@ -250,13 +242,21 @@ public class GameActivity extends BaseActivity {
         });
 
         acTvSure.setOnClickListener(v -> {
+            GameURL="http://demo.e3webrtc.com:900"+(pos+2);
             Bundle bundle=new Bundle();
+            Log.e("GameRoomActivity", "loadH5Game: "+GameURL+"\t\t"+pos);
             bundle.putString(GameRoomActivity.Html_Url,GameURL);
+            bundle.putInt(GameRoomActivity.GAME_TYPE,pos);
             GameRoomActivity.newInstance(GameActivity.this,bundle);
             parentDialog.dismiss();
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mList.clear();
+    }
 
     @Override
     protected void onDestroy() {

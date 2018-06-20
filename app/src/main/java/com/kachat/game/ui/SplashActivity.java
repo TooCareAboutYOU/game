@@ -7,23 +7,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.events.services.UpLoadBugLogService;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.ui.user.login.LoginActivity;
-import com.kachat.game.utils.CalculateException;
-import com.kachat.game.utils.OnMultiClickListener;
-import com.kachat.game.utils.manager.CrashHandlerManager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -108,11 +101,10 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
 
     }
 
-    int i=1;
     @OnClick(R.id.img_bg)
     public void Onclick(View v){
         Intent intent=null;
-        if (DaoQuery.queryLoginState()) {
+        if (DaoQuery.queryUserListSize() == 1) {
             intent = new Intent(SplashActivity.this, MainActivity.class);
         }else {
             intent = new Intent(SplashActivity.this, LoginActivity.class);

@@ -25,9 +25,8 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:checked="true"
-            android:background="@drawable/selector_shop_top_menu"
-            android:text="金币" />
-        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>
+            android:background="@drawable/selector_shop_top_menu"  />
+        <!--<View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>-->
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/acRbtn_Props"
             android:layout_width="0dp"
@@ -37,9 +36,8 @@
             android:textColor="@android:color/white"
             android:gravity="center"
             android:textSize="14sp"
-            android:background="@drawable/selector_shop_top_menu"
-            android:text="消耗道具" />
-        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>
+            android:background="@drawable/selector_shop_top_menu" />
+        <!--<View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>-->
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/acRbtn_Persons"
             android:layout_width="0dp"
@@ -49,9 +47,8 @@
             android:layout_weight="1"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:background="@drawable/selector_shop_top_menu"
-            android:text="人物遮罩" />
-        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>
+            android:background="@drawable/selector_shop_top_menu"  />
+        <!--<View android:layout_width="1dp" android:layout_height="match_parent" android:background="@android:color/white"/>-->
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/acRbtn_Faces"
             android:layout_width="0dp"
@@ -61,8 +58,7 @@
             android:layout_weight="1"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:background="@drawable/selector_shop_top_menu"
-            android:text="饰品表情" />
+            android:background="@drawable/selector_shop_top_menu"  />
     </RadioGroup>
 
     <FrameLayout

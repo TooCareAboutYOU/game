@@ -1,11 +1,14 @@
 package com.kachat.game.ui.graduate.fragments;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +24,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class LivePersonModeListFragment extends BaseFragment {
+    private static final String TAG = "LivePersonModeList";
 
-//    @BindView(R.id.rv_switch_bg)
     private RecyclerView mRvSwitchBg;
     private List<String> mList;
+    private Live2DBgAdapter mAdapter;
 
-    public LivePersonModeListFragment() {
-    }
+    public LivePersonModeListFragment() { }
 
     public static LivePersonModeListFragment getInstance() {
         return Live2DModeListFragmentHolder.instance;
@@ -69,7 +72,9 @@ public class LivePersonModeListFragment extends BaseFragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         mRvSwitchBg.setLayoutManager(manager);
         mRvSwitchBg.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.HORIZONTAL));
-        mRvSwitchBg.setAdapter(new Live2DBgAdapter());
+
+        mAdapter = new Live2DBgAdapter();
+        mRvSwitchBg.setAdapter(mAdapter);
     }
 
     public class Live2DBgAdapter extends RecyclerView.Adapter<Live2DBgAdapter.BgBackGround> {
@@ -102,6 +107,18 @@ public class LivePersonModeListFragment extends BaseFragment {
                 new AlterDialogBuilder(Objects.requireNonNull(getActivity()),"提示",containerView);
                 return false;
             });
+            holder.itemView.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        ViewCompat.animate(v).scaleX(1.17f).scaleY(1.17f).translationZ(1).start();
+                    }else {
+                        ViewCompat.animate(v).scaleX(1.17f).scaleY(1.17f).start();
+                        ViewGroup group= (ViewGroup) v.getParent();
+                        group.requestLayout();
+                        group.invalidate();
+                    }
+                }
+            });
         }
 
         @Override
@@ -119,6 +136,19 @@ public class LivePersonModeListFragment extends BaseFragment {
             }
 
         }
+
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mAdapter != null) {
+            mAdapter=null;
+        }
+        if (mList!= null) {
+            mList.clear();
+            mList=null;
+        }
+
+        super.onDestroyView();
+    }
 }

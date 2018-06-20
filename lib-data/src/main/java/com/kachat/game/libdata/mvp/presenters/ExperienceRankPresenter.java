@@ -23,7 +23,7 @@ public class ExperienceRankPresenter {
             @Override
             public void onSuccess(RankingListBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         ExperienceRankPresenter.this.mView.onSuccess(result);
                     }else {
                         ExperienceRankPresenter.this.mView.onFailed(result.getCode(),result.getError());

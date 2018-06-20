@@ -69,20 +69,6 @@ public class UserInfoBean implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"username\":\"")
-                .append(username).append('\"');
-        sb.append(",\"gender\":\"")
-                .append(gender).append('\"');
-        sb.append(",\"uid\":")
-                .append(uid);
-        sb.append(",\"age\":")
-                .append(age);
-        sb.append(",\"system\":")
-                .append(system);
-        sb.append(",\"detail\":")
-                .append(detail);
-        sb.append('}');
-        return sb.toString();
+        return JSON.toJSONString(this);
     }
 }

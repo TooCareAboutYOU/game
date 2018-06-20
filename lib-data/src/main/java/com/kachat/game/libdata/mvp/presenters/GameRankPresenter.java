@@ -28,7 +28,7 @@ public class GameRankPresenter {
             @Override
             public void onSuccess(GameRankBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         GameRankPresenter.this.mView.onSuccess(result);
                     }else {
                         GameRankPresenter.this.mView.onFailed(result.getCode(),result.getError());

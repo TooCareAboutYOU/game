@@ -24,7 +24,7 @@ public class RegisterPresenter {
             @Override
             public void onSuccess(UserBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         RegisterPresenter.this.mView.onSuccess(result);
                     }else {
                         RegisterPresenter.this.mView.onFailed(result.getCode(),result.getError());

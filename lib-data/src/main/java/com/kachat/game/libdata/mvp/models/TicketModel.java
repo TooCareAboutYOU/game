@@ -15,8 +15,8 @@ public class TicketModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserTicket(@NonNull String uid, final OnPresenterListeners.OnModelListener<MessageBean> listener){
-        mSubscription= UserApi.getUserTicket(uid,new Observer<MessageBean>() {
+    public void getUserTicket(final OnPresenterListeners.OnModelListener<MessageBean> listener){
+        mSubscription= UserApi.getUserTicket(new Observer<MessageBean>() {
             @Override
             public void onCompleted() { }
 

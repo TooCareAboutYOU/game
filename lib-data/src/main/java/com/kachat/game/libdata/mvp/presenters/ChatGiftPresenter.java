@@ -25,7 +25,7 @@ public class ChatGiftPresenter {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         ChatGiftPresenter.this.mView.onSuccess(result);
                     }else {
                         ChatGiftPresenter.this.mView.onFailed(result.getCode(),result.getError());

@@ -70,7 +70,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void hideLoadView(){ getLoadView().setVisibility(View.GONE); }
 
 
-
     private Unbinder unbinder;
 
     @SuppressLint({"RestrictedApi", "InflateParams"})

@@ -2,28 +2,28 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.CategoriesBean;
+import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.CategoriesModel;
 
 public class CategoriesPresenter {
 
-    private static final String TAG = "CheckMobileFragment";
+    private static final String TAG = "ShopActivity";
 
     private CategoriesModel mModel;
-    private OnPresenterListeners.OnViewListener<CategoriesBean> mView;
+    private OnPresenterListeners.OnViewListener<CategoryTypeBean> mView;
 
-    public CategoriesPresenter(OnPresenterListeners.OnViewListener<CategoriesBean> view) {
+    public CategoriesPresenter(OnPresenterListeners.OnViewListener<CategoryTypeBean> view) {
         this.mModel=new CategoriesModel();
         this.mView = view;
     }
 
     public void attachPresenter(){
-        this.mModel.getCategories(new OnPresenterListeners.OnModelListener<CategoriesBean>() {
+        this.mModel.getCategories(new OnPresenterListeners.OnModelListener<CategoryTypeBean>() {
             @Override
-            public void onSuccess(CategoriesBean result) {
+            public void onSuccess(CategoryTypeBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         CategoriesPresenter.this.mView.onSuccess(result);
                     }else {
                         CategoriesPresenter.this.mView.onFailed(result.getCode(),result.getError());

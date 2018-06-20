@@ -26,7 +26,7 @@ public class ResetPwdPresenter {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode()== CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
                         ResetPwdPresenter.this.mView.onSuccess(result);
                     }else {
                         ResetPwdPresenter.this.mView.onFailed(result.getCode(),result.getError());

@@ -39,27 +39,9 @@ public class DaoDelete {
 //        }
 //    }
 
-    //退出登录
-    public static boolean deleteLogin(){
-        synchronized (DaoDelete.class) {
-            int sizebefore = DaoQuery.queryLoginListSize();
-            if (sizebefore > 0) {
-                GreenDaoHelper.getInstance().writeLogin().deleteAll();
-            } else {
-                return true;
-            }
-            int sizeAfter = DaoQuery.queryLoginListSize();
-            if (sizeAfter == 0) {
-                return true;
-            }
-            return false;
-        }
-    }
-
-    //
     public static boolean deleteUserAll(){
         synchronized (DaoDelete.class) {
-            int sizebefore = DaoQuery.queryUserlistSize();
+            int sizebefore = DaoQuery.queryUserListSize();
             if (sizebefore > 0) {
                 Log.i(TAG, "deleteUserAll: 清空");
                 GreenDaoHelper.getInstance().writeUser().deleteAll();
@@ -67,7 +49,7 @@ public class DaoDelete {
                 Log.i(TAG, "deleteUserAll: 已经为空");
                 return true;
             }
-            int sizeAfter = DaoQuery.queryUserlistSize();
+            int sizeAfter = DaoQuery.queryUserListSize();
             if (sizeAfter == 0) {
                 Log.i(TAG, "deleteUserAll: 清空成功");
                 return true;

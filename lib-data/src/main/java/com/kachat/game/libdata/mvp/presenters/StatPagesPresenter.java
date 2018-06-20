@@ -31,7 +31,7 @@ public class StatPagesPresenter {
             @Override
             public void onSuccess(MessageBean result) {
                 if (mView != null) {
-                    if (result.getCode() == CodeType.REQUEST_SUCCESS) {
+                    if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         StatPagesPresenter.this.mView.onSuccess(result); // result.getResult().getHp();
                     }else {
                         StatPagesPresenter.this.mView.onFailed(result.getCode(),result.getError());

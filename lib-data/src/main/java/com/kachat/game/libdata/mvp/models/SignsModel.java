@@ -21,8 +21,8 @@ public class SignsModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void requestSigns(@NonNull String uid, @NonNull String deviceId, final OnPresenterListeners.OnModelListener<SingsBean> listener){
-        mSubscription= UserApi.requestSigns(uid,deviceId, new Observer<SingsBean>() {
+    public void requestSigns(@NonNull String deviceId, final OnPresenterListeners.OnModelListener<SingsBean> listener){
+        mSubscription= UserApi.requestSigns(deviceId, new Observer<SingsBean>() {
             @Override
             public void onCompleted() { }
 

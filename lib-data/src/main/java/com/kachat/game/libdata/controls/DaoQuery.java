@@ -18,21 +18,21 @@ public class DaoQuery {
     private static final String TAG = "DaoQuery";
 
     //登录状态
-    public static boolean queryLoginState() {
-        synchronized (DaoQuery.class) {
-            List<DbLoginBean> userBeans = GreenDaoHelper.getInstance().writeLogin().queryBuilder().list();
-            if (userBeans != null && userBeans.size() == 1) {
-                return userBeans.get(0).getIsLogin();
-            }
-            return false;
-        }
-    }
-
-    public static int queryLoginListSize() {
-        synchronized (DaoQuery.class) {
-            return GreenDaoHelper.getInstance().writeLogin().queryBuilder().list().size();
-        }
-    }
+//    public static boolean queryLoginState() {
+//        synchronized (DaoQuery.class) {
+//            List<DbLoginBean> userBeans = GreenDaoHelper.getInstance().writeLogin().queryBuilder().list();
+//            if (userBeans != null && userBeans.size() == 1) {
+//                return userBeans.get(0).getIsLogin();
+//            }
+//            return false;
+//        }
+//    }
+//
+//    public static int queryLoginListSize() {
+//        synchronized (DaoQuery.class) {
+//            return GreenDaoHelper.getInstance().writeLogin().queryBuilder().list().size();
+//        }
+//    }
 
 
     public static DbUserBean queryUserData(String mobile) {
@@ -60,7 +60,7 @@ public class DaoQuery {
         }
     }
 
-    public static int queryUserlistSize() {
+    public static int queryUserListSize() {
         synchronized (DaoQuery.class) {
             return GreenDaoHelper.getInstance().writeUser().queryBuilder().list().size();
         }
