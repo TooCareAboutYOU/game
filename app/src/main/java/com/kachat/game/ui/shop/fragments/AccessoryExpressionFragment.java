@@ -16,10 +16,13 @@ import android.view.ViewGroup;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.CategoryGoodsPresenter;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +31,9 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ * 饰品表情
+ */
 public class AccessoryExpressionFragment extends BaseFragment {
 
     private static final String TAG = "GoldsFragment";
@@ -77,7 +82,7 @@ public class AccessoryExpressionFragment extends BaseFragment {
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.item_shop_accessory_expression, parent, false));
+            return new ItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.item_shop, parent, false));
         }
 
         @SuppressLint("SetTextI18n")
@@ -86,8 +91,14 @@ public class AccessoryExpressionFragment extends BaseFragment {
             if (!TextUtils.isEmpty(mGoodsBeanList.get(position).getImage_url())) {
                 holder.mSdvIcon.setImageURI(Uri.parse(mGoodsBeanList.get(position).getImage_url()));
             }
+            if (!TextUtils.isEmpty(mGoodsBeanList.get(position).getName())) {
+                holder.mAcTvName.setText(mGoodsBeanList.get(position).getName());
+            }
             holder.mAcTvAmount.setText("X\t"+mGoodsBeanList.get(position).getAmount());
             holder.mAcTvPrice.setText(mGoodsBeanList.get(position).getPrice()+"");
+            holder.mSdvSmall.setImageResource(R.drawable.icon_diamond);
+            holder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new PublicEventMessage.ShopBuy(mGoodsBeanList.get(position))));
+
         }
 
         @Override
@@ -97,12 +108,16 @@ public class AccessoryExpressionFragment extends BaseFragment {
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
 
+            @BindView(R.id.sdv_Icon)
+            SimpleDraweeView mSdvIcon;
+            @BindView(R.id.acTv_Name)
+            AppCompatTextView mAcTvName;
             @BindView(R.id.acTv_Amount)
             AppCompatTextView mAcTvAmount;
             @BindView(R.id.acTv_Price)
             AppCompatTextView mAcTvPrice;
-            @BindView(R.id.sdv_Icon)
-            SimpleDraweeView mSdvIcon;
+            @BindView(R.id.sdv_Small)
+            SimpleDraweeView mSdvSmall;
 
             ItemViewHolder(View itemView) {
                 super(itemView);

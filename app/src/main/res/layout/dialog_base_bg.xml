@@ -2,42 +2,100 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="336dp"
+    android:layout_width="302dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:padding="13dp"
+    android:background="#80000000">
+
     <android.support.v7.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
+        android:layout_width="302dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="8dp"
+        android:background="@drawable/shape_rectangle_white"
         android:orientation="vertical">
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/acTV_Hint_bg"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="#4CE6FC"
-            android:gravity="center"
-            android:textSize="24sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:text="null"/>
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/acTV_Hint_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_editor_absoluteY="15dp"
+                android:textColor="@android:color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:textSize="18sp"
+                android:text="提示"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/acIV_Close"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@drawable/icon_close"/>
+        </android.support.constraint.ConstraintLayout>
+        
+        <View android:layout_width="match_parent" android:layout_height="2dp" android:layout_marginTop="@dimen/margin_10dp" android:background="@android:color/white"/>
+
         <FrameLayout
             android:id="@+id/fl_Container"
-            android:layout_width="326dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="#02DAF4"
-            android:paddingStart="@dimen/padding_10dp"
-            android:paddingTop="1dp"
-            android:paddingEnd="@dimen/padding_10dp"
-            android:paddingBottom="@dimen/padding_10dp" />
-    </android.support.v7.widget.LinearLayoutCompat>
+            android:minHeight="100dp"
+            android:padding="@dimen/padding_10dp" >
+        </FrameLayout>
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/acIV_Close"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="end"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:src="@mipmap/ic_launcher" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/acTv_Sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_gravity="end"
+            android:textSize="20sp"
+            android:text="确定"/>
+        
+    </android.support.v7.widget.LinearLayoutCompat>
 </FrameLayout>
+
+
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="336dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center">-->
+    <!--<android.support.v7.widget.LinearLayoutCompat-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:padding="5dp"-->
+        <!--android:orientation="vertical">-->
+        <!--<android.support.v7.widget.AppCompatTextView-->
+            <!--android:id="@+id/acTV_Hint_bg"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?android:attr/actionBarSize"-->
+            <!--android:background="#4CE6FC"-->
+            <!--android:gravity="center"-->
+            <!--android:textSize="24sp"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textStyle="bold"-->
+            <!--android:text="null"/>-->
+        <!--<FrameLayout-->
+            <!--android:id="@+id/fl_Container"-->
+            <!--android:layout_width="326dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:background="#02DAF4"-->
+            <!--android:paddingStart="@dimen/padding_10dp"-->
+            <!--android:paddingTop="1dp"-->
+            <!--android:paddingEnd="@dimen/padding_10dp"-->
+            <!--android:paddingBottom="@dimen/padding_10dp" />-->
+    <!--</android.support.v7.widget.LinearLayoutCompat>-->
+
+    <!--<android.support.v7.widget.AppCompatImageView-->
+        <!--android:id="@+id/acIV_Close"-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_gravity="end"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--android:src="@mipmap/ic_launcher" />-->
+<!--</FrameLayout>-->

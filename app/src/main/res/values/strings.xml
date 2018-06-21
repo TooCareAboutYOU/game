@@ -17,7 +17,7 @@
     <string name="hint_input_password">请输入密码</string>
     <string name="toast_pwd_is_null">密码不能为空!</string>
     <string name="game_introductions">游戏说明</string>
-    <string name="game_introductions_details">本人/单位(姓名/单位名称)于(时间)委托(委托人或单位)申 请购买了(产品名称)，由于(概述问题)，本人/单位 (姓名/单位名称)现申请获得(产品名称)的管理权。为了避免权属纠纷，特做如下说明：(姓名/单位名称)是(产品名称)的真正所有者，今后由(产品名称)引起的纠纷和造成的一切后果，其责任概由(姓名/单位名称)承担，与(委托人或单位)无关。特此声明!</string>
+    <string name="game_introductions_details">本人/单位(姓名/单位名称)于(时间)委托(委托人或单位)申 请购买了(产品名称)，由于(概述问题)，本人/单位 (姓名/单位名称)现申请获得(产品名称)的管理权。为了避免权属纠纷，特做如下说明：(姓名/单位名称)是(产品名称)的真正所有者，今后由(产品名称)引起的纠纷和造成的一切后果，其责任概由(姓名/单位名称)承担，与(委托人或单位)无关。\n特此声明!</string>
     <string name="title_activity_grschooladuate">研究所</string>
     <string name="title_activity_shop">商城</string>
     <string name="title_activity_game_center">游戏中心</string>

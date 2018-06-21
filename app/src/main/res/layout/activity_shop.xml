@@ -5,14 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/icon_shop_bg"
     tools:context=".ui.shop.ShopActivity">
+
     <include layout="@layout/base_toolbar"/>
 
     <RadioGroup
         android:id="@+id/rg_GoodsType"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/icon_shop_title_bg"
         android:orientation="horizontal"
         android:weightSum="4">
         <android.support.v7.widget.AppCompatRadioButton

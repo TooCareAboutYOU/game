@@ -1,7 +1,6 @@
 package com.kachat.game.ui.user.register;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
@@ -28,6 +27,7 @@ import com.kachat.game.ui.MainActivity;
 import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.OnMultiClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 import com.kachat.game.utils.widgets.wheelview.BottomDialog;
 import com.kachat.game.utils.widgets.wheelview.WheelView;
 
@@ -36,7 +36,6 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class PersonInfoActivity extends BaseActivity {
 
@@ -176,21 +175,8 @@ public class PersonInfoActivity extends BaseActivity {
     }
 
     private void SuccessDialog() {
-        View containerView = LayoutInflater.from(this).inflate(R.layout.dailog_hint_cilck, null);
-        AppCompatTextView hintMsg = containerView.findViewById(R.id.acTv_hint_info);
-        hintMsg.setText("恭喜你注册成功!");
-        AppCompatTextView acTvSure = containerView.findViewById(R.id.acTv_sure);
-        AlterDialogBuilder alterDialog = new AlterDialogBuilder(this, "提示", containerView);
-        alterDialog.getRootClose().setOnClickListener(v -> {
-            AutoLogin(alterDialog);
-        });
-
-        acTvSure.setOnClickListener(new OnMultiClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                AutoLogin(alterDialog);
-            }
-        });
+        AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(PersonInfoActivity.this, new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!"));
+        dialogBuilder.getRootSure().setOnClickListener(v1 ->dialogBuilder.dismiss());
     }
 
     // TODO: 2018/6/11 自动跳转登录

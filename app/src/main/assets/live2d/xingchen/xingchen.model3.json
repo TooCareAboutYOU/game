@@ -1,0 +1,9 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "xingChen.moc3",
+		"Textures": [
+			"xingChen.1024/texture_00.png"
+		]
+	}
+}

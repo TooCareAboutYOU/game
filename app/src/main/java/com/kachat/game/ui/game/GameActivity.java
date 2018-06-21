@@ -149,7 +149,7 @@ public class GameActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull GameViewHolder holder, @SuppressLint("RecyclerView") int position) {
             holder.sdvMark.setOnClickListener(v -> {
-                View containerView = LayoutInflater.from(GameActivity.this).inflate(R.layout.dialog_game_introductions, null);
+                View containerView = LayoutInflater.from(GameActivity.this).inflate(R.layout.dialog_introductions, null);
                 new AlterDialogBuilder(GameActivity.this, "游戏说明", containerView);
             });
 

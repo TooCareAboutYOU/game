@@ -87,6 +87,7 @@ public class UserApi extends HttpManager {
 
     //用户道具表
     public static Subscription getUserProps(Observer<PropsBean> observer) {
+        Log.i(TAG, "getUserProps: "+uid()+"\n"+token());
         return setSubscribe(mUserService.getUserProps(token(),uid()), observer);
     }
 

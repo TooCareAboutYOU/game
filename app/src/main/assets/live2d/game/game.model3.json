@@ -3,7 +3,7 @@
 	"FileReferences": {
 		"Moc": "game.moc3",
 		"Textures": [
-			"game.png"
+			"game.1024/texture_00.png"
 		]
 	}
 }

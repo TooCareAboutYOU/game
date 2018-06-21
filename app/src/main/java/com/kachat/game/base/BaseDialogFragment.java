@@ -8,12 +8,17 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.blankj.utilcode.util.ToastUtils;
+import com.kachat.game.Config;
+import com.orhanobut.logger.Logger;
 
 import java.util.Objects;
 
@@ -45,7 +50,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
         mView= inflater.inflate(setResLayoutId(),null);
         Objects.requireNonNull(getDialog().getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getDialog().setCanceledOnTouchOutside(false);
-        unbinder = ButterKnife.bind(this, mView);
+        unbinder = ButterKnife.bind(this,mView);
         initView(mView);
         return mView;
     }
@@ -78,5 +83,15 @@ public abstract class BaseDialogFragment extends DialogFragment {
         unbinder.unbind();
 
     }
+
+
+    public void Logger(@SuppressLint("SupportAnnotationUsage") @StringRes String msg){
+        if (Config.isDebug) {
+            Logger.i(msg);
+        }
+    }
+
+    public void Toast(String msg){  ToastUtils.showShort(msg);  }
+    public void Toast(int msg){  ToastUtils.showShort(msg);  }
 
 }

@@ -1,9 +1,0 @@
-{
-	"Version": 3,
-	"FileReferences": {
-		"Moc": "mimiyan.moc3",
-		"Textures": [
-			"mimiyan.png"
-		]
-	}
-}

@@ -115,7 +115,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".ui.user.activitys.ResetPassWordActivity"
+            android:name=".ui.user.ResetPassWordActivity"
             android:label="@string/title_activity_reset_password"
             android:screenOrientation="portrait" />
         <activity

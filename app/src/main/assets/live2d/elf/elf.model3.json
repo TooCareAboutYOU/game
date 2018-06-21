@@ -1,9 +1,0 @@
-{
-	"Version": 3,
-	"FileReferences": {
-		"Moc": "elf.moc3",
-		"Textures": [
-			"elf.png"
-		]
-	}
-}

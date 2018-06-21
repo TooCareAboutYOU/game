@@ -27,7 +27,7 @@ public class PropsPresenter {
             public void onSuccess(PropsBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        PropsPresenter.this.mView.onSuccess(result); // result.getResult().getTicket()
+                        PropsPresenter.this.mView.onSuccess(result);
                     }else {
                         PropsPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

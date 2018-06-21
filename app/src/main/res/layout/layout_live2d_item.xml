@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="64dp"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_Item_Container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:layout_gravity="center"
-    android:background="@drawable/selector_recycview_item">
+    android:layout_gravity="center">
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/sdv_live2d"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginTop="10dp"
-        android:background="@mipmap/ic_launcher"/>
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/avTv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="5dp"
-        android:ellipsize="end"
-        android:textSize="12sp"
-        android:text="null"/>
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:padding="2dp"/>
 </android.support.v7.widget.LinearLayoutCompat>

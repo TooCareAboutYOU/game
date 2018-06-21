@@ -1,9 +1,0 @@
-{
-	"Version": 3,
-	"FileReferences": {
-		"Moc": "child.moc3",
-		"Textures": [
-			"child.png"
-		]
-	}
-}

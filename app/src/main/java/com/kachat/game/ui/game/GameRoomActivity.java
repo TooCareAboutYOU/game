@@ -92,7 +92,7 @@ public class GameRoomActivity extends BaseActivity {
     }
 
     private void initGameHtml() {
-        SdkApi.getInstance().initGame(this, mBridgeWebView);
+        SdkApi.getInstance().loadGame(this, mBridgeWebView);
         SdkApi.getInstance().getBridgeWebView().setDefaultHandler(new DefaultHandler());
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
@@ -115,11 +115,16 @@ public class GameRoomActivity extends BaseActivity {
             this.finish();
         }
         SdkApi.getInstance().loadGame(url);
-//
-        SdkApi.getInstance().startPreview();
-        SdkApi.getInstance().loadVideoView(this, flLocalView, flRemoteView);
 
-        SdkApi.getInstance().initFaceRigItf("live2d/miyo", "miyo", "", "bg1.png");
+        SdkApi.getInstance().create();
+
+        SdkApi.getInstance().loadLocalView(this, flLocalView);
+
+        SdkApi.getInstance().loadRemoteView(this, flRemoteView);
+
+        SdkApi.getInstance().enableVideoView();
+
+        SdkApi.getInstance().loadFaceRigItf("live2d/miyo", "miyo", "livebg", "bg_1.png");
 
         SdkApi.getInstance().startGameMatch(type);
     }
@@ -439,7 +444,9 @@ public class GameRoomActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
-        SdkApi.getInstance().destroy();
+
+        SdkApi.getInstance().destroy(true);
+
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();
         }

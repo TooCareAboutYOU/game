@@ -46,7 +46,7 @@ public class SdkApi {
         private static final SdkApi instance = new SdkApi();
     }
 
-    public void initGame(Context context, BridgeWebView bridgeWebView) {
+    public void loadGame(Context context, BridgeWebView bridgeWebView) {
         mContext = context.getApplicationContext();
         mBridgeWebView = bridgeWebView;
 
@@ -94,7 +94,7 @@ public class SdkApi {
     }
 
     public void loadGame(String htmlUrl) {
-        mBridgeWebView.loadUrl(htmlUrl);
+        this.mBridgeWebView.loadUrl(htmlUrl);
     }
 
     /**
@@ -107,52 +107,56 @@ public class SdkApi {
         VAGameAPI.getInstance().startGameMatch(gameType);
     }
 
-
-    public void loadVideoView(Context context, ViewGroup localContainer, ViewGroup remoteContainer) {
-        localProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
-        localProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        localView = localProxy.getDisplay();
-        localContainer.addView(localView);
-
-        remoteProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
-        remoteProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        remoteView = remoteProxy.getDisplay();
-        remoteContainer.addView(remoteView);
-
-        VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localProxy, remoteProxy);
-    }
-
-    public void startPreview() {
+    public void create() {
         VAGameAPI.getInstance().startPreview();
     }
 
-    public void initFaceRigItf(String filePath, String fileName, String bgPath, String bgName) {
-        videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
-        if (videoProcessorToCamera == null) {
+    public void loadLocalView(Context context, ViewGroup localContainer) {
+        this.localProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
+        this.localProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
+        this.localView = this.localProxy.getDisplay();
+        localContainer.addView(this.localView);
+    }
+
+    public void loadRemoteView(Context context, ViewGroup remoteContainer) {
+        this.remoteProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
+        this.remoteProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
+        this.remoteView = this.remoteProxy.getDisplay();
+        remoteContainer.addView(this.remoteView);
+    }
+
+    public void enableVideoView() {
+        VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(this.localProxy, this.remoteProxy);
+    }
+
+
+    public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName) {
+        this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
+        if (this.videoProcessorToCamera == null) {
             throw new NullPointerException("videoProcessorToCamera is null");
         }
 
-        boolean isEnabled = videoProcessorToCamera.native_faceRigEnabled();
-        videoProcessorToCamera.native_start();
-        videoProcessorToCamera.native_setEnableFaceRigSource(true);
+        boolean isEnabled = this.videoProcessorToCamera.native_faceRigEnabled();
+        this.videoProcessorToCamera.native_start();
+        this.videoProcessorToCamera.native_setEnableFaceRigSource(true);
 
         if (!isEnabled) {
-            faceRigItf = videoProcessorToCamera.native_faceRigItf();
+            this.faceRigItf = this.videoProcessorToCamera.native_faceRigItf();
 //            String path = getApplicationInfo().sourceDir;
-            faceRigItf.native_setLive2DModel(filePath, fileName);
-            faceRigItf.native_showFaceTrack(false);
-            faceRigItf.native_setModelOuputSize(320, 640);
-            faceRigItf.native_setDetectFPS(5);
+            this.faceRigItf.native_setLive2DModel(filePath, fileName);
+            this.faceRigItf.native_showFaceTrack(false);
+            this.faceRigItf.native_setModelOuputSize(320, 640);
+            this.faceRigItf.native_setDetectFPS(1);
 //            float[] floats=faceRigItf.native_modelOffset();
-            faceRigItf.native_setOnFaceDetectListener(have -> {
+            this.faceRigItf.native_setOnFaceDetectListener(have -> {
                 Log.i("", have ? "yes" : "no");
                 // TODO: 2018/5/30 检测人脸 5s后为检测到人脸 弹提示，需转主线程
-                if (mFaceDetectListener != null) {
-                    mFaceDetectListener.onEvent(have);
+                if (this.mFaceDetectListener != null) {
+                    this.mFaceDetectListener.onEvent(have);
                 }
             });
-            faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
-            faceRigItf.native_setModelBackgroundImage(bgPath, bgName);
+            this.faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
+            this.faceRigItf.native_setModelBackgroundImage(bgPath, bgName);
         }
     }
 
@@ -166,55 +170,60 @@ public class SdkApi {
     }
 
     public void setLive2DModel(String filePath, String fileName) {
-        if (faceRigItf == null) {
+        if (this.faceRigItf == null) {
             throw new NullPointerException("faceRigItf is null");
         }
-        faceRigItf.native_setLive2DModel(filePath, fileName);
+        this.faceRigItf.native_setLive2DModel(filePath, fileName);
     }
 
     public void setFaceRigItf(float zoom, float left, float right) {
-        if (faceRigItf == null) {
+        if (this.faceRigItf == null) {
             throw new NullPointerException("faceRigItf is null");
         }
-        faceRigItf.native_setModelZoomFraction(zoom); // 缩放
-        faceRigItf.native_setModelOffset(left, right);
+        this.faceRigItf.native_setModelZoomFraction(zoom); // 缩放
+        this.faceRigItf.native_setModelOffset(left, right);
     }
 
     public void setModelBackgroundImage(String filePath, String fileName, String format) {
-        if (faceRigItf == null) {
+        if (this.faceRigItf == null) {
             throw new NullPointerException("faceRigItf is null");
         }
-        faceRigItf.native_setModelBackgroundImage(filePath, fileName + format);
+        this.faceRigItf.native_setModelBackgroundImage(filePath, fileName + format);
     }
 
-    public void destroy() {
-
-        if (localProxy != null) {
-            localProxy = null;
-        }
-        if (remoteProxy != null) {
-            remoteProxy = null;
-        }
-
-        if (videoProcessorToCamera != null) {
-            videoProcessorToCamera = null;
-        }
-
-        if (mBridgeWebView != null) {
-            if (mWebSettings != null) {
-                mWebSettings = null;
+    public void destroy(boolean isLoad) {
+        if (this.mBridgeWebView != null) {
+            if (this.mWebSettings != null) {
+                this.mWebSettings = null;
             }
-            mBridgeWebView.clearFormData(); // 仅清除自动完成填充的表单数据
-            mBridgeWebView.clearCache(true); //  清除网页访问留下的缓存,针对整个应用程序
-            mBridgeWebView.clearHistory();              //  清除当前webview访问的历史记录
-            mBridgeWebView.destroy();
-            mBridgeWebView = null;
+            this.mBridgeWebView.clearFormData(); // 仅清除自动完成填充的表单数据
+            this.mBridgeWebView.clearCache(true); //  清除网页访问留下的缓存,针对整个应用程序
+            this.mBridgeWebView.clearHistory();              //  清除当前webview访问的历史记录
+            this.mBridgeWebView.destroy();
+            this.mBridgeWebView = null;
         }
 
-        VAGameAPI.getInstance().stopGameMatch();
-        VAGameAPI.getInstance().leaveGameRoom();
+        this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
+        if (this.videoProcessorToCamera != null) {
+            this.videoProcessorToCamera.native_stop();
+            this.videoProcessorToCamera = null;
+        }
+
+        if (isLoad) {
+            VAGameAPI.getInstance().stopGameMatch();
+            VAGameAPI.getInstance().leaveGameRoom();
+        }
+
         VAGameAPI.getInstance().stopPreview();
-        Log.i("GameRoomActivity", "destroy: ");
+
+        if (this.localProxy != null) {
+            this.localProxy = null;
+        }
+        if (this.remoteProxy != null) {
+            this.remoteProxy = null;
+        }
+
+
     }
 
 

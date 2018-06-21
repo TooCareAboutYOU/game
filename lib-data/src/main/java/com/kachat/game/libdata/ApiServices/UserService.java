@@ -78,12 +78,13 @@ public interface UserService {
     @GET("/users/{uid}/scenes")
     Observable<ScenesBean> getUserScenes(@Path("uid") int uid);
 
-    //用户拥有场景
+    // http://api.e3webrtc.com:8004/users/{uid}/props
+    //用户拥有道具
     @GET("/users/{uid}/props")
     Observable<PropsBean> getUserProps(@Header("Authorization") String token, @Path("uid") int uid);
 
-    //  http://api.e3webrtc.com:8004/
-    //用户拥有场景
+    //  http://api.e3webrtc.com:8004/users/19/lives
+    //用户拥有人物遮罩
     @GET("/users/{uid}/lives")
     Observable<LivesBean> getUserLives(@Path("uid") int uid);
 

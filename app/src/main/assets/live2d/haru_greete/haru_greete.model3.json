@@ -1,0 +1,10 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "haru_greete.moc3",
+		"Textures": [
+			"haru_greete.2048/texture_00.png",
+			"haru_greete.2048/texture_01.png"
+		]
+	}
+}

@@ -10,29 +10,31 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.CleanUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
-import com.kachat.game.application.ApplicationHelper;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.ui.user.fragment.PropsFragment;
 import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.manager.ActivityManager;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 public class MeActivity extends BaseActivity {
 
@@ -133,6 +135,18 @@ public class MeActivity extends BaseActivity {
             mAcTvUserGold.setText(dbUserBean.getGold()+"");
             acTvUserCharm.setText(dbUserBean.getCharm()+"");
         }
+
+        //根据屏幕方向
+//        WindowManager manager = this.getWindowManager();
+//        DisplayMetrics outMetrics = new DisplayMetrics();
+//        manager.getDefaultDisplay().getMetrics(outMetrics);
+//        int width = outMetrics.widthPixels;
+//        int height = outMetrics.heightPixels;
+//
+//        SurfaceView surfaceView=new SurfaceView(this);
+//        ViewGroup.LayoutParams params=new ViewGroup.LayoutParams((int)(width * 0.22),(int)(height * 0.22));
+//        surfaceView.setLayoutParams(params);
+
     }
 
 
@@ -177,18 +191,16 @@ public class MeActivity extends BaseActivity {
         public String getMenuTitle() {   return menuTitle;  }
     }
 
+    @SuppressLint("InflateParams")
     private void UserDialog(int type,String title){
         switch (type) {
             case 0:{
-                View containerView=LayoutInflater.from(this).inflate(R.layout.dailog_hint_cilck,null);
-                AppCompatTextView tvTitle=containerView.findViewById(R.id.acTv_hint_info);
-                tvTitle.setText("目前您暂时没有任何道具，如想使用请到商城购买。");
-                AppCompatTextView acTvtext=containerView.findViewById(R.id.acTv_sure);
-                acTvtext.setText("前往");
-                new AlterDialogBuilder(this,"提示",containerView);
-                acTvtext.setOnClickListener(v -> ToastUtils.showShort("确定"));
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"),"前往");
+                dialogBuilder.getRootSure().setOnClickListener(v -> {
+                    dialogBuilder.dismiss();
+                    PropsFragment.getInstance(title).show(getSupportFragmentManager(),"PropsFragment");
+                });
 
-//                PropsFragment.getInstance().show(getSupportFragmentManager(),"PropsFragment");
                 break;
             }
             case 1:{
@@ -196,10 +208,7 @@ public class MeActivity extends BaseActivity {
                 break;
             }
             case 2:{
-                View containerView=LayoutInflater.from(this).inflate(R.layout.dailog_hint,null);
-                AppCompatTextView tvTitle=containerView.findViewById(R.id.acTv_hint_info);
-                tvTitle.setText("目前邀请好友功能暂未开放，\n敬请期待！");
-                new AlterDialogBuilder(this,"提示",containerView);
+                new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"));
                 break;
             }
             case 3:{
@@ -210,12 +219,17 @@ public class MeActivity extends BaseActivity {
                 View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_about_us,null);
                 AppCompatTextView version=containerView.findViewById(R.id.acTv_AppVersion);
                 version.setText(AppUtils.getAppVersionName());
-                new AlterDialogBuilder(this,title,containerView);
+                AppCompatTextView name=containerView.findViewById(R.id.acTv_AppName);
+                name.setText(AppUtils.getAppName());
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this,title,containerView);
+                dialogBuilder.getRootSure().setVisibility(View.GONE);
+
                 break;
             }
             case 5:{
-                View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_user_agreement,null);
-                new AlterDialogBuilder(this,title,containerView);
+                View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_introductions,null);
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this,title,containerView,"同意");
+                dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
                 break;
             }
             case 6:{  //退出登录
@@ -223,7 +237,6 @@ public class MeActivity extends BaseActivity {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
                     ActivityManager.getInstance().removeActivity("MainActivity");
                     LoginActivity.newInstance(MeActivity.this);
-                    // TODO: 2018/6/7 移除 MainActivity
                     this.finish();
                 }
 

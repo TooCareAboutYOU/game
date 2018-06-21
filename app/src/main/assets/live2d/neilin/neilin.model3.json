@@ -1,0 +1,9 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "neiLin.moc3",
+		"Textures": [
+			"neiLin.1024/texture_00.png"
+		]
+	}
+}

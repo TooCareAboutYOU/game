@@ -2,14 +2,17 @@ package com.kachat.game.ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.PermissionUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
