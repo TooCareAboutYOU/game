@@ -83,17 +83,12 @@ public interface UserService {
     @GET("/users/{uid}/props")
     Observable<PropsBean> getUserProps(@Header("Authorization") String token, @Path("uid") int uid);
 
-    //  http://api.e3webrtc.com:8004/users/19/lives
-    //用户拥有人物遮罩
-    @GET("/users/{uid}/lives")
-    Observable<LivesBean> getUserLives(@Path("uid") int uid);
-
-
+    //  http://api.e3webrtc.com:8004/signs?uid=19
     //检查用户是否签到
     @GET("/signs")
     Observable<MessageBean> getUserSignsStatus(@Query("uid") int uid);
 
-    // http://api.e3webrtc.com:8004/signs?user=1&user=1
+    // http://api.e3webrtc.com:8004/signs?uid=19
     //用户签到
     @FormUrlEncoded
     @POST("/signs")

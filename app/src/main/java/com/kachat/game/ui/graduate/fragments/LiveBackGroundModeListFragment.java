@@ -2,8 +2,6 @@ package com.kachat.game.ui.graduate.fragments;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,16 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
 import com.kachat.game.model.Live2DModel;
-import com.kachat.game.utils.widgets.AlterDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import cn.lemon.view.SpaceItemDecoration;
 
@@ -58,11 +53,11 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
     public void onInitView(@NonNull View view) {
         mRvSwitchBg=view.findViewById(R.id.rv_switch_bg);
         mList = new ArrayList<>();
-        mList.add(new Live2DModel("bg_1.png", R.drawable.icon_bg_1_default,true));
-        mList.add(new Live2DModel("bg_2.png", R.drawable.icon_bg_2_default,false));
-        mList.add(new Live2DModel("bg_3.png", R.drawable.icon_bg_3_default,false));
-        mList.add(new Live2DModel("bg_4.png", R.drawable.icon_bg_4_default,false));
-        mList.add(new Live2DModel("bg_5.png", R.drawable.icon_bg_5_default,false));
+        mList.add(new Live2DModel("bg_1.png", R.drawable.icon_bg_1_default,true,true,0,0));
+        mList.add(new Live2DModel("bg_2.png", R.drawable.icon_bg_2_default,false,true,0,0));
+        mList.add(new Live2DModel("bg_3.png", R.drawable.icon_bg_3_default,false,true,0,0));
+        mList.add(new Live2DModel("bg_4.png", R.drawable.icon_bg_4_default,false,true,0,0));
+        mList.add(new Live2DModel("bg_5.png", R.drawable.icon_bg_5_default,false,true,0,0));
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         mRvSwitchBg.setLayoutManager(manager);
@@ -76,7 +71,7 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
         @NonNull
         @Override
         public BgBackGround onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new BgBackGround(LayoutInflater.from(getContext()).inflate(R.layout.layout_live2d_item, null));
+            return new BgBackGround(LayoutInflater.from(getContext()).inflate(R.layout.item_figures_mask_unclock, null));
         }
 
         @Override

@@ -3,7 +3,6 @@ package com.kachat.game.ui.user.fragment;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cn.lemon.view.SpaceItemDecoration;
 
 /**
@@ -38,7 +35,7 @@ import cn.lemon.view.SpaceItemDecoration;
  */
 public class PropsFragment extends BaseDialogFragment {
 
-    private static final String TAG = "PropsFragment";
+    public static final String TAG = "PropsFragment";
     @BindView(R.id.acTV_Hint_bg)
     AppCompatTextView mAcTVHintBg;
     @BindView(R.id.acIV_Close)
@@ -62,7 +59,6 @@ public class PropsFragment extends BaseDialogFragment {
         public static final PropsFragment instance = new PropsFragment();
     }
 
-//    @BindView(R.id.rv_Prop)
     RecyclerView mRecyclerView;
 
     private PropsPresenter mPresenter = null;
@@ -85,13 +81,12 @@ public class PropsFragment extends BaseDialogFragment {
     @SuppressLint("InflateParams")
     @Override
     protected void initView(View view) {
-        Log.i(TAG, "initView: ");
         mAcTVHintBg.setText(mTitle);
         mAcIVClose.setOnClickListener(v -> dismiss());
         mAcTvSure.setVisibility(View.GONE);
 
 
-        View listView=LayoutInflater.from(getContext()).inflate(R.layout.fragment_props,null);
+        View listView=LayoutInflater.from(getContext()).inflate(R.layout.fragment_dialog_recyclerview,null);
         mRecyclerView=listView.findViewById(R.id.rv_Prop);
         mFlContainer.addView(listView);
 

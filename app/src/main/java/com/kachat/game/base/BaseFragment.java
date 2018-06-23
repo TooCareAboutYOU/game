@@ -1,8 +1,10 @@
 package com.kachat.game.base;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.kachat.game.Config;
 import com.kachat.game.R;
+import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -137,6 +141,11 @@ public abstract class BaseFragment extends Fragment {
         mUnbinder.unbind();
     }
 
+    public void Logger(@SuppressLint("SupportAnnotationUsage") @StringRes String msg){
+        if (Config.isDebug) {
+            Logger.i(msg);
+        }
+    }
 
     public void Toast(String msg){  ToastUtils.showShort(msg);  }
     public void Toast(int msg){  ToastUtils.showShort(msg);  }

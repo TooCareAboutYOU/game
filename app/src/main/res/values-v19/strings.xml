@@ -14,5 +14,5 @@
     <string name="title_activity_shop">商城</string>
     <string name="title_activity_game_center">游戏中心</string>
     <string name="title_activity_register">注册</string>
-    <string name="title_activity_user_info">个人档案</string>
+    <string name="title_activity_user_info">我的档案</string>
 </resources>

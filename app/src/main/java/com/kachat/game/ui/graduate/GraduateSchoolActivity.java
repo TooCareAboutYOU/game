@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
 import com.RtcVideoProcess.FaceRigItf;
 import com.RtcVideoProcess.VideoProcessItf;
 import com.dnion.RenderProxy;
@@ -152,6 +154,7 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     @Override
     public void onLivePersonEvent(String fileName) {
         Log.i(TAG, "onLivePersonEvent: "+fileName);
+        Toast.makeText(this, "选中了人物遮罩：" + fileName, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -170,6 +173,7 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     @Override
     public void onLiveVoiceEvent(String fileName) {
         Log.i(TAG, "onLiveVoiceEvent: "+fileName);
+        Toast.makeText(this, "选中了变声：" + fileName, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -183,15 +187,8 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     @Override
     public void onLiveBackGroundEvent(String fileName) {
         Log.i(TAG, "onLiveBackGroundEvent: "+fileName);
+        Toast.makeText(this, "选中了背景：" + fileName, Toast.LENGTH_SHORT).show();
     }
-
-
-
-
-
-
-
-
 
     @Override
     protected void onDestroy() {

@@ -91,14 +91,9 @@ public class UserApi extends HttpManager {
         return setSubscribe(mUserService.getUserProps(token(),uid()), observer);
     }
 
-    //用户道具表
-    public static Subscription getUserLives(Observer<LivesBean> observer) {
-        return setSubscribe(mUserService.getUserLives(uid()), observer);
-    }
-
-    //检查用户
+    //判断用户
     public static Subscription getUserSignsStatus(Observer<MessageBean> observer) {
-        return setSubscribe(mUserService.getUserTickets(uid()), observer);
+        return setSubscribe(mUserService.getUserSignsStatus(uid()), observer);
     }
 
     //用户签到

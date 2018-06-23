@@ -5,6 +5,7 @@
     android:layout_width="302dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:maxHeight="527dp"
     android:padding="13dp"
     android:background="#80000000">
 
@@ -41,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:padding="@dimen/padding_10dp" >
+            android:padding="@dimen/padding_5dp" >
         </FrameLayout>
 
         <android.support.v7.widget.AppCompatTextView
@@ -52,50 +53,15 @@
             android:layout_gravity="end"
             android:textSize="20sp"
             android:text="确定"/>
-        
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/rl_MyRank"
+            android:layout_gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
+            <include layout="@layout/item_expranklist_normal"  />
+        </RelativeLayout>
     </android.support.v7.widget.LinearLayoutCompat>
 </FrameLayout>
-
-
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="336dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center">-->
-    <!--<android.support.v7.widget.LinearLayoutCompat-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:padding="5dp"-->
-        <!--android:orientation="vertical">-->
-        <!--<android.support.v7.widget.AppCompatTextView-->
-            <!--android:id="@+id/acTV_Hint_bg"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?android:attr/actionBarSize"-->
-            <!--android:background="#4CE6FC"-->
-            <!--android:gravity="center"-->
-            <!--android:textSize="24sp"-->
-            <!--android:textColor="@android:color/black"-->
-            <!--android:textStyle="bold"-->
-            <!--android:text="null"/>-->
-        <!--<FrameLayout-->
-            <!--android:id="@+id/fl_Container"-->
-            <!--android:layout_width="326dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:background="#02DAF4"-->
-            <!--android:paddingStart="@dimen/padding_10dp"-->
-            <!--android:paddingTop="1dp"-->
-            <!--android:paddingEnd="@dimen/padding_10dp"-->
-            <!--android:paddingBottom="@dimen/padding_10dp" />-->
-    <!--</android.support.v7.widget.LinearLayoutCompat>-->
-
-    <!--<android.support.v7.widget.AppCompatImageView-->
-        <!--android:id="@+id/acIV_Close"-->
-        <!--android:layout_width="30dp"-->
-        <!--android:layout_height="30dp"-->
-        <!--android:layout_gravity="end"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--android:src="@mipmap/ic_launcher" />-->
-<!--</FrameLayout>-->

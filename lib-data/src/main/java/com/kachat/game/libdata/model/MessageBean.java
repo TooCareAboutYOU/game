@@ -23,7 +23,7 @@ public class MessageBean extends BaseBeans {
         private String message;
         private int ticket;
         private int hp;
-        private int status;
+        private int status;  // 是否签到，0-未签到，1-已签到
 
         public ResultBean() {
         }

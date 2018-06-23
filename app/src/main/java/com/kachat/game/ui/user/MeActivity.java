@@ -8,15 +8,12 @@ import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -25,6 +22,7 @@ import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.ui.user.fragment.EditUserFragment;
 import com.kachat.game.ui.user.fragment.PropsFragment;
 import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.manager.ActivityManager;
@@ -61,11 +59,11 @@ public class MeActivity extends BaseActivity {
     AppCompatTextView mAcTvUserLevel;
     @BindView(R.id.progressBar_Level)
     ContentLoadingProgressBar mProgressBarLevel;
+    @BindView(R.id.progressBar_Sport)
+    ContentLoadingProgressBar mProgressBarSport;
     
     @BindView(R.id.acTv_UserDiamonds)
     AppCompatTextView mAcTvUserDiamonds;
-    @BindView(R.id.acTv_UserSport)
-    AppCompatTextView acTvUserCharmport;
     @BindView(R.id.acTv_UserGold)
     AppCompatTextView mAcTvUserGold;
     @BindView(R.id.acTv_UserCharm)
@@ -75,8 +73,6 @@ public class MeActivity extends BaseActivity {
     RecyclerView mRvUserMenu;
 
     private List<MenuBean> mList = null;
-    private MenuAdapter mMenuAdapter;
-    private GridLayoutManager manager;
 
     @Override
     protected int onSetResourceLayout() {
@@ -92,26 +88,25 @@ public class MeActivity extends BaseActivity {
     protected void initImmersionBar() {
         super.initImmersionBar();
         if (getImmersionBar() != null) {
-            getImmersionBar().navigationBarColor(R.color.black).titleBar(mToolbar).transparentBar().init();
+            getImmersionBar().navigationBarColor(R.color.black).titleBar(mToolbar).transparentStatusBar().init();
         }
     }
 
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
+        getToolbarMenu().setBackgroundResource(R.drawable.icon_me_edit);
         getToolbarMenu().setOnClickListener(v -> UserDialog(7,"编辑"));
         mList = new ArrayList<>();
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "道具"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "新手指引"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "邀请好友"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "意见反馈"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "关于我们"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "用户协议"));
-        mList.add(new MenuBean(R.mipmap.ic_launcher, "退出登录"));
-        mMenuAdapter = new MenuAdapter();
-        manager = new GridLayoutManager(this, 3,GridLayoutManager.VERTICAL,false);
-        mRvUserMenu.setLayoutManager(manager);
-        mRvUserMenu.setAdapter(mMenuAdapter);
+        mList.add(new MenuBean(R.drawable.icon_me_daoju, "道具"));
+        mList.add(new MenuBean(R.drawable.icon_me_friends, "邀请好友"));
+        mList.add(new MenuBean(R.drawable.icon_me_zhiyin, "新手指引"));
+        mList.add(new MenuBean(R.drawable.icon_me_yijian, "意见反馈"));
+        mList.add(new MenuBean(R.drawable.icon_me_about_us, "关于我们"));
+        mList.add(new MenuBean(R.drawable.icon_me_document, "用户协议"));
+        mList.add(new MenuBean(R.drawable.icon_me_out, "退出登录"));
+        mRvUserMenu.setLayoutManager(new LinearLayoutManager(this));
+        mRvUserMenu.setAdapter(new MenuAdapter());
     }
 
 
@@ -123,39 +118,29 @@ public class MeActivity extends BaseActivity {
         if (dbUserBean != null) {
             mAcTvUserName.setText(dbUserBean.getUsername());
             if (dbUserBean.getGender().equals("male")) {
-//                mSdvUserSex.setImageResource();
+                mSdvUserLogo.setBackgroundResource(R.drawable.icon_male_logo);
+                mSdvUserSex.setImageResource(R.drawable.icon_male);
             }else {
-//                mSdvUserSex.setImageResource();
+                mSdvUserLogo.setBackgroundResource(R.drawable.icon_female_logo);
+                mSdvUserSex.setImageResource(R.drawable.icon_female);
             }
             mAcTvUserAccountID.setText(dbUserBean.getNumber()+"");
-            mAcTvUserLevel.setText("LV"+dbUserBean.getLevel()+"");
+            mAcTvUserLevel.setText("LV"+dbUserBean.getLevel());
             mProgressBarLevel.setProgress(dbUserBean.getLevel());
-            mAcTvUserDiamonds.setText(dbUserBean.getDiamond()+"");
-            acTvUserCharmport.setText(dbUserBean.getHp()+"");
-            mAcTvUserGold.setText(dbUserBean.getGold()+"");
-            acTvUserCharm.setText(dbUserBean.getCharm()+"");
+            mAcTvUserDiamonds.setText("钻石:"+dbUserBean.getDiamond());
+            mProgressBarSport.setProgress(dbUserBean.getHp());
+            mAcTvUserGold.setText("金币:"+dbUserBean.getGold());
+            acTvUserCharm.setText("魅力值:"+dbUserBean.getCharm());
         }
 
-        //根据屏幕方向
-//        WindowManager manager = this.getWindowManager();
-//        DisplayMetrics outMetrics = new DisplayMetrics();
-//        manager.getDefaultDisplay().getMetrics(outMetrics);
-//        int width = outMetrics.widthPixels;
-//        int height = outMetrics.heightPixels;
-//
-//        SurfaceView surfaceView=new SurfaceView(this);
-//        ViewGroup.LayoutParams params=new ViewGroup.LayoutParams((int)(width * 0.22),(int)(height * 0.22));
-//        surfaceView.setLayoutParams(params);
-
     }
-
 
     private class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder> {
         @SuppressLint("InflateParams")
         @NonNull
         @Override
         public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new MenuViewHolder(LayoutInflater.from(MeActivity.this).inflate(R.layout.item_user_menu, null));
+            return new MenuViewHolder(LayoutInflater.from(MeActivity.this).inflate(R.layout.item_user_menu, parent,false));
         }
 
         @Override
@@ -195,27 +180,27 @@ public class MeActivity extends BaseActivity {
     private void UserDialog(int type,String title){
         switch (type) {
             case 0:{
-                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"),"前往");
-                dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    dialogBuilder.dismiss();
-                    PropsFragment.getInstance(title).show(getSupportFragmentManager(),"PropsFragment");
-                });
+//                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"),"前往");
+//                dialogBuilder.getRootSure().setOnClickListener(v -> {
+//                    dialogBuilder.dismiss();
+//                });
+                PropsFragment.getInstance(title).show(getSupportFragmentManager(),PropsFragment.TAG);
+                break;
+            }
+            case 1:{  //邀请好友
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"));
+                dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
+                break;
+            }
+            case 2:{   //新手反馈
 
                 break;
             }
-            case 1:{
+            case 3:{  //意见反馈
 
                 break;
             }
-            case 2:{
-                new AlterDialogBuilder(MeActivity.this, new DialogTextView(MeActivity.this,"目前邀请好友功能暂未开放，\n敬请期待！"));
-                break;
-            }
-            case 3:{
-
-                break;
-            }
-            case 4:{
+            case 4:{ //关于我们
                 View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_about_us,null);
                 AppCompatTextView version=containerView.findViewById(R.id.acTv_AppVersion);
                 version.setText(AppUtils.getAppVersionName());
@@ -226,25 +211,30 @@ public class MeActivity extends BaseActivity {
 
                 break;
             }
-            case 5:{
+            case 5:{ //用户协议
                 View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_introductions,null);
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this,title,containerView,"同意");
                 dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
                 break;
             }
             case 6:{  //退出登录
-                if (DaoDelete.deleteUserAll()) {
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this,title,
+                        new DialogTextView(MeActivity.this,"确定退出？"));
+                dialogBuilder.getRootSure().setOnClickListener(v -> {
+                    if (DaoDelete.deleteUserAll()) {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
-                    ActivityManager.getInstance().removeActivity("MainActivity");
-                    LoginActivity.newInstance(MeActivity.this);
-                    this.finish();
-                }
+                        ActivityManager.getInstance().removeActivity("MainActivity");
+                        LoginActivity.newInstance(MeActivity.this);
+                        this.finish();
+                    }
+                    dialogBuilder.dismiss();
+                });
+
 
                 break;
             }
-            case 7:{
-                View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_user_edit,null);
-                new AlterDialogBuilder(this,title,containerView);
+            case 7:{   //编辑用户信息
+                EditUserFragment.getInstance(title).show(getSupportFragmentManager(),EditUserFragment.TAG);
                 break;
             }
         }

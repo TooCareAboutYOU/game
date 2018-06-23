@@ -62,6 +62,7 @@ public class RankingListBean extends BaseBeans {
             private String gender;
             private int uid;
             private int age;
+            private int index;
             private DetailBean detail;
 
             public String getUsername() {
@@ -94,6 +95,14 @@ public class RankingListBean extends BaseBeans {
 
             public void setAge(int age) {
                 this.age = age;
+            }
+
+            public int getIndex() {
+                return index;
+            }
+
+            public void setIndex(int index) {
+                this.index = index;
             }
 
             public DetailBean getDetail() {

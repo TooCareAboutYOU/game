@@ -8,6 +8,7 @@ import com.kachat.game.libdata.http.HttpManager;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.model.GameRankBean;
+import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.model.GamesBean;
 import com.kachat.game.libdata.model.MessageBean;
@@ -67,16 +68,21 @@ public class GameApi extends HttpManager{
 
     //魅力排行榜
     public static Subscription getCharm(Observer<RankingListBean> observer){
-        return setSubscribe(mGameService.getCharm(),observer);
+        return setSubscribe(mGameService.getCharm(token()),observer);
     }
 
     //经验排行榜
     public static Subscription getExperience(Observer<RankingListBean> observer){
-        return setSubscribe(mGameService.getExperience(),observer);
+        return setSubscribe(mGameService.getExperience(token()),observer);
     }
 
     //游戏排行榜
     public static Subscription getGameRankList(int gameIndex, int type,Observer<GameRankBean> observer){
-        return setSubscribe(mGameService.getGameRankList(gameIndex, type),observer);
+        return setSubscribe(mGameService.getGameRankList(token(),gameIndex, type),observer);
+    }
+
+    //人物遮罩
+    public static Subscription getUserLives(Observer<LivesBean> observer) {
+        return setSubscribe(mGameService.getUserLives(uid()), observer);
     }
 }

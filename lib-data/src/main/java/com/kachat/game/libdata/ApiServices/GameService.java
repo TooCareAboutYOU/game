@@ -3,6 +3,7 @@ package com.kachat.game.libdata.apiServices;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.model.GameRankBean;
+import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.model.GamesBean;
 import com.kachat.game.libdata.model.MessageBean;
@@ -64,11 +65,11 @@ public interface GameService {
 
     //魅力排行榜  http://api.e3webrtc.com:8004/ranks/charm
     @GET("/ranks/charm")
-    Observable<RankingListBean> getCharm();
+    Observable<RankingListBean> getCharm(@Header("Authorization") String token);
 
     //魅力排行榜  http://api.e3webrtc.com:8004/ranks/exp
     @GET("/ranks/exp")
-    Observable<RankingListBean> getExperience();
+    Observable<RankingListBean> getExperience(@Header("Authorization") String token);
 
 
     //  http://api.e3webrtc.com:8004/ranks/game/901?type=1
@@ -77,5 +78,10 @@ public interface GameService {
      * 排行榜分类 0-总排行榜，1-周排行榜
      */
      @GET("/ranks/game/{game_index}")
-    Observable<GameRankBean> getGameRankList(@Path("game_index") int game_index, @Query("type") int type);
+    Observable<GameRankBean> getGameRankList(@Header("Authorization") String token,@Path("game_index") int game_index, @Query("type") int type);
+
+    //  http://api.e3webrtc.com:8004/users/19/lives
+    //人物遮罩
+    @GET("/users/{uid}/lives")
+    Observable<LivesBean> getUserLives(@Path("uid") int uid);
 }

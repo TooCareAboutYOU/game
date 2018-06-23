@@ -6,7 +6,22 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ user_live_id: 用户遮罩ID
+ live_number: 拥有该遮罩数量，0-表示未拥有
+ live_chip_number: 拥有该遮罩碎片个数
+ live: 单个遮罩详情
+     index: 遮罩编号
+     name: 遮罩名称
+     image_url: 图片地址
+     unlock_chip: 解锁遮罩需要的碎片数量
+     costumes: 该遮罩所有装饰数组
+     costume_number: 拥有该装饰数量，0-表示未拥有
+         costume_chip_number: 拥有该装饰碎片数量
+         costume: 装饰详情
+         name: 装饰名称
+         index: 装饰编号
+         unlock_chip: 解锁该装饰需要的碎片数量
+         image_url: 装饰图片地址
  */
 public class LivesBean extends BaseBeans {
 
@@ -48,6 +63,7 @@ public class LivesBean extends BaseBeans {
             private LiveBean live;
             private int live_chip_number;
             private int live_number;
+            private boolean isFlag;
 
             public int getUser_live_id() {
                 return user_live_id;
@@ -79,6 +95,14 @@ public class LivesBean extends BaseBeans {
 
             public void setLive_number(int live_number) {
                 this.live_number = live_number;
+            }
+
+            public boolean isFlag() {
+                return isFlag;
+            }
+
+            public void setFlag(boolean flag) {
+                isFlag = flag;
             }
 
             public static class LiveBean implements Serializable{

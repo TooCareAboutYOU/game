@@ -35,6 +35,13 @@ public class SingsBean extends BaseBeans {
         private int gold;
         private int hp;
 
+        public ResultBean(int diamond, int exp, int gold, int hp) {
+            this.diamond = diamond;
+            this.exp = exp;
+            this.gold = gold;
+            this.hp = hp;
+        }
+
         public int getDiamond() {
             return diamond;
         }
