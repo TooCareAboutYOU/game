@@ -1,9 +1,9 @@
 {
 	"Version": 3,
 	"FileReferences": {
-		"Moc": "weiKeYa.moc3",
+		"Moc": "weiKeTa.moc3",
 		"Textures": [
-			"weiKeYa.1024/texture_00.png"
+			"weiKeTa.png"
 		]
 	}
 }

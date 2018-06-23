@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -113,7 +114,7 @@ public class PersonInfoActivity extends BaseActivity {
             String pwd = mAcEtPassWord.getText().toString();
             Log.i(TAG, "onMultiClick: " + name + "\t\t" + pwd);
             if (Check(name, pwd)) {
-                String mobile = Objects.requireNonNull(DaoQuery.queryUserData()).getMobile();
+                String mobile = Config.getMobile();
                 Log.i(TAG, "onMultiClick: " + "mobile");
                 mRegisterPresenter.attachPresenter(mobile, pwd, gender, userAge + "", name);
             }
@@ -181,7 +182,7 @@ public class PersonInfoActivity extends BaseActivity {
 
     // TODO: 2018/6/11 自动跳转登录
     private void AutoLogin(AlterDialogBuilder alterDialog) {
-        String mobile = Objects.requireNonNull(DaoQuery.queryUserData()).getMobile();
+        String mobile = Config.getMobile();
         mPresenter.attachPresenter(mobile, mAcEtPassWord.getText().toString());
         alterDialog.dismiss();
     }

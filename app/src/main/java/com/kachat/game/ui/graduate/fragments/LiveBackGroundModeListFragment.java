@@ -53,7 +53,7 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
     public void onInitView(@NonNull View view) {
         mRvSwitchBg=view.findViewById(R.id.rv_switch_bg);
         mList = new ArrayList<>();
-        mList.add(new Live2DModel("bg_1.png", R.drawable.icon_bg_1_default,true,true,0,0));
+        mList.add(new Live2DModel("bg_1.png", R.drawable.icon_bg_1_default,false,true,0,0));
         mList.add(new Live2DModel("bg_2.png", R.drawable.icon_bg_2_default,false,true,0,0));
         mList.add(new Live2DModel("bg_3.png", R.drawable.icon_bg_3_default,false,true,0,0));
         mList.add(new Live2DModel("bg_4.png", R.drawable.icon_bg_4_default,false,true,0,0));
@@ -61,13 +61,13 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         mRvSwitchBg.setLayoutManager(manager);
-//        mRvSwitchBg.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.HORIZONTAL));
         mRvSwitchBg.addItemDecoration(new SpaceItemDecoration(2,0,2,0));
         mRvSwitchBg.setAdapter(new Live2DBgAdapter());
     }
 
     public class Live2DBgAdapter extends RecyclerView.Adapter<Live2DBgAdapter.BgBackGround> {
 
+        @SuppressLint("InflateParams")
         @NonNull
         @Override
         public BgBackGround onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

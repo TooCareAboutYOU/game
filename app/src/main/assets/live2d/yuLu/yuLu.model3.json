@@ -3,7 +3,7 @@
 	"FileReferences": {
 		"Moc": "yuLu.moc3",
 		"Textures": [
-			"yuLu.2048/texture_00.png"
+			"yuLu.png"
 		],
 		"Physics": "yuLu.physics3.json"
 	},

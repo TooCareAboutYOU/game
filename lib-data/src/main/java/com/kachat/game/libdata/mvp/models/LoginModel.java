@@ -42,28 +42,10 @@ public class LoginModel extends BaseModel {
                     }
                     if (result.getResult() != null) {
                         if (result.getResult().getUser().getDetail() != null) {
-//                            DbUserBean dbUserBean=new DbUserBean();
-//                            dbUserBean.setToken("JWT "+result.getResult().getToken());
-//                            dbUserBean.setUsername(result.getResult().getUser().getUsername());
-//                            dbUserBean.setGender(result.getResult().getUser().getGender());
-//                            dbUserBean.setUid(result.getResult().getUser().getUid());
-//                            dbUserBean.setAge(result.getResult().getUser().getAge());
-//                            dbUserBean.setSystem(result.getResult().getUser().getSystem());
-//                            dbUserBean.setLevel(result.getResult().getUser().getDetail().getLevel());
-//                            dbUserBean.setHp(result.getResult().getUser().getDetail().getHp());
-//                            dbUserBean.setExp_to_level_up(result.getResult().getUser().getDetail().getExp_to_level_up());
-//                            dbUserBean.setExp(result.getResult().getUser().getDetail().getExp());
-//                            dbUserBean.setNumber(result.getResult().getUser().getDetail().getNumber());
-//                            dbUserBean.setDiamond(result.getResult().getUser().getDetail().getDiamond());
-//                            dbUserBean.setCharm(result.getResult().getUser().getDetail().getCharm());
-//                            dbUserBean.setGold(result.getResult().getUser().getDetail().getGold());
-//                            DaoInsert.insertUser(dbUserBean);
-
-                            DaoUpdate.updateUser("JWT "+result.getResult().getToken(),
+                            DaoInsert.insertUser(new DbUserBean(null,"JWT "+result.getResult().getToken(),mobile,
                                     result.getResult().getUser().getUsername(),
                                     result.getResult().getUser().getGender(),
-                                    result.getResult().getUser().getUid(),
-                                    result.getResult().getUser().getAge(),
+                                    result.getResult().getUser().getUid(),result.getResult().getUser().getAge(),
                                     result.getResult().getUser().getSystem(),
                                     result.getResult().getUser().getDetail().getLevel(),
                                     result.getResult().getUser().getDetail().getHp(),
@@ -72,7 +54,22 @@ public class LoginModel extends BaseModel {
                                     result.getResult().getUser().getDetail().getNumber(),
                                     result.getResult().getUser().getDetail().getDiamond(),
                                     result.getResult().getUser().getDetail().getCharm(),
-                                    result.getResult().getUser().getDetail().getGold());
+                                    result.getResult().getUser().getDetail().getGold()));
+
+//                            DaoUpdate.updateUser("JWT "+result.getResult().getToken(),
+//                                    result.getResult().getUser().getUsername(),
+//                                    result.getResult().getUser().getGender(),
+//                                    result.getResult().getUser().getUid(),
+//                                    result.getResult().getUser().getAge(),
+//                                    result.getResult().getUser().getSystem(),
+//                                    result.getResult().getUser().getDetail().getLevel(),
+//                                    result.getResult().getUser().getDetail().getHp(),
+//                                    result.getResult().getUser().getDetail().getExp_to_level_up(),
+//                                    result.getResult().getUser().getDetail().getExp(),
+//                                    result.getResult().getUser().getDetail().getNumber(),
+//                                    result.getResult().getUser().getDetail().getDiamond(),
+//                                    result.getResult().getUser().getDetail().getCharm(),
+//                                    result.getResult().getUser().getDetail().getGold());
                         }
                     }
             }

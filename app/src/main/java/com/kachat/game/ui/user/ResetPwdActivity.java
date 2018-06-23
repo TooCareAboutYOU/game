@@ -8,7 +8,7 @@ import com.kachat.game.base.BaseActivity;
 import butterknife.BindView;
 
 
-public class ResetPassWordActivity extends BaseActivity {
+public class ResetPwdActivity extends BaseActivity {
 
 
     @BindView(R.id.toolbar_base)

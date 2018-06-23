@@ -3,18 +3,27 @@ package com.kachat.game.ui.user.login;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.AppCompatEditText;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.controls.DaoQuery;
-import com.kachat.game.ui.MainActivity;
-import com.kachat.game.ui.user.login.fragments.CheckMobileFragment;
-import com.kachat.game.ui.user.login.fragments.InputPwdFragment;
+import com.kachat.game.libdata.model.ErrorBean;
+import com.kachat.game.libdata.model.GetCaptchaBean;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
+import com.kachat.game.libdata.mvp.presenters.CaptchaPresenter;
 import com.kachat.game.ui.user.register.RegisterActivity;
+import com.kachat.game.utils.MyUtils;
+
+import butterknife.BindView;
 
 
 public class LoginActivity extends BaseActivity {
@@ -26,53 +35,112 @@ public class LoginActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
+    @BindView(R.id.cl_Container)
+    ConstraintLayout mClContainer;
+    @BindView(R.id.acEt_mobile)
+    AppCompatEditText mAcEtMobile;
 
+    private CaptchaPresenter mCaptchaPresenter;
 
     @Override
     protected int onSetResourceLayout() {
-        return R.layout.activity_login;
+        return R.layout.activity_check_mobile;
     }
 
     @Override
     protected boolean onSetStatusBar() {
-        return false;
+        return true;
     }
-
 
     @SuppressLint("CommitTransaction")
     @Override
     protected void onInitView() {
         DaoDelete.deleteUserAll();
-        initCheckAccount();
+
+        mCaptchaPresenter = new CaptchaPresenter(new CheckAccount());
+        findViewById(R.id.sdv_go).setOnClickListener(v-> Check());
     }
 
-    public void initCheckAccount(){
-        mTransaction=getSupportFragmentManager().beginTransaction();
-        mTransaction.add(R.id.fl_Container, CheckMobileFragment.getInstance());
-        mTransaction.commit();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAcEtMobile.setText("15000000000");
     }
 
-    public void initInputPwd(){
-        Log.i("CheckMobileFragment", "initInputPwd: ");
-        mTransaction=getSupportFragmentManager().beginTransaction();
-        mTransaction.replace(R.id.fl_Container, InputPwdFragment.getInstance());
-        mTransaction.commit();
+    String mobile;
+    private void Check() {
+        mobile = mAcEtMobile.getText().toString().trim();
+
+        if (TextUtils.isEmpty(mobile)) {
+            mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+            Toast(R.string.toast_mobile_is_null);
+            return;
+        }
+        if (!MyUtils.checkMobileNumber(mobile)) {
+            mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+            Toast(R.string.toast_mobile_format_is_error);
+            mAcEtMobile.setText("");
+            return;
+        }
+
+        mCaptchaPresenter.attachPresenter(mobile);
+
     }
 
-    public void JumpToMain(){
-        MainActivity.getInstance(this);
-        mTransaction.remove(CheckMobileFragment.getInstance());
-        mTransaction.remove(InputPwdFragment.getInstance());
-//        mTransaction.commit();
-        this.finish();
+    //0   验证码发送成功   --调到输入验证码
+    //10001 用户已注册       --调到登录
+    //10002 手机号格式不正确  --提示手机错误
+    //10003 发送过快    --这个应该很少会出现
+    private class CheckAccount implements OnPresenterListeners.OnViewListener<GetCaptchaBean> {
+        @Override
+        public void onSuccess(GetCaptchaBean result) {  //不存在,发送验证码
+
+            Toast("验证码：" + result.getResult().getCaptcha());
+            if (result.getResult() != null) {
+                Config.setMobile(mobile);
+                RegisterActivity.newInstance(LoginActivity.this);
+                finish();
+            }
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            if (error != null) {
+                if (errorCode == CodeType.CODE_RESPONSE_INPUT_PWD) {  //  已注册,输入密码登录
+                    mClContainer.setBackgroundResource(R.drawable.img_bg_login_ok);
+                    Config.setMobile(mobile);
+                    CheckPwdActivity.newInstance(LoginActivity.this);
+                    finish();
+                }else {
+                    mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+                    Toast(error.getToast());
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+            if (e != null) {
+                Toast(e.getMessage());
+            }
+        }
     }
 
-    public void JumpToRegister(){
-        RegisterActivity.newInstance(this);
-        mTransaction.remove(CheckMobileFragment.getInstance());
-        mTransaction.remove(InputPwdFragment.getInstance());
-//        mTransaction.commit();
-        this.finish();
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAcEtMobile.setText("");
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mCaptchaPresenter != null) {
+            mCaptchaPresenter.detachPresenter();
+            mCaptchaPresenter = null;
+        }
+        super.onDestroy();
+
     }
 
 

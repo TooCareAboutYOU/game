@@ -54,7 +54,7 @@ public class LiveVoiceModeListFragment extends BaseFragment {
     public void onInitView(@NonNull View view) {
         RecyclerView rvSwitchBg = view.findViewById(R.id.rv_switch_bg);
         mList = new ArrayList<>();
-        mList.add(new Live2DModel("level_1",R.drawable.icon_voice_level_1_default,true,true,0,0));
+        mList.add(new Live2DModel("level_1",R.drawable.icon_voice_level_1_default,false,true,0,0));
         mList.add(new Live2DModel("level_2",R.drawable.icon_voice_level_2_default,false,true,0,0));
         mList.add(new Live2DModel("level_3",R.drawable.icon_voice_level_3_default,false,true,0,0));
         mList.add(new Live2DModel("level_4",R.drawable.icon_voice_level_4_default,false,true,0,0));
@@ -62,14 +62,13 @@ public class LiveVoiceModeListFragment extends BaseFragment {
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         rvSwitchBg.setLayoutManager(manager);
-//        mRvSwitchBg.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.HORIZONTAL));
         rvSwitchBg.addItemDecoration(new SpaceItemDecoration(2,0,2,0));
-
         rvSwitchBg.setAdapter(new Live2DBgAdapter());
     }
 
     public class Live2DBgAdapter extends RecyclerView.Adapter<Live2DBgAdapter.VoiceViewHolder> {
 
+        @SuppressLint("InflateParams")
         @NonNull
         @Override
         public VoiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -102,7 +102,7 @@ public class ChatActivity extends BaseActivity implements LivePersonModeListFrag
 //            });
 //            faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
 ////            faceRigItf.native_modelZoomFraction()
-//            faceRigItf.native_setModelBackgroundImage("", "bg1.png");
+//            faceRigItf.native_setModelBackgroundImage("", "bg_1.png");
 //        }
 //
 //        transaction=getSupportFragmentManager().beginTransaction();
@@ -117,7 +117,7 @@ public class ChatActivity extends BaseActivity implements LivePersonModeListFrag
 //                faceRigItf.native_setModelBackgroundImage("", "bg2.png");
 //            }else {
 //                btn.setText("Bg1");
-//                faceRigItf.native_setModelBackgroundImage("", "bg1.png");
+//                faceRigItf.native_setModelBackgroundImage("", "bg_1.png");
 //            }
 //        });
 //

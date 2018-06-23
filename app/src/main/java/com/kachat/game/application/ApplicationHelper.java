@@ -15,6 +15,7 @@ import com.kachat.game.Constant;
 import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.libdata.HttpLocalDataHelper;
 import com.kachat.game.ui.user.login.LoginActivity;
+import com.kachat.game.utils.SharedPreferencesHelper;
 import com.kachat.game.utils.manager.CrashHandlerManager;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
@@ -36,7 +37,10 @@ public class ApplicationHelper {
         initEvent();
         initKaChatSDK(application.getApplicationContext());
 //        initCrash(application);
+
+        SharedPreferencesHelper.init(application.getApplicationContext(),"JX",Context.MODE_PRIVATE);
     }
+
 
     private static void initImageLoader(@NonNull Context context){   Fresco.initialize(context);   }
 

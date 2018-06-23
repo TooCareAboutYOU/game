@@ -19,6 +19,7 @@ import com.dnion.VAGameAPI;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.base.videos.SdkApi;
 import com.kachat.game.ui.graduate.fragments.LiveBackGroundModeListFragment;
 import com.kachat.game.ui.graduate.fragments.LivePersonModeListFragment;
 import com.kachat.game.ui.graduate.fragments.LiveVoiceModeListFragment;
@@ -64,9 +65,11 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     private Fragment mFragmentPeople= LivePersonModeListFragment.getInstance();
     private Fragment mFragmentVoice= LiveVoiceModeListFragment.getInstance();
     private Fragment mFragmentBG= LiveBackGroundModeListFragment.getInstance();
-    private VideoProcessItf videoProcessorToCamera=null;
-    private FaceRigItf faceRigItf = null;
-    private RenderProxy localProxy=null;
+//    private VideoProcessItf videoProcessorToCamera=null;
+//    private FaceRigItf faceRigItf = null;
+//    private RenderProxy localProxy=null;
+    private String personPath="live2d/";
+    private String bgPath="livebg";
 
     @Override
     protected int onSetResourceLayout() { return R.layout.activity_graduate_school; }
@@ -88,45 +91,18 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
         getToolbarMenu().setImageResource(R.drawable.icon_graduate_school);
         getToolbarMenu().setOnClickListener(v -> {});
 
-//        initVideo();
+        initVideo1("yuLu","bg_1.png");
+
         initLive();
     }
 
-    private void initVideo(String model,String bgImg) {
-//        SdkApi.getInstance().create();
-//        SdkApi.getInstance().loadLocalView(this, mFlContainer);
-//        SdkApi.getInstance().loadFaceRigItf("live2d/miyo", "miyo", "livebg", "bg_1.png");
-
-        VAGameAPI.getInstance().startPreview();
-        localProxy = VAGameAPI.getInstance().createRenderProxy(getApplicationContext());
-        localProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        mFlContainer.addView(localProxy.getDisplay());
-
-         videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
-        if (this.videoProcessorToCamera == null) {
-            throw new NullPointerException("videoProcessorToCamera is null");
-        }
-
-        boolean isEnabled = videoProcessorToCamera.native_faceRigEnabled();
-        videoProcessorToCamera.native_start();
-        videoProcessorToCamera.native_setEnableFaceRigSource(true);
-
-        if (!isEnabled) {
-            faceRigItf = videoProcessorToCamera.native_faceRigItf();
-            faceRigItf.native_setLive2DModel("live2d/"+model, model);
-            faceRigItf.native_showFaceTrack(false);
-            faceRigItf.native_setModelOuputSize(320, 640);
-            faceRigItf.native_setDetectFPS(1);
-            this.faceRigItf.native_setOnFaceDetectListener(have -> {
-                Log.i("", have ? "yes" : "no");
-                // TODO: 2018/5/30 检测人脸 5s后为检测到人脸 弹提示，需转主线程
-            });
-            this.faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
-            this.faceRigItf.native_setModelBackgroundImage("livebg", bgImg);
-        }
-
+    private void initVideo1(String model,String bgImg) {
+        SdkApi.getInstance().create();
+        SdkApi.getInstance().loadLocalView(this, mFlContainer);
+        SdkApi.getInstance().enableVideoView();
+        SdkApi.getInstance().loadFaceRigItf(personPath+model, model, bgPath, bgImg);
+        SdkApi.getInstance().startGameMatch(0);
     }
-
 
     private void initLive() {
         mRgTabs.setOnCheckedChangeListener((group, checkedId) -> {
@@ -147,14 +123,13 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     /**
      * Live2D人物
      */
-    private void loadLive2DPersons(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentPeople).commit();
-    }
+    private void loadLive2DPersons(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentPeople).commit();}
 
     @Override
     public void onLivePersonEvent(String fileName) {
         Log.i(TAG, "onLivePersonEvent: "+fileName);
-        Toast.makeText(this, "选中了人物遮罩：" + fileName, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "选中了人物遮罩：" + fileName, Toast.LENGTH_SHORT).show();
+        SdkApi.getInstance().setLive2DModel(personPath+fileName,fileName);
     }
 
     /**
@@ -166,46 +141,31 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
 //        new AlterDialogBuilder(this,"游戏说明",containerView);
     }
 
-    private void loadVoice(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentVoice).commit();
-    }
+    private void loadVoice(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentVoice).commit(); }
 
     @Override
     public void onLiveVoiceEvent(String fileName) {
         Log.i(TAG, "onLiveVoiceEvent: "+fileName);
-        Toast.makeText(this, "选中了变声：" + fileName, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "选中了变声：" + fileName, Toast.LENGTH_SHORT).show();
     }
 
 
     /**
      * Live2D 背景
      */
-    private void loadLive2DBackGround(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentBG).commit();
-    }
+    private void loadLive2DBackGround(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentBG).commit(); }
 
     @Override
     public void onLiveBackGroundEvent(String fileName) {
         Log.i(TAG, "onLiveBackGroundEvent: "+fileName);
         Toast.makeText(this, "选中了背景：" + fileName, Toast.LENGTH_SHORT).show();
+        SdkApi.getInstance().setModelBackgroundImage(bgPath,fileName);
     }
 
     @Override
     protected void onDestroy() {
 
-//        SdkApi.getInstance().destroy(false);
-
-        this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
-        if (this.videoProcessorToCamera != null) {
-            this.videoProcessorToCamera.native_stop();
-            this.videoProcessorToCamera=null;
-        }
-
-        VAGameAPI.getInstance().stopPreview();
-
-        if (this.localProxy != null) {
-            this.localProxy = null;
-        }
+        SdkApi.getInstance().destroy(true);
 
         if (mFlContainer.getChildCount() > 0) {
             mFlContainer.removeAllViews();

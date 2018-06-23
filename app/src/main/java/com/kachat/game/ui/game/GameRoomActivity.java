@@ -124,7 +124,7 @@ public class GameRoomActivity extends BaseActivity {
 
         SdkApi.getInstance().enableVideoView();
 
-        SdkApi.getInstance().loadFaceRigItf("live2d/miyo", "miyo", "livebg", "bg_1.png");
+        SdkApi.getInstance().loadFaceRigItf("", "yuLu", "", "bg_1.png");
 
         SdkApi.getInstance().startGameMatch(type);
     }

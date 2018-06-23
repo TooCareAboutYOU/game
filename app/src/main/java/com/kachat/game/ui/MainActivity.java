@@ -30,7 +30,9 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.ExperienceRankPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsStatusPresenter;
+import com.kachat.game.test.TestActivity;
 import com.kachat.game.ui.fragments.HomeRankListFragment;
+import com.kachat.game.ui.game.GameActivity;
 import com.kachat.game.ui.graduate.GraduateSchoolActivity;
 import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
@@ -48,6 +50,8 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
+
+    private boolean isLogin=false;
 
     @BindView(R.id.toolbar_Home)
     Toolbar mToolbar;
@@ -95,7 +99,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     @Override
     protected void onInitView() {
         mRankList = new ArrayList<>();
@@ -126,14 +129,12 @@ public class MainActivity extends BaseActivity {
         checkLogin();
     }
 
-
-
     @OnClick({R.id.sdv_UserLogo, R.id.sdv_RankingList, R.id.sdv_SignIn, R.id.sdv_Shop})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.sdv_UserLogo:
 //                MeActivity.newInstance(this);
-                GraduateSchoolActivity.newInstance(this);
+//                TestActivity.newInstance(this);
                 break;
             case R.id.sdv_RankingList:
                 if (mPresenter != null) {
@@ -141,18 +142,20 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.sdv_SignIn:
-                if (mStatusPresenter != null) {
-                    mStatusPresenter.attachPresenter();
-                }
+//                if (mStatusPresenter != null) {
+//                    mStatusPresenter.attachPresenter();
+//                }
+                GraduateSchoolActivity.newInstance(this);
+
                 break;
             case R.id.sdv_Shop:
                 ShopActivity.newInstance(this);
+//                GameActivity.newInstance(this);
                 break;
         }
     }
 
     private class ExpLevelCallBack implements OnPresenterListeners.OnViewListener<RankingListBean> {
-
         @Override
         public void onSuccess(RankingListBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
@@ -161,7 +164,6 @@ public class MainActivity extends BaseActivity {
             } else {
                 HomeRankListFragment.getInstance("等级", mRankList).show(getSupportFragmentManager(), HomeRankListFragment.TAG);
             }
-
         }
 
         @Override
@@ -260,8 +262,6 @@ public class MainActivity extends BaseActivity {
                 result.getExp()+"经验");
     }
 
-
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onStart() {
@@ -282,7 +282,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     private void checkLogin() {
         Log.i(TAG, "初始化连接一次: ");
         if (mDbUserBean == null) {
@@ -293,25 +292,8 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(this, "用户账号异常", Toast.LENGTH_SHORT).show();
             return;
         }
+        isLogin=true;
         SdkApi.getInstance().sdkLogin(mDbUserBean.getUid(), mDbUserBean.getToken());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i(TAG, "onPause: ");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i(TAG, "onStop: ");
     }
 
     @Override
@@ -329,14 +311,14 @@ public class MainActivity extends BaseActivity {
             mSignsPresenter.detachPresenter();
             mSignsPresenter=null;
         }
-
+        if (isLogin) {
+            SdkApi.getInstance().sdkExit();
+        }
         super.onDestroy();
-//        KaChatApplication.getInstance().stop();
     }
 
     //记录用户首次点击返回键的时间
     private long firstTime = 0;
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -344,7 +326,6 @@ public class MainActivity extends BaseActivity {
                 Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
                 firstTime = System.currentTimeMillis();
             } else {
-                SdkApi.getInstance().sdkExit();
                 System.exit(0);
             }
             return true;

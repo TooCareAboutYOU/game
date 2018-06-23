@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -56,7 +57,7 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.acTv_Timer)
     AppCompatTextView mAcTvTimer;
 
-    private String mobile = DaoQuery.queryUserData().getMobile();
+    private String mobile = Config.getMobile();
 
     CountDownTimer mTimer = new CountDownTimer(60 * 1000, 1000) {
         @SuppressLint("SetTextI18n")
