@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/icon_me_bg">
+    android:background="@drawable/icon_app_bg_dark">
     <!--返回、编辑-->
     <include layout="@layout/base_toolbar" />
 
@@ -81,7 +81,7 @@
                 android:textSize="14sp" />
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/progressBar_Level"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                style="@android:style/Widget.ProgressBar.Horizontal"
                 android:layout_width="114dp"
                 android:layout_height="10dp"
                 android:layout_marginStart="10dp"
@@ -108,7 +108,7 @@
                 android:layout_gravity="center_vertical"/>
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/progressBar_Sport"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                style="@android:style/Widget.ProgressBar.Horizontal"
                 android:layout_width="114dp"
                 android:layout_height="10dp"
                 android:layout_marginStart="10dp"

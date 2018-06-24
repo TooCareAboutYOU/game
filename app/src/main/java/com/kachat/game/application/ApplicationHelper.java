@@ -111,6 +111,7 @@ public class ApplicationHelper {
             @Override
             public void onGameMessage(String s) {
                 Log.i(TAG, "onGameMessage: "+s);
+                // {"type":"leave","data":{},"game":"hexTris"}
                 EventBus.getDefault().post(new DNGameEventMessage(s,DNGameEventMessage.DNGameEvent.GAME_MESSAGE));
             }
 

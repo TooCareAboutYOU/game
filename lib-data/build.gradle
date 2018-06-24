@@ -42,11 +42,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-//    implementation project(':network')
+    //    implementation project(':network')
     api 'org.greenrobot:greendao:3.2.2'
     api 'org.greenrobot:greendao-generator:3.2.2'
     api 'net.zetetic:android-database-sqlcipher:3.5.9'
-
     api 'io.reactivex:rxjava:1.3.0'
     api 'io.reactivex:rxandroid:1.2.1'
     api 'com.squareup.okio:okio:1.14.0'
@@ -67,18 +66,20 @@ dependencies {
     api 'com.blankj:utilcode:1.10.0'
     api 'com.orhanobut:logger:1.15'
     api 'com.android.support:multidex:1.0.3'
-//    implementation 'me.panpf:sketch:2.6.1' // 'me.panpf:sketch:$sketch_version'
+    //    implementation 'me.panpf:sketch:2.6.1' // 'me.panpf:sketch:$sketch_version'
     //内存检测
     //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     //    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     api 'com.orhanobut:logger:1.15'
     api 'com.github.lzyzsd:jsbridge:1.0.4'
-//    implementation 'com.blankj:utilcode:1.10.0'
-    api 'com.youth.banner:banner:1.4.10'// https://github.com/youth5201314/banner
+    //    implementation 'com.blankj:utilcode:1.10.0'
+    api 'com.youth.banner:banner:1.4.10'
+    // https://github.com/youth5201314/banner
     api 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     //顶部导航栏  https://github.com/H07000223/FlycoTabLayout
     api 'cn.lemon:RefreshRecyclerView:1.4.1'
     //  https://github.com/xinzhazha/RecyclerView
     api 'com.gyf.barlibrary:barlibrary:2.3.0'
     //     https://github.com/gyf-dev/ImmersionBar
+    api 'com.google.code.gson:gson:2.8.2'
 }

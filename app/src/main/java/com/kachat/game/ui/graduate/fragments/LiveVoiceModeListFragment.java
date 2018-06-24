@@ -12,7 +12,11 @@ import android.view.ViewGroup;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.model.Live2DModel;
+import com.kachat.game.ui.graduate.GraduateSchoolActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +38,6 @@ public class LiveVoiceModeListFragment extends BaseFragment {
         @SuppressLint("StaticFieldLeak")
         private static final LiveVoiceModeListFragment instance = new LiveVoiceModeListFragment();
     }
-
-    public interface OnSwitchListener {
-        void onLiveVoiceEvent(String fileName);
-    }
-
-    private OnSwitchListener mSwitchListener=null;
-    public void setOnSwitchListener(OnSwitchListener listener) {
-        this.mSwitchListener = listener;
-    }
-
 
     @Override
     public int onSetResourceLayout() {
@@ -85,9 +79,9 @@ public class LiveVoiceModeListFragment extends BaseFragment {
             }
 
             holder.itemView.setOnClickListener(v -> {
-                if (mSwitchListener != null) {
-                    mSwitchListener.onLiveVoiceEvent(mList.get(position).getName());
-                }
+
+                EventBus.getDefault().post(new PublicEventMessage.OnGraduateEvent(GraduateSchoolActivity.LAYOUT_VOICE,mList.get(position).getName()));
+
                 for (int i = 0; i < mList.size(); i++) {
                     if (i == position) {
                         mList.get(i).setFlag(true);
@@ -119,9 +113,6 @@ public class LiveVoiceModeListFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        if (mSwitchListener != null) {
-            mSwitchListener=null;
-        }
 
         if (mList!= null) {
             mList.clear();

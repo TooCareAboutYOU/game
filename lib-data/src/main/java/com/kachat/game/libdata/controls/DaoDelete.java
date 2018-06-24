@@ -1,8 +1,10 @@
 package com.kachat.game.libdata.controls;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kachat.game.libdata.GreenDaoHelper;
+import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 
 /**
  * Created by admin on 2018/3/13.
@@ -41,20 +43,34 @@ public class DaoDelete {
 
     public static boolean deleteUserAll(){
         synchronized (DaoDelete.class) {
-            int sizebefore = DaoQuery.queryUserListSize();
-            if (sizebefore > 0) {
-                Log.i(TAG, "deleteUserAll: 清空");
+            int sizeUser = DaoQuery.queryUserListSize();
+            if (sizeUser > 0) {
+                Log.i(TAG, "delete User: 不为清空");
                 GreenDaoHelper.getInstance().writeUser().deleteAll();
-            } else {
-                Log.i(TAG, "deleteUserAll: 已经为空");
-                return true;
             }
-            int sizeAfter = DaoQuery.queryUserListSize();
-            if (sizeAfter == 0) {
-                Log.i(TAG, "deleteUserAll: 清空成功");
-                return true;
+            Log.i(TAG, "User 数据表已经为空");
+            return true;
+        }
+    }
+
+    public static boolean deleteLiveModelAll(){
+        synchronized (DaoDelete.class) {
+            int sizeLiveModel = DaoQuery.queryListModelListSize();
+
+            if (sizeLiveModel > 0) {
+                Log.i(TAG, "delete LiveModel: 不为清空");
+                GreenDaoHelper.getInstance().writeLive2DModel().deleteAll();
             }
-            return false;
+
+            Log.i(TAG, "LiveModel 数据库已经为空");
+            return true;
+        }
+    }
+
+    public static boolean deleteModelByKey(long key){
+        synchronized (DaoDelete.class) {
+            GreenDaoHelper.getInstance().writeLive2DModel().deleteByKey(key);
+            return true;
         }
     }
 

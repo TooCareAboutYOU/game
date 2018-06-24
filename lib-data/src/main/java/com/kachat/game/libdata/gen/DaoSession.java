@@ -8,9 +8,11 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.dbmodel.DbLoginBean;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 
+import com.kachat.game.libdata.gen.DbLive2DBeanDao;
 import com.kachat.game.libdata.gen.DbLoginBeanDao;
 import com.kachat.game.libdata.gen.DbUserBeanDao;
 
@@ -23,9 +25,11 @@ import com.kachat.game.libdata.gen.DbUserBeanDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig dbLive2DBeanDaoConfig;
     private final DaoConfig dbLoginBeanDaoConfig;
     private final DaoConfig dbUserBeanDaoConfig;
 
+    private final DbLive2DBeanDao dbLive2DBeanDao;
     private final DbLoginBeanDao dbLoginBeanDao;
     private final DbUserBeanDao dbUserBeanDao;
 
@@ -33,22 +37,32 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
+        dbLive2DBeanDaoConfig = daoConfigMap.get(DbLive2DBeanDao.class).clone();
+        dbLive2DBeanDaoConfig.initIdentityScope(type);
+
         dbLoginBeanDaoConfig = daoConfigMap.get(DbLoginBeanDao.class).clone();
         dbLoginBeanDaoConfig.initIdentityScope(type);
 
         dbUserBeanDaoConfig = daoConfigMap.get(DbUserBeanDao.class).clone();
         dbUserBeanDaoConfig.initIdentityScope(type);
 
+        dbLive2DBeanDao = new DbLive2DBeanDao(dbLive2DBeanDaoConfig, this);
         dbLoginBeanDao = new DbLoginBeanDao(dbLoginBeanDaoConfig, this);
         dbUserBeanDao = new DbUserBeanDao(dbUserBeanDaoConfig, this);
 
+        registerDao(DbLive2DBean.class, dbLive2DBeanDao);
         registerDao(DbLoginBean.class, dbLoginBeanDao);
         registerDao(DbUserBean.class, dbUserBeanDao);
     }
     
     public void clear() {
+        dbLive2DBeanDaoConfig.clearIdentityScope();
         dbLoginBeanDaoConfig.clearIdentityScope();
         dbUserBeanDaoConfig.clearIdentityScope();
+    }
+
+    public DbLive2DBeanDao getDbLive2DBeanDao() {
+        return dbLive2DBeanDao;
     }
 
     public DbLoginBeanDao getDbLoginBeanDao() {

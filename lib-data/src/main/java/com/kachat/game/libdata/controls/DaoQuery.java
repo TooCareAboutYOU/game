@@ -1,13 +1,17 @@
 package com.kachat.game.libdata.controls;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kachat.game.libdata.GreenDaoHelper;
+import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.dbmodel.DbLoginBean;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
+import com.kachat.game.libdata.gen.DbLive2DBeanDao;
 import com.kachat.game.libdata.gen.DbUserBeanDao;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by admin on 2018/3/12.
@@ -16,24 +20,6 @@ import java.util.List;
 public class DaoQuery {
 
     private static final String TAG = "DaoQuery";
-
-    //登录状态
-//    public static boolean queryLoginState() {
-//        synchronized (DaoQuery.class) {
-//            List<DbLoginBean> userBeans = GreenDaoHelper.getInstance().writeLogin().queryBuilder().list();
-//            if (userBeans != null && userBeans.size() == 1) {
-//                return userBeans.get(0).getIsLogin();
-//            }
-//            return false;
-//        }
-//    }
-//
-//    public static int queryLoginListSize() {
-//        synchronized (DaoQuery.class) {
-//            return GreenDaoHelper.getInstance().writeLogin().queryBuilder().list().size();
-//        }
-//    }
-
 
     public static DbUserBean queryUserData(String mobile) {
         synchronized (DaoQuery.class) {
@@ -66,36 +52,36 @@ public class DaoQuery {
         }
     }
 
-    //    /**
-//     * @param uid
-//     * @return
-//     */
-//    public static List<DbUserBean> queryUserListByUid(int uid){
-//        synchronized (DaoQuery.class) {
-//            List<UserBean> userBeans = GreenDaoHelper.getInstance().writeUser().queryBuilder().where(UserBeanDao.Properties.Uid.lt(uid)).list();
-//            Log.i(TAG, "条数: " + userBeans.size());
-//            if (userBeans != null && userBeans.size() > 0) {
-//                for (UserBean bean : userBeans) {
-//                    Log.i(TAG, "数据: " + bean.toString());
-//                }
-//                return userBeans;
-//            }
-//            return null;
-//        }
-//    }
-//
-//
-//    public static List<UserBean> queryUserlist(){
-//        synchronized (DaoQuery.class) {
-//            List<UserBean> userBeans = GreenDaoHelper.getInstance().writeUser().queryBuilder().list();
-//            Log.i(TAG, "条数: " + userBeans.size());
-//            if (userBeans != null && userBeans.size() > 0) {
-//                for (UserBean bean : userBeans) {
-//                    Log.i(TAG, "数据: " + bean.toString());
-//                }
-//                return userBeans;
-//            }
-//            return null;
-//        }
-//    }
+
+    /************************************Live2d 模型******************************************/
+
+    public static List<DbLive2DBean> queryModelListData(){
+        synchronized (DaoQuery.class) {
+            List<DbLive2DBean> dbLive2DBeanList = GreenDaoHelper.getInstance().writeLive2DModel().queryBuilder().list();
+            if (dbLive2DBeanList != null && dbLive2DBeanList.size() > 0) {
+               return dbLive2DBeanList;
+            }
+            return null;
+        }
+    }
+
+    public static long queryGetModelId(String fileName){
+        synchronized (DaoQuery.class) {
+            if (TextUtils.isEmpty(fileName)) {
+                throw new NullPointerException("the fileName is null");
+            }
+            DbLive2DBean bean = GreenDaoHelper.getInstance().writeLive2DModel().queryBuilder()
+                    .where(DbLive2DBeanDao.Properties.LiveFileName.eq(fileName)).build().unique();
+            if (bean != null) {
+                return bean.getId();
+            }
+            return -1;
+        }
+    }
+
+    public static int queryListModelListSize() {
+        synchronized (DaoQuery.class) {
+            return GreenDaoHelper.getInstance().writeLive2DModel().queryBuilder().list().size();
+        }
+    }
 }

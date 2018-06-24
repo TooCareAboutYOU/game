@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="150dp"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary">
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/sdv_img"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@mipmap/ic_launcher"/>
+            android:layout_height="match_parent">
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/sdv_mark"
                 android:layout_width="23dp"
                 android:layout_height="30dp"
                 android:scaleType="fitXY"
-                android:background="@mipmap/ic_launcher"
+                android:background="@drawable/icon_game_hint"
                 app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="20dp"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/sdv_TimeLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                app:layout_constraintRight_toRightOf="parent" />
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/sdv_Start"
                 android:layout_width="90dp"
@@ -28,8 +32,8 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="5dp"
                 android:scaleType="fitXY"
-                android:background="@mipmap/ic_launcher"
+                android:background="@drawable/icon_game_start"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.LinearLayoutCompat>
+</FrameLayout>

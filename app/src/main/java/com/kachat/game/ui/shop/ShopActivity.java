@@ -91,10 +91,8 @@ public class ShopActivity extends BaseActivity {
     protected void onInitView() {
         getToolBarTitle().setTextColor(Color.BLACK);
         getToolBarBack().setOnClickListener(v -> finish());
-        getToolbarMenu().setImageResource(R.drawable.icon_recharge);
-        getToolbarMenu().setOnClickListener(v -> {
-
-        });
+//        getToolbarMenu().setImageResource(R.drawable.icon_recharge);
+//        getToolbarMenu().setOnClickListener(v -> { });
 
         mBuyGoodsPresenter=new BuyGoodsPresenter(new BuyCallBack());
         mPresenter = new CategoriesPresenter(new CategoriesCallBack());

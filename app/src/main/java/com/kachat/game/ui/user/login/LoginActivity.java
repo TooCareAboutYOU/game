@@ -8,11 +8,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.services.NetConnectService;
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -22,12 +24,14 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.CaptchaPresenter;
 import com.kachat.game.ui.user.register.RegisterActivity;
 import com.kachat.game.utils.MyUtils;
+import com.kachat.game.utils.OnClickListener;
 
 import butterknife.BindView;
 
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String TAG = "LoginActivity";
     private static FragmentTransaction mTransaction;
 
     public static void newInstance(Context context){
@@ -55,10 +59,10 @@ public class LoginActivity extends BaseActivity {
     @SuppressLint("CommitTransaction")
     @Override
     protected void onInitView() {
-        DaoDelete.deleteUserAll();
-
         mCaptchaPresenter = new CaptchaPresenter(new CheckAccount());
-        findViewById(R.id.sdv_go).setOnClickListener(v-> Check());
+        findViewById(R.id.sdv_go).setOnClickListener(v-> {
+            Check();
+        });
     }
 
     @Override
@@ -94,7 +98,6 @@ public class LoginActivity extends BaseActivity {
     private class CheckAccount implements OnPresenterListeners.OnViewListener<GetCaptchaBean> {
         @Override
         public void onSuccess(GetCaptchaBean result) {  //不存在,发送验证码
-
             Toast("验证码：" + result.getResult().getCaptcha());
             if (result.getResult() != null) {
                 Config.setMobile(mobile);
@@ -105,23 +108,25 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                if (errorCode == CodeType.CODE_RESPONSE_INPUT_PWD) {  //  已注册,输入密码登录
-                    mClContainer.setBackgroundResource(R.drawable.img_bg_login_ok);
-                    Config.setMobile(mobile);
-                    CheckPwdActivity.newInstance(LoginActivity.this);
-                    finish();
-                }else {
-                    mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
-                    Toast(error.getToast());
-                }
+            Log.i(TAG, "onFailed: "+error.toString());
+
+            if (errorCode == CodeType.CODE_RESPONSE_INPUT_PWD) {  //  已注册,输入密码登录
+                mClContainer.setBackgroundResource(R.drawable.img_bg_login_ok);
+                Config.setMobile(mobile);
+                CheckPwdActivity.newInstance(LoginActivity.this);
+                finish();
+            }else {
+                mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+                Toast(error.getToast());
             }
+
         }
 
         @Override
         public void onError(Throwable e) {
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
             if (e != null) {
+                Log.i(TAG, "onError: "+e.getMessage());
                 Toast(e.getMessage());
             }
         }
@@ -140,7 +145,6 @@ public class LoginActivity extends BaseActivity {
             mCaptchaPresenter = null;
         }
         super.onDestroy();
-
     }
 
 

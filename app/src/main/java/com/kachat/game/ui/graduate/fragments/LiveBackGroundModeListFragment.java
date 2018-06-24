@@ -12,7 +12,11 @@ import android.view.ViewGroup;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.model.Live2DModel;
+import com.kachat.game.ui.graduate.GraduateSchoolActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +38,6 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
         @SuppressLint("StaticFieldLeak")
         private static final LiveBackGroundModeListFragment instance = new LiveBackGroundModeListFragment();
     }
-
-    public interface OnSwitchListener {
-        void onLiveBackGroundEvent(String fileName);
-    }
-    private OnSwitchListener mSwitchListener=null;
-    public void setOnSwitchListener(OnSwitchListener listener) {
-        this.mSwitchListener = listener;
-    }
-
 
     @Override
     public int onSetResourceLayout() {
@@ -84,9 +79,8 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
             }
 
             holder.itemView.setOnClickListener(v -> {
-                if (mSwitchListener != null) {
-                    mSwitchListener.onLiveBackGroundEvent(mList.get(position).getName());
-                }
+                EventBus.getDefault().post(new PublicEventMessage.OnGraduateEvent(GraduateSchoolActivity.LAYOUT_BACKGROUND,mList.get(position).getName()));
+
                 for (int i = 0; i < mList.size(); i++) {
                     if (i == position) {
                         mList.get(i).setFlag(true);
@@ -118,10 +112,6 @@ public class LiveBackGroundModeListFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        if (mSwitchListener != null) {
-            mSwitchListener=null;
-        }
-
         if (mList!= null) {
             mList.clear();
             mList=null;

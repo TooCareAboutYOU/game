@@ -15,13 +15,17 @@ import android.widget.RelativeLayout;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.LivesPresenter;
 import com.kachat.game.model.Live2DModel;
+import com.kachat.game.ui.graduate.GraduateSchoolActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +56,6 @@ public class LivePersonModeListFragment extends BaseFragment {
     private static class Live2DModeListFragmentHolder {
         @SuppressLint("StaticFieldLeak")
         private static final LivePersonModeListFragment instance = new LivePersonModeListFragment();
-    }
-
-    public interface OnSwitchListener {
-        void onLivePersonEvent(String fileName);
-    }
-
-    private OnSwitchListener mSwitchListener = null;
-
-    public void setOnSwitchListener(OnSwitchListener listener) {
-        this.mSwitchListener = listener;
     }
 
     @Override
@@ -148,12 +142,7 @@ public class LivePersonModeListFragment extends BaseFragment {
                     AlterDialogBuilder dialogBuilder = new AlterDialogBuilder(Objects.requireNonNull(getContext()), new DialogTextView(getContext(), "碎片不足!"));
                     dialogBuilder.getRootSure().setOnClickListener(v1 -> dialogBuilder.dismiss());
                 } else {
-                    if (mSwitchListener != null) {
-                        if (TextUtils.isEmpty(mListLocal.get(position).getName())) {
-                            throw new NullPointerException("position =" + position + ",the Figures mask is null");
-                        }
-                        mSwitchListener.onLivePersonEvent(mListLocal.get(position).getName());
-                    }
+                    EventBus.getDefault().post(new PublicEventMessage.OnGraduateEvent(GraduateSchoolActivity.LAYOUT_FIGURES_MASK,mListLocal.get(position).getName()));
                 }
 
                 for (int i = 0; i < mListLocal.size(); i++) {

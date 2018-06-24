@@ -16,37 +16,13 @@ public class KaChatApplication extends MultiDexApplication {
 
     private static KaChatApplication instance;
 
-    public static Intent intent;
-
     @Override
     public void onCreate() {
         super.onCreate();
         instance=this;
         ApplicationHelper.init(this);
-//        start();
-//        initLeakCanary();
     }
 
     public static synchronized KaChatApplication getInstance(){ return instance; }
-
-    private void start(){
-        startService(new Intent(this,NetConnectService.class));
-    }
-
-    public void stop(){
-        stopService(intent);
-    }
-
-
-//    private RefWatcher mRefWatcher;
-//    public static RefWatcher getRefWatcher(Context context){
-//        KaChatApplication application= (KaChatApplication) context.getApplicationContext();
-//        return application.mRefWatcher;
-//    }
-//
-//    private void initLeakCanary(){
-//        mRefWatcher=LeakCanary.install(instance);
-//
-//    }
 
 }

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.kachat.game.libdata.gen.DaoMaster;
 import com.kachat.game.libdata.gen.DaoSession;
+import com.kachat.game.libdata.gen.DbLive2DBeanDao;
 import com.kachat.game.libdata.gen.DbLoginBeanDao;
 import com.kachat.game.libdata.gen.DbUserBeanDao;
 
@@ -105,5 +106,27 @@ public class GreenDaoHelper {
         return null;
     }
 
+
+    /****************************************** 用户模型 *******************************************************/
+
+    public DbLive2DBeanDao writeLive2DModel(){
+        sDatabase=sHelper.getWritableDb();
+        sDaoMaster=new DaoMaster(sDatabase);
+        sDaoSession=sDaoMaster.newSession();
+        if (sDaoSession.getDbLive2DBeanDao() != null) {
+            return sDaoSession.getDbLive2DBeanDao();
+        }
+        return null;
+    }
+
+    public DbLive2DBeanDao readLive2DModel(){
+        sDatabase=sHelper.getReadableDb();
+        sDaoMaster=new DaoMaster(sDatabase);
+        sDaoSession=sDaoMaster.newSession();
+        if (sDaoSession.getDbLive2DBeanDao() != null) {
+            return sDaoSession.getDbLive2DBeanDao();
+        }
+        return null;
+    }
 
 }

@@ -25,11 +25,13 @@
             android:textSize="14sp"
             android:hint="请输入新密码"/>
 
-        <android.support.v7.widget.AppCompatImageView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:layout_marginTop="30.4dp"
-            android:src="@mipmap/ic_launcher"
+            android:background="@drawable/selector_btn_long"
+            android:gravity="center"
+            android:text="完成"
             android:scaleType="fitXY"
             app:layout_constraintTop_toBottomOf="@+id/acEt_NewPassWord"/>
         

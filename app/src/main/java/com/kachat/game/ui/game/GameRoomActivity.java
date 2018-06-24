@@ -22,14 +22,18 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
+
+import com.alibaba.fastjson.JSON;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
 import com.github.lzyzsd.jsbridge.DefaultHandler;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.base.videos.SdkApi;
+import com.kachat.game.SdkApi;
 import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,15 +51,19 @@ public class GameRoomActivity extends BaseActivity {
     public static final String Html_Url = "html_url";
     public static final String GAME_TYPE="game_type";
 
+    @BindView(R.id.rl_Loading)
+    RelativeLayout loadingView;
+    @BindView(R.id.sdv_Back)
+    SimpleDraweeView mSdvBack;
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
-
     @BindView(R.id.bridgeWebView)
     BridgeWebView mBridgeWebView;
     @BindView(R.id.fl_local)
     FrameLayout flLocalView;
     @BindView(R.id.fl_remote)
     FrameLayout flRemoteView;
+
 
     public static void newInstance(Context context, Bundle bundle) {
         Intent intent = new Intent(context, GameRoomActivity.class);
@@ -66,6 +74,8 @@ public class GameRoomActivity extends BaseActivity {
     }
 
     private DbUserBean mDbUserBean = DaoQuery.queryUserData();
+    private int type;
+    private boolean isLoad=false;
 
     @Override
     protected int onSetResourceLayout() {
@@ -88,11 +98,12 @@ public class GameRoomActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
+        mSdvBack.setOnClickListener(v -> finish());
         initGameHtml();
     }
 
     private void initGameHtml() {
-        SdkApi.getInstance().loadGame(this, mBridgeWebView);
+        SdkApi.getInstance().loadGame(mBridgeWebView);
         SdkApi.getInstance().getBridgeWebView().setDefaultHandler(new DefaultHandler());
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
@@ -108,24 +119,28 @@ public class GameRoomActivity extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
         String url = Objects.requireNonNull(bundle).getString(Html_Url);
-        int type=bundle.getInt(GAME_TYPE);
+        type=bundle.getInt(GAME_TYPE);
+
+        Log.i(TAG, "initGameHtml: "+url+"\t\t"+type);
 
         if (TextUtils.isEmpty(url)) {
-            Log.i(TAG, "游戏地址为空: ");
+            Toast("游戏地址为空!");
             this.finish();
         }
+
+
+        SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadGame(url);
 
-        SdkApi.getInstance().create();
+    }
 
+    private void loadVideo(){
+        isLoad=true;
         SdkApi.getInstance().loadLocalView(this, flLocalView);
-
         SdkApi.getInstance().loadRemoteView(this, flRemoteView);
-
         SdkApi.getInstance().enableVideoView();
-
-        SdkApi.getInstance().loadFaceRigItf("", "yuLu", "", "bg_1.png");
-
+        DbLive2DBean dbLive2DBean= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
+        SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),type);//
         SdkApi.getInstance().startGameMatch(type);
     }
 
@@ -166,7 +181,7 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case JOIN_SUCCESS:
                 Log.i(TAG, "onEvent: JOIN_SUCCESS");
-                //Toast.makeText(this, "JOIN_SUCCESS", //Toast.LENGTH_SHORT).show();
+                loadingView.setVisibility(View.GONE);
                 break;
             case JOIN_FAILED:
                 Log.i(TAG, "onEvent: JOIN_FAILED");
@@ -179,6 +194,14 @@ public class GameRoomActivity extends BaseActivity {
             case GAME_MESSAGE:
                 Log.i(TAG, "onEvent: GAME_MESSAGE");
                 //Toast.makeText(this, "GAME_MESSAGE", //Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isEmpty(event.getString())) {
+                    DNGameEventMessage.OnGameMessageBean bean= JSON.parseObject(event.getString(),DNGameEventMessage.OnGameMessageBean.class);
+                    if (!TextUtils.isEmpty(bean.getType()) && bean.getType().equals("leave")) {
+                        if (flRemoteView.getChildCount() > 0) {
+                            flRemoteView.removeAllViews();
+                        }
+                    }
+                }
                 signalWebView(event.getString());
                 break;
             case GAME_STAT:
@@ -250,6 +273,9 @@ public class GameRoomActivity extends BaseActivity {
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             Log.i(TAG, "onProgressChanged: " + newProgress);
+            if (newProgress == 100) {
+                loadVideo();
+            }
         }
 
         @Override
@@ -445,7 +471,8 @@ public class GameRoomActivity extends BaseActivity {
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
 
-        SdkApi.getInstance().destroy(true);
+        SdkApi.getInstance().destroy(isLoad);
+
 
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();
@@ -453,6 +480,7 @@ public class GameRoomActivity extends BaseActivity {
         if (flRemoteView.getChildCount() > 0) {
             flRemoteView.removeAllViews();
         }
+
         super.onDestroy();
     }
 

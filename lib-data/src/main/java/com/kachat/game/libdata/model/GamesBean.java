@@ -42,6 +42,10 @@ public class GamesBean extends BaseBeans{
             private int price;
             private int category;
             private int index;
+            private int image; //图片
+            private int imgStart; //开始游戏
+            private int imgHint;  //说明
+            private int imgTimeLimit;  //显示
 
             public String getName() {
                 return name;
@@ -75,10 +79,43 @@ public class GamesBean extends BaseBeans{
                 this.index = index;
             }
 
+            public int getImage() {
+                return image;
+            }
+
+            public void setImage(int image) {
+                this.image = image;
+            }
+
+            public int getImgStart() {
+                return imgStart;
+            }
+
+            public void setImgStart(int imgStart) {
+                this.imgStart = imgStart;
+            }
+
+            public int getImgHint() {
+                return imgHint;
+            }
+
+            public void setImgHint(int imgHint) {
+                this.imgHint = imgHint;
+            }
+
+            public int getImgTimeLimit() {
+                return imgTimeLimit;
+            }
+
+            public void setImgTimeLimit(int imgTimeLimit) {
+                this.imgTimeLimit = imgTimeLimit;
+            }
+
             @Override
             public String toString() {
                 return JSON.toJSONString(this);
             }
+
         }
 
         @Override

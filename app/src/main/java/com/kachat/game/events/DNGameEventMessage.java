@@ -103,4 +103,49 @@ public class DNGameEventMessage {
     public String toString() {
         return JSON.toJSONString(this);
     }
+
+    public static class OnGameMessageBean{
+
+        /**
+         * type : leave
+         * data : {}
+         * game : hexTris
+         */
+
+        private String type;
+        private DataBean data;
+        private String game;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public DataBean getData() {
+            return data;
+        }
+
+        public void setData(DataBean data) {
+            this.data = data;
+        }
+
+        public String getGame() {
+            return game;
+        }
+
+        public void setGame(String game) {
+            this.game = game;
+        }
+
+        public static class DataBean {
+        }
+
+        @Override
+        public String toString() {
+            return JSON.toJSONString(this);
+        }
+    }
 }

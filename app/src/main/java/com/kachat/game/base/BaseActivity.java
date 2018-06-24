@@ -27,6 +27,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.gyf.barlibrary.ImmersionBar;
 import com.kachat.game.Config;
 import com.kachat.game.R;
+import com.kachat.game.application.KaChatApplication;
+import com.kachat.game.events.services.NetConnectService;
 import com.kachat.game.utils.manager.ActivityManager;
 import com.orhanobut.logger.Logger;
 
@@ -71,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     private Unbinder unbinder;
+    private Intent mIntent=null;
 
     @SuppressLint({"RestrictedApi", "InflateParams"})
     @Override
@@ -106,6 +109,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
 
+//        mIntent=new Intent(this,NetConnectService.class);
+//        startService(mIntent);
 
         onInitView();
         initImmersionBar();
@@ -117,6 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (unbinder != null) {
             unbinder.unbind();
         }
+//        stopService(mIntent);
 
         if (onSetStatusBar() && mImmersionBar != null) {
             mImmersionBar.destroy();

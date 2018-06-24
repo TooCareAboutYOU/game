@@ -61,7 +61,7 @@ public class PersonInfoActivity extends BaseActivity {
     @BindView(R.id.acEt_PassWord)
     AppCompatEditText mAcEtPassWord;
     @BindView(R.id.acIv_Register)
-    AppCompatImageView mAcIvRegister;
+    AppCompatTextView mAcIvRegister;
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
 
@@ -109,7 +109,7 @@ public class PersonInfoActivity extends BaseActivity {
 
         mDatePicker.setOnClickListener(v -> showWheelView());
 
-        findViewById(R.id.acIv_Register).setOnClickListener(v -> {
+        mAcIvRegister.setOnClickListener(v -> {
             String name = mAcEtNewNickName.getText().toString();
             String pwd = mAcEtPassWord.getText().toString();
             Log.i(TAG, "onMultiClick: " + name + "\t\t" + pwd);

@@ -12,6 +12,9 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.kachat.game.Config;
 import com.kachat.game.Constant;
+import com.kachat.game.application.KaChatApplication;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 
 import java.util.Objects;
 
@@ -50,16 +53,13 @@ public class NetConnectService extends Service {
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                         boolean newWorkState= NetworkUtils.isConnected();
                         if (newWorkState) {
-                            Toast.makeText(context, "网络连接", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "连接", Toast.LENGTH_SHORT).show();
                         }else {
-                            Toast.makeText(context, "网络断开", Toast.LENGTH_SHORT).show();
+//                            new AlterDialogBuilder(KaChatApplication.getInstance(),new DialogTextView(KaChatApplication.getInstance(),"网络已断开"));
+                            Toast.makeText(context, "数据连接已断开", Toast.LENGTH_SHORT).show();
                         }
                     break;
             }
-
         }
     }
-
-
-
 }

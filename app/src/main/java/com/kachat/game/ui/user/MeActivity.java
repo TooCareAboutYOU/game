@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.blankj.utilcode.util.AppUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
+import com.kachat.game.SdkApi;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
@@ -95,8 +96,8 @@ public class MeActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
-        getToolbarMenu().setBackgroundResource(R.drawable.icon_me_edit);
-        getToolbarMenu().setOnClickListener(v -> UserDialog(7,"编辑"));
+//        getToolbarMenu().setBackgroundResource(R.drawable.icon_me_edit);
+//        getToolbarMenu().setOnClickListener(v -> UserDialog(7,"编辑"));
         mList = new ArrayList<>();
         mList.add(new MenuBean(R.drawable.icon_me_daoju, "道具"));
         mList.add(new MenuBean(R.drawable.icon_me_friends, "邀请好友"));
@@ -124,7 +125,7 @@ public class MeActivity extends BaseActivity {
                 mSdvUserLogo.setBackgroundResource(R.drawable.icon_female_logo);
                 mSdvUserSex.setImageResource(R.drawable.icon_female);
             }
-            mAcTvUserAccountID.setText(dbUserBean.getNumber()+"");
+            mAcTvUserAccountID.setText("ID："+dbUserBean.getUid());
             mAcTvUserLevel.setText("LV"+dbUserBean.getLevel());
             mProgressBarLevel.setProgress(dbUserBean.getLevel());
             mAcTvUserDiamonds.setText("钻石:"+dbUserBean.getDiamond());
@@ -224,13 +225,14 @@ public class MeActivity extends BaseActivity {
                     if (DaoDelete.deleteUserAll()) {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
                         ActivityManager.getInstance().removeActivity("MainActivity");
+                        DaoDelete.deleteUserAll();
+                        DaoDelete.deleteLiveModelAll();
+                        SdkApi.getInstance().sdkExit();
                         LoginActivity.newInstance(MeActivity.this);
                         this.finish();
                     }
                     dialogBuilder.dismiss();
                 });
-
-
                 break;
             }
             case 7:{   //编辑用户信息

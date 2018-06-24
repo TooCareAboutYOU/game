@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.AlertDialogLayout;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -15,7 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -24,10 +29,15 @@ import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.model.GamesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.GameListPresenter;
+import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import butterknife.BindView;
 import cn.lemon.view.SpaceItemDecoration;
 
@@ -54,8 +64,6 @@ public class GameActivity extends BaseActivity {
     AppCompatTextView mAcTvUserSport;
     @BindView(R.id.acTv_UserGold)
     AppCompatTextView mAcTvUserGold;
-    @BindView(R.id.acTv_UserCharm)
-    AppCompatTextView mAcTvUserCharm;
     @BindView(R.id.rv_GameList)
     RecyclerView mRvGameList;
 
@@ -87,6 +95,13 @@ public class GameActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> this.finish());
+        getToolbarMenu().setImageResource(R.drawable.icon_ranklist);
+        SimpleDraweeView sdvView=findViewById(R.id.sdv_ToolBar_BaseMenu2);
+        sdvView.setImageResource(R.drawable.icon_hint);
+        sdvView.setOnClickListener(v -> {
+            new AlterDialogBuilder(this,"游戏规则",new DialogTextView(this,"dfds"));
+        });
+
         mList = new ArrayList<>();
         mAdapter = new GameListAdapter();
         manager = new LinearLayoutManager(this);
@@ -98,18 +113,24 @@ public class GameActivity extends BaseActivity {
         mPresenter = new GameListPresenter(new GameListCallBack());
     }
 
+    public void onShopClick(View v){  ShopActivity.newInstance(this);  }
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onStart() {
         super.onStart();
         DbUserBean dbUserBean = DaoQuery.queryUserData();
         if (dbUserBean != null) {
+            if (dbUserBean.getGender().equals("male")) {
+                mSdvUserLogo.setBackgroundResource(R.drawable.icon_male_logo);
+            } else {
+                mSdvUserLogo.setBackgroundResource(R.drawable.icon_female_logo);
+            }
             mAcTvUserName.setText(dbUserBean.getUsername());
             mAcTvUserLevel.setText("LV" + dbUserBean.getLevel() + "");
             mAcTvUserSport.setText(dbUserBean.getHp() + "");
             mAcTvUserDiamonds.setText(dbUserBean.getDiamond() + "");
             mAcTvUserGold.setText(dbUserBean.getGold() + "");
-            mAcTvUserCharm.setText(dbUserBean.getCharm() + "");
         }
 
         mPresenter.attachPresenter();
@@ -119,6 +140,32 @@ public class GameActivity extends BaseActivity {
         @Override
         public void onSuccess(GamesBean result) {
             if (result != null && result.getResult().getGames() != null && result.getResult().getGames().size() > 0) {
+                int size=result.getResult().getGames().size();
+                Log.i(TAG, "onSuccess: "+result.getResult().getGames().toString());
+                for (int i = 0; i < size; i++) {
+                    switch (result.getResult().getGames().get(i).getIndex()) {
+                        case 903: //娃娃机
+                            result.getResult().getGames().get(0).setImage(R.drawable.icon_game_bg_chat);
+                            result.getResult().getGames().get(0).setImgStart(R.drawable.icon_game_start);
+                            result.getResult().getGames().get(0).setImgTimeLimit(R.drawable.icon_game_slice);
+                            break;
+                        case 902: //六芒星
+                            result.getResult().getGames().get(1).setImage(R.drawable.icon_game_bg_fourytzx);
+                            result.getResult().getGames().get(1).setImgHint(R.drawable.icon_game_hint);
+                            result.getResult().getGames().get(1).setImgStart(R.drawable.icon_game_start);
+                            break;
+                        case 901://消灭星星
+                            result.getResult().getGames().get(2).setImage(R.drawable.icon_game_bg_star);
+                            result.getResult().getGames().get(2).setImgHint(R.drawable.icon_game_hint);
+                            result.getResult().getGames().get(2).setImgStart(R.drawable.icon_game_start);
+                            break;
+                        case 900:  //盖房子
+                            result.getResult().getGames().get(3).setImage(R.drawable.icon_game_bg_house);
+                            result.getResult().getGames().get(3).setImgHint(R.drawable.icon_game_hint);
+                            result.getResult().getGames().get(3).setImgStart(R.drawable.icon_game_start);
+                            break;
+                    }
+                }
                 mList.addAll(result.getResult().getGames());
                 mAdapter.notifyDataSetChanged();
             }
@@ -153,7 +200,30 @@ public class GameActivity extends BaseActivity {
                 new AlterDialogBuilder(GameActivity.this, "游戏说明", containerView);
             });
 
-            holder.itemView.setOnClickListener(v -> loadH5Game(position));
+
+
+            holder.sdvImg.setImageResource(mList.get(position).getImage());
+            holder.sdvMark.setImageResource(mList.get(position).getImgHint());
+            if (mList.get(position).getIndex() == 903) {
+                holder.sdvMark.setVisibility(View.GONE);
+                holder.sdvTimeLimit.setImageResource(mList.get(position).getImgTimeLimit());
+            }
+            holder.sdvStart.setImageResource(mList.get(position).getImgStart());
+
+
+            holder.sdvStart.setOnClickListener(v -> {
+                if (Config.getFirst() != 200) {
+                    new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
+
+                    return;
+                }
+                if (mList.get(position).getIndex() != 903) {
+//                    loadH5Game(mList.get(position).getIndex());
+                    loadGame(mList.get(position).getIndex());
+                }else {
+                    new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"限时游戏，暂未开放!")).hideRootSure();
+                }
+            });
         }
 
         @Override
@@ -162,23 +232,55 @@ public class GameActivity extends BaseActivity {
         }
 
         class GameViewHolder extends RecyclerView.ViewHolder {
-            SimpleDraweeView sdvImg, sdvMark, sdvStart;
+            SimpleDraweeView sdvImg, sdvMark,sdvTimeLimit, sdvStart;
 
             GameViewHolder(View itemView) {
                 super(itemView);
                 sdvImg = itemView.findViewById(R.id.sdv_img);
                 sdvMark = itemView.findViewById(R.id.sdv_mark);
+                sdvTimeLimit=itemView.findViewById(R.id.sdv_TimeLimit);
                 sdvStart = itemView.findViewById(R.id.sdv_Start);
             }
         }
     }
 
+    private void loadGame(int index){
+        int htmlNum=-1;
+        int matchType=-1;
+        switch (index) {
+            case 902: //六芒星
+                htmlNum=9004;
+                matchType=2;
+                break;
+            case 903: //娃娃机
+                htmlNum=-1;
+                matchType=-1;
+                break;
+            case 901://消灭星星
+                htmlNum=9003;
+                matchType=1;
+                break;
+            case 900:  //盖房子
+                htmlNum=9002;
+                matchType=0;
+                break;
+        }
+        if (htmlNum != -1) {
+            GameURL = "http://demo.e3webrtc.com:" + htmlNum;
+            Bundle bundle = new Bundle();
+            bundle.putString(GameRoomActivity.Html_Url, GameURL);
+            bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
+            GameRoomActivity.newInstance(GameActivity.this, bundle);
+//            parentDialog.dismiss();
+        }
+    }
 
-    private void loadH5Game(int pos) {
+
+    private void loadH5Game(int index) {
         @SuppressLint("InflateParams")
         View containerView = LayoutInflater.from(this).inflate(R.layout.dialog_find_friends_condition, null);
         AlterDialogBuilder parentDialog=new AlterDialogBuilder(this, "寻找你的伙伴", containerView);
-
+        parentDialog.hideRootSure();
         AppCompatTextView acTvSure = containerView.findViewById(R.id.acTv_sure);
         SwitchCompat switch1 = containerView.findViewById(R.id.switch_1);
         SimpleDraweeView sdvCondition1 = containerView.findViewById(R.id.sdv_Condition1);
@@ -213,6 +315,7 @@ public class GameActivity extends BaseActivity {
             @SuppressLint("InflateParams")
             View sexView = LayoutInflater.from(this).inflate(R.layout.dialog_matching_sex, null);
             AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, "性别匹配", sexView);
+            dialogBuilder.hideRootSure();
 
             AppCompatTextView sexSure = sexView.findViewById(R.id.acTv_sure);
             sexSure.setText("确定");
@@ -242,13 +345,34 @@ public class GameActivity extends BaseActivity {
         });
 
         acTvSure.setOnClickListener(v -> {
-            GameURL="http://demo.e3webrtc.com:900"+(pos+2);
-            Bundle bundle=new Bundle();
-            Log.e("GameRoomActivity", "loadH5Game: "+GameURL+"\t\t"+pos);
-            bundle.putString(GameRoomActivity.Html_Url,GameURL);
-            bundle.putInt(GameRoomActivity.GAME_TYPE,pos);
-            GameRoomActivity.newInstance(GameActivity.this,bundle);
-            parentDialog.dismiss();
+            int htmlNum=-1;
+            int matchType=-1;
+            switch (index) {
+                case 902: //六芒星
+                    htmlNum=9004;
+                    matchType=2;
+                    break;
+                case 903: //娃娃机
+                    htmlNum=-1;
+                    matchType=-1;
+                    break;
+                case 901://消灭星星
+                    htmlNum=9003;
+                    matchType=1;
+                    break;
+                case 900:  //盖房子
+                    htmlNum=9002;
+                    matchType=0;
+                    break;
+            }
+            if (htmlNum != -1) {
+                GameURL = "http://demo.e3webrtc.com:" + htmlNum;
+                Bundle bundle = new Bundle();
+                bundle.putString(GameRoomActivity.Html_Url, GameURL);
+                bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
+                GameRoomActivity.newInstance(GameActivity.this, bundle);
+                parentDialog.dismiss();
+            }
         });
     }
 
@@ -273,7 +397,7 @@ public class GameActivity extends BaseActivity {
             manager = null;
         }
         if (mAdapter != null) {
-            manager = null;
+            mAdapter = null;
         }
 
         super.onDestroy();

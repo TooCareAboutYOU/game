@@ -31,7 +31,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 
-public class ChatActivity extends BaseActivity implements LivePersonModeListFragment.OnSwitchListener{
+public class ChatActivity extends BaseActivity{
 
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, ChatActivity.class);
@@ -150,11 +150,9 @@ public class ChatActivity extends BaseActivity implements LivePersonModeListFrag
 
     @Override
     protected void onInitData(@Nullable Bundle savedInstanceState) {
-        LivePersonModeListFragment.getInstance().setOnSwitchListener(this);
     }
 
-    @Override
-    public void onLivePersonEvent(String fileName) {
+
 //        if (faceRigItf != null) {
 //            if (!TextUtils.isEmpty(fileName)) {
 //                faceRigItf.native_setLive2DModel("live2d/"+fileName, fileName);
@@ -204,15 +202,14 @@ public class ChatActivity extends BaseActivity implements LivePersonModeListFrag
 //        }else {
 //            throw new NullPointerException("the faceRigItf is null");
 //        }
-    }
 
     @Override
     protected void onDestroy() {
-        faceRigItf=null;
-        fullRenderProxy=null;
-        localSFView=null;
-        videoProcessorToCamera=null;
-        mClFullscreenView.removeView(localSFView);
+//        faceRigItf=null;
+//        fullRenderProxy=null;
+//        localSFView=null;
+//        videoProcessorToCamera=null;
+//        mClFullscreenView.removeView(localSFView);
 //        transaction.remove(mFragmentPeople);
 //        VAChatAPI.getInstance().stopPreview();
 //        VAChatAPI.getInstance().disconnect();

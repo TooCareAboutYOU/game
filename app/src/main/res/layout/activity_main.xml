@@ -1,147 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/icon_bg_light"
+    android:background="@drawable/icon_app_bg_light"
     tools:context=".ui.MainActivity">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_Home"
+    <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="58dp">
-        <android.support.v7.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="0dp"
-            android:paddingEnd="@dimen/padding_10dp"
-            android:orientation="horizontal">
-            <!--用户性别头像-->
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/sdv_UserLogo"
-                android:layout_width="58dp"
-                android:layout_height="58dp"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/icon_app_bg_light" >
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_Home"
+            android:layout_width="match_parent"
+            android:layout_height="58dp">
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginStart="@dimen/margin_5dp">
-                <!--顶部-->
+                android:paddingStart="0dp"
+                android:paddingEnd="@dimen/padding_10dp"
+                android:orientation="horizontal">
+                <!--用户性别头像-->
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/sdv_UserLogo"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"/>
+
                 <android.support.v7.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginStart="@dimen/margin_5dp">
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/acTv_UserName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@android:color/white"
-                        android:text="null"/>
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/acTv_UserLevel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/margin_5dp"
-                        android:textSize="14sp"
-                        android:textColor="@android:color/white"
-                        android:text="null"/>
-                    <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/sdv_RankingList"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/icon_ranklist"/>
-                    <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/sdv_SignIn"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="20dp"
-                        android:background="@drawable/icon_qiandao"/>
-                </android.support.v7.widget.LinearLayoutCompat>
-                <!--底部-->
-                <android.support.v7.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/margin_5dp">
+                    <!--顶部-->
+                    <android.support.v7.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="@dimen/margin_5dp">
+                        <android.support.v7.widget.AppCompatTextView
+                            android:id="@+id/acTv_UserName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="@android:color/white"
+                            android:text="null"/>
+                        <android.support.v7.widget.AppCompatTextView
+                            android:id="@+id/acTv_UserLevel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/margin_5dp"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/white"
+                            android:text="null"/>
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/sdv_RankingList"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/icon_ranklist"/>
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/sdv_SignIn"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginStart="20dp"
+                            android:background="@drawable/icon_qiandao"/>
+                    </android.support.v7.widget.LinearLayoutCompat>
+                    <!--底部-->
                     <android.support.v7.widget.LinearLayoutCompat
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorHalfTransparent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <!--体力-->
                         <android.support.v7.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/colorHalfTransparent"
                             android:orientation="horizontal">
-                            <com.facebook.drawee.view.SimpleDraweeView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:background="@drawable/icon_me_sports"/>
-                            <android.support.v7.widget.AppCompatTextView
-                                android:id="@+id/acTv_UserSport"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/margin_10dp"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/white"
-                                android:text="null"/>
+                            <!--体力-->
+                            <android.support.v7.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+                                <com.facebook.drawee.view.SimpleDraweeView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:background="@drawable/icon_me_sports"/>
+                                <android.support.v7.widget.AppCompatTextView
+                                    android:id="@+id/acTv_UserSport"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/margin_10dp"
+                                    android:textSize="12sp"
+                                    android:textColor="@android:color/white"
+                                    android:text="null"/>
+                            </android.support.v7.widget.LinearLayoutCompat>
+                            <!--金币-->
+                            <android.support.v7.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+                                <com.facebook.drawee.view.SimpleDraweeView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:background="@drawable/icon_me_golds"/>
+                                <android.support.v7.widget.AppCompatTextView
+                                    android:id="@+id/acTv_UserGold"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/margin_10dp"
+                                    android:textSize="12sp"
+                                    android:textColor="@android:color/white"
+                                    android:text="null"/>
+                            </android.support.v7.widget.LinearLayoutCompat>
+                            <!--钻石-->
+                            <android.support.v7.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+                                <com.facebook.drawee.view.SimpleDraweeView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:background="@drawable/icon_me_diamonds"/>
+                                <android.support.v7.widget.AppCompatTextView
+                                    android:id="@+id/acTv_UserDiamonds"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/margin_10dp"
+                                    android:textSize="12sp"
+                                    android:textColor="@android:color/white"
+                                    android:text="null"/>
+                            </android.support.v7.widget.LinearLayoutCompat>
                         </android.support.v7.widget.LinearLayoutCompat>
-                        <!--金币-->
-                        <android.support.v7.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <com.facebook.drawee.view.SimpleDraweeView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:background="@drawable/icon_me_golds"/>
-                            <android.support.v7.widget.AppCompatTextView
-                                android:id="@+id/acTv_UserGold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/margin_10dp"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/white"
-                                android:text="null"/>
-                        </android.support.v7.widget.LinearLayoutCompat>
-                        <!--钻石-->
-                        <android.support.v7.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <com.facebook.drawee.view.SimpleDraweeView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:background="@drawable/icon_me_diamonds"/>
-                            <android.support.v7.widget.AppCompatTextView
-                                android:id="@+id/acTv_UserDiamonds"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/margin_10dp"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/white"
-                                android:text="null"/>
-                        </android.support.v7.widget.LinearLayoutCompat>
+                        <!--商城-->
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/sdv_Shop"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:background="@drawable/icon_shop"/>
                     </android.support.v7.widget.LinearLayoutCompat>
-                    <!--商城-->
-                    <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/sdv_Shop"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/icon_shop"/>
+
                 </android.support.v7.widget.LinearLayoutCompat>
-
             </android.support.v7.widget.LinearLayoutCompat>
-        </android.support.v7.widget.LinearLayoutCompat>
-    </android.support.v7.widget.Toolbar>
+        </android.support.v7.widget.Toolbar>
 
-</android.support.v7.widget.LinearLayoutCompat>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onGameClick"
+            android:text="游戏"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSignClick"
+            android:text="研究院"/>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+</FrameLayout>

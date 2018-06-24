@@ -1,35 +1,49 @@
 package com.kachat.game.ui.graduate;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.TextUtils;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.RtcVideoProcess.FaceRigItf;
-import com.RtcVideoProcess.VideoProcessItf;
-import com.dnion.RenderProxy;
-import com.dnion.VAGameAPI;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.base.videos.SdkApi;
+import com.kachat.game.base.BaseFragment;
+import com.kachat.game.SdkApi;
+import com.kachat.game.events.PublicEventMessage;
+import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.libdata.model.ErrorBean;
+import com.kachat.game.libdata.model.LivesBean;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
+import com.kachat.game.libdata.mvp.presenters.LivesPresenter;
 import com.kachat.game.ui.graduate.fragments.LiveBackGroundModeListFragment;
 import com.kachat.game.ui.graduate.fragments.LivePersonModeListFragment;
 import com.kachat.game.ui.graduate.fragments.LiveVoiceModeListFragment;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
+import java.util.Objects;
+
 import butterknife.BindView;
 
-public class GraduateSchoolActivity extends BaseActivity implements LivePersonModeListFragment.OnSwitchListener,
-        LiveBackGroundModeListFragment.OnSwitchListener,
-        LiveVoiceModeListFragment.OnSwitchListener{
+public class GraduateSchoolActivity extends BaseActivity  {
 
     private static final String TAG = "GraduateSchoolActivity";
+    public static final int LAYOUT_FIGURES_MASK=0;
+    public static final int LAYOUT_ACCESSORY=1;
+    public static final int LAYOUT_VOICE=2;
+    public static final int LAYOUT_BACKGROUND=3;
 
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, GraduateSchoolActivity.class);
@@ -47,7 +61,7 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     @BindView(R.id.sdv_Left)
     SimpleDraweeView mSdvLeft;
     @BindView(R.id.fl_PropsList)   //素材容器
-    FrameLayout mFlPropsList;
+            FrameLayout mFlPropsList;
     @BindView(R.id.sdv_Right)
     SimpleDraweeView mSdvRight;
 
@@ -62,20 +76,19 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
     @BindView(R.id.rg_Tabs)
     RadioGroup mRgTabs;
 
-    private Fragment mFragmentPeople= LivePersonModeListFragment.getInstance();
-    private Fragment mFragmentVoice= LiveVoiceModeListFragment.getInstance();
-    private Fragment mFragmentBG= LiveBackGroundModeListFragment.getInstance();
-//    private VideoProcessItf videoProcessorToCamera=null;
-//    private FaceRigItf faceRigItf = null;
-//    private RenderProxy localProxy=null;
-    private String personPath="live2d/";
-    private String bgPath="livebg";
+    private LivesPresenter mLivesPresenter = null;
+    private String personPath = "live2d/";
+    private String bgPath = "livebg";
 
     @Override
-    protected int onSetResourceLayout() { return R.layout.activity_graduate_school; }
+    protected int onSetResourceLayout() {
+        return R.layout.activity_graduate_school;
+    }
 
     @Override
-    protected boolean onSetStatusBar() { return true; }
+    protected boolean onSetStatusBar() {
+        return true;
+    }
 
     @Override
     protected void initImmersionBar() {
@@ -87,89 +100,175 @@ public class GraduateSchoolActivity extends BaseActivity implements LivePersonMo
 
     @Override
     protected void onInitView() {
-        getToolBarBack().setOnClickListener(v->this.finish());
+        getToolBarBack().setOnClickListener(v -> this.finish());
         getToolbarMenu().setImageResource(R.drawable.icon_graduate_school);
-        getToolbarMenu().setOnClickListener(v -> {});
-
-        initVideo1("yuLu","bg_1.png");
-
+        getToolbarMenu().setOnClickListener(v -> {
+            boolean isSave=SdkApi.getInstance().save();
+            if (isSave) {
+                new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存成功!")).hideRootSure();
+            }else {
+                new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存失败!")).hideRootSure();
+            }
+        });
+        int size= DaoQuery.queryListModelListSize();
+        if (size == 0) {
+            mLivesPresenter = new LivesPresenter(new MaskCallBack());
+            mLivesPresenter.attachPresenter();
+        }else {
+            String fileName= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0).getLiveFileName();
+            String bgName= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0).getBgFileName();
+            initVideo1(fileName, bgName);
+        }
         initLive();
     }
 
-    private void initVideo1(String model,String bgImg) {
-        SdkApi.getInstance().create();
+    private void initVideo1(String model, String bgImg) {
+        SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadLocalView(this, mFlContainer);
         SdkApi.getInstance().enableVideoView();
-        SdkApi.getInstance().loadFaceRigItf(personPath+model, model, bgPath, bgImg);
-        SdkApi.getInstance().startGameMatch(0);
+        SdkApi.getInstance().loadFaceRigItf(personPath + model, model, bgPath, bgImg,-1);
+    }
+
+    private class MaskCallBack implements OnPresenterListeners.OnViewListener<LivesBean> {
+        @Override
+        public void onSuccess(LivesBean result) {
+            if (result.getResult() != null && result.getResult().getLives() != null && result.getResult().getLives().size() > 0) {
+                if (!TextUtils.isEmpty(result.getResult().getLives().get(0).getLive().getName())) {
+                    initVideo1(result.getResult().getLives().get(0).getLive().getName(), "bg_1.png");
+                }
+            }
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            if (error != null) {
+                Logger(error.getToast());
+                Toast(error.getToast());
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e != null) {
+                Logger(e.getMessage());
+                Toast(e.getMessage());
+            }
+        }
     }
 
     private void initLive() {
+        loadLive2DPersons();
         mRgTabs.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
-                case R.id.llc_Role: loadLive2DPersons(); break;
-                case R.id.llc_Prop: break;
-                case R.id.llc_Voice: loadVoice(); break;
-                case R.id.llc_BackGround: loadLive2DBackGround(); break;
+                case R.id.llc_Role:
+                    loadLive2DPersons();
+                    break;
+                case R.id.llc_Prop:
+                    break;
+                case R.id.llc_Voice:
+                    loadVoice();
+                    break;
+                case R.id.llc_BackGround:
+                    loadLive2DBackGround();
+                    break;
             }
         });
-
-        loadLive2DPersons();
-        LivePersonModeListFragment.getInstance().setOnSwitchListener(this);
-        LiveVoiceModeListFragment.getInstance().setOnSwitchListener(this);
-        LiveBackGroundModeListFragment.getInstance().setOnSwitchListener(this);
     }
 
-    /**
-     * Live2D人物
-     */
-    private void loadLive2DPersons(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentPeople).commit();}
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PublicEventMessage.OnGraduateEvent event) {
+        if (event != null) {
+            switch (event.getType()) {
+                case LAYOUT_FIGURES_MASK: {
+                    SdkApi.getInstance().setLive2DModel(personPath + event.getMsg(), event.getMsg(),-1);
+                    break;
+                }
+                case LAYOUT_ACCESSORY: {
+                    break;
+                }
+                case LAYOUT_VOICE: {
+                    Toast.makeText(this, "变声：" + event.getMsg(), Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                case LAYOUT_BACKGROUND: {
+                    SdkApi.getInstance().setModelBackgroundImage(bgPath, event.getMsg());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void loadLive2DPersons() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(0)).commit(); }
+    private void loadVoice() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(2)).commit(); }
+    private void loadLive2DBackGround() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(3)).commit(); }
+
+    @SuppressLint("UseSparseArrays")
+    private HashMap<Integer, BaseFragment> sFragmentHashMap = new HashMap<>();
+    public BaseFragment createFragment(int position) {
+        BaseFragment baseFragment = sFragmentHashMap.get(position);
+        if (baseFragment == null) {
+            switch (position) {
+                case 0: baseFragment = LivePersonModeListFragment.getInstance();break;
+                case 1: break;
+                case 2: baseFragment = LiveVoiceModeListFragment.getInstance();break;
+                case 3: baseFragment = LiveBackGroundModeListFragment.getInstance();break;
+            }
+        }
+        return baseFragment;
+    }
+
+//    private void setFigureMaskConfig(String fileName){
+//        if (!TextUtils.isEmpty(fileName)) {
+//            float[][] params=null;
+//            switch (fileName) {
+//                case "aLaiKeSi": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.0f, 0f, 0f}, {1.5f, 0f, -0.1333f}}); break;
+//                case "haru": mDbLive2DBean.setFiguresMask(params = new float[][]{{2.3f,0f,-0.625f},{2.5f,0f,-0.7f}});break;
+//                case "kaPa": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.5f,-0.0416f,0f},{1.5f,0f,-0.041f}}); break;
+//                case "lanTiYa": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.9f,0f,-0.1f},{2.5f,0f,-0.1933f}}); break;
+//                case "murahana": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.7f,0f,-0.1f},{2.0f,0f,-0.05f}}); break;
+//                case "neiLin": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.8f,0f,-0.0937f},{2.5f,0f,-0.2533f}}); break;
+//                case "natori": mDbLive2DBean.setFiguresMask(params = new float[][]{{2.5f,0f,-0.5937f},{3.2f,0f,-0.85f}}); break;
+//                case "tiYaNa": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.9f,0f,-0.125f},{2.5f,0f,-0.1933f}}); break;
+//                case "weiKeTa": mDbLive2DBean.setFiguresMask(params = new float[][]{{2.0f,0f,-0.0468f},{3.2f,0f,-0.2433f}}); break;
+//                case "xingChen": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.0f,0f,-0.1f},{1.7f,0f,-0.1333f}}); break;
+//                case "yuLu": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.0f,0f,-0.1f},{1.7f,0f,-0.05f}}); break;
+//                case "yangYan": mDbLive2DBean.setFiguresMask(params = new float[][]{{1.0f,0f,-0.1f},{1.7f,0f,-0.1333f}}); break;
+//            }
+//            assert params != null;
+//            SdkApi.getInstance().setLive2DModel(personPath + fileName, fileName);
+//            SdkApi.getInstance().setFaceRigItf(params[0][1],params[0][2],params[0][3]);
+//        }
+//    }
 
     @Override
-    public void onLivePersonEvent(String fileName) {
-        Log.i(TAG, "onLivePersonEvent: "+fileName);
-//        Toast.makeText(this, "选中了人物遮罩：" + fileName, Toast.LENGTH_SHORT).show();
-        SdkApi.getInstance().setLive2DModel(personPath+fileName,fileName);
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
-
-    /**
-     * 道具
-     */
-    private void loadProps(){
-//        @SuppressLint("InflateParams")
-//        View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_introductions,null);
-//        new AlterDialogBuilder(this,"游戏说明",containerView);
-    }
-
-    private void loadVoice(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentVoice).commit(); }
 
     @Override
-    public void onLiveVoiceEvent(String fileName) {
-        Log.i(TAG, "onLiveVoiceEvent: "+fileName);
-//        Toast.makeText(this, "选中了变声：" + fileName, Toast.LENGTH_SHORT).show();
-    }
-
-
-    /**
-     * Live2D 背景
-     */
-    private void loadLive2DBackGround(){ getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList,mFragmentBG).commit(); }
-
-    @Override
-    public void onLiveBackGroundEvent(String fileName) {
-        Log.i(TAG, "onLiveBackGroundEvent: "+fileName);
-        Toast.makeText(this, "选中了背景：" + fileName, Toast.LENGTH_SHORT).show();
-        SdkApi.getInstance().setModelBackgroundImage(bgPath,fileName);
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
+
+        if (mLivesPresenter != null) {
+            mLivesPresenter.detachPresenter();
+            mLivesPresenter=null;
+        }
 
         SdkApi.getInstance().destroy(true);
 
         if (mFlContainer.getChildCount() > 0) {
             mFlContainer.removeAllViews();
         }
+        if (sFragmentHashMap != null) {
+            sFragmentHashMap.clear();
+        }
+
 
         super.onDestroy();
     }

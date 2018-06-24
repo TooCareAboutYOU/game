@@ -49,7 +49,7 @@ public interface GameService {
     @POST("/stats/pages")
     Observable<MessageBean> postStatPages( @Field("user") String user, @Field("type") String type);
 
-    //查询商品列表  http://api.e3webrtc.com:8004/v2/shop/categories
+    //查询商品类别列表  http://api.e3webrtc.com:8004/v2/shop/categories
     @GET("v2/shop/categories")
     Observable<CategoryTypeBean> getCategories();
 

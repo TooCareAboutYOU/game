@@ -3,8 +3,6 @@ package com.kachat.game.ui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +17,7 @@ import com.blankj.utilcode.util.DeviceUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.base.videos.SdkApi;
+import com.kachat.game.SdkApi;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.model.ErrorBean;
@@ -30,13 +28,11 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.ExperienceRankPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsStatusPresenter;
-import com.kachat.game.test.TestActivity;
 import com.kachat.game.ui.fragments.HomeRankListFragment;
 import com.kachat.game.ui.game.GameActivity;
 import com.kachat.game.ui.graduate.GraduateSchoolActivity;
 import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
-import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
@@ -44,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
@@ -129,11 +124,16 @@ public class MainActivity extends BaseActivity {
         checkLogin();
     }
 
+    public void onGameClick(View v){ GameActivity.newInstance(this); }
+
+    public void onSignClick(View v){ GraduateSchoolActivity.newInstance(this); }
+
+
     @OnClick({R.id.sdv_UserLogo, R.id.sdv_RankingList, R.id.sdv_SignIn, R.id.sdv_Shop})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.sdv_UserLogo:
-//                MeActivity.newInstance(this);
+                MeActivity.newInstance(this);
 //                TestActivity.newInstance(this);
                 break;
             case R.id.sdv_RankingList:
@@ -142,15 +142,12 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.sdv_SignIn:
-//                if (mStatusPresenter != null) {
-//                    mStatusPresenter.attachPresenter();
-//                }
-                GraduateSchoolActivity.newInstance(this);
-
+                if (mStatusPresenter != null) {
+                    mStatusPresenter.attachPresenter();
+                }
                 break;
             case R.id.sdv_Shop:
                 ShopActivity.newInstance(this);
-//                GameActivity.newInstance(this);
                 break;
         }
     }
@@ -311,10 +308,11 @@ public class MainActivity extends BaseActivity {
             mSignsPresenter.detachPresenter();
             mSignsPresenter=null;
         }
-        if (isLogin) {
-            SdkApi.getInstance().sdkExit();
-        }
+//        if (isLogin) {
+
+//        }
         super.onDestroy();
+        SdkApi.getInstance().sdkExit();
     }
 
     //记录用户首次点击返回键的时间
