@@ -139,6 +139,10 @@
             android:name=".ui.shop.ShopActivity"
             android:label="@string/title_activity_shop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bar.MurphyBarActivity"
+            android:label="@string/title_activity_bar"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

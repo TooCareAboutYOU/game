@@ -3,6 +3,8 @@ package com.kachat.game.ui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.media.tv.TvView;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -11,9 +13,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.DeviceUtils;
+import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
@@ -28,6 +34,7 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.ExperienceRankPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsPresenter;
 import com.kachat.game.libdata.mvp.presenters.SignsStatusPresenter;
+import com.kachat.game.ui.bar.MurphyBarActivity;
 import com.kachat.game.ui.fragments.HomeRankListFragment;
 import com.kachat.game.ui.game.GameActivity;
 import com.kachat.game.ui.graduate.GraduateSchoolActivity;
@@ -100,27 +107,6 @@ public class MainActivity extends BaseActivity {
         mPresenter = new ExperienceRankPresenter(new ExpLevelCallBack());
         mStatusPresenter=new SignsStatusPresenter(new SignsStatusCallBack());
         mSignsPresenter=new SignsPresenter(new SignsInCallBack());
-//        findViewById(R.id.btn_graduate).setOnClickListener(v -> {
-//            GraduateSchoolActivity.newInstance(this);
-//        });
-//
-//        findViewById(R.id.btn_Live2D).setOnClickListener(v -> {
-//            ChatActivity.newInstance(this);
-//        });
-//
-//        findViewById(R.id.btn_H5Game).setOnClickListener(v -> {
-//            GameActivity.newInstance(this);
-//        });
-//        findViewById(R.id.btn_Me).setOnClickListener(v -> {
-//            MeActivity.newInstance(this);
-//        });
-//        findViewById(R.id.btn_Shop).setOnClickListener(v -> {
-//            ShopActivity.newInstance(this);
-//            for (int i = 1; i < 11; i++) {
-//                UpLoadBugLogService.writeLog(Process.myPid(),Process.myTid(), UpLoadBugLogService.DeBugType.info,"这是第"+i+"条新增信息");
-//            }
-//            UpLoadBugLogService.toZip(Objects.requireNonNull(DaoQuery.queryUserData()).getMobile());
-//        });
         checkLogin();
     }
 
@@ -128,6 +114,7 @@ public class MainActivity extends BaseActivity {
 
     public void onSignClick(View v){ GraduateSchoolActivity.newInstance(this); }
 
+    public void onBarClick(View view) { MurphyBarActivity.newInstance(this); }
 
     @OnClick({R.id.sdv_UserLogo, R.id.sdv_RankingList, R.id.sdv_SignIn, R.id.sdv_Shop})
     public void onViewClicked(View view) {
@@ -279,6 +266,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint({"CheckResult","InflateParams"})
     private void checkLogin() {
         Log.i(TAG, "初始化连接一次: ");
         if (mDbUserBean == null) {

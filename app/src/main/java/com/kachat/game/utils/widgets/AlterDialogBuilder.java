@@ -97,18 +97,20 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
         return mAcTvSure;
     }
 
-    public void hideRootSure() {
+    public AlterDialogBuilder hideRootSure() {
         if (mAcTvSure == null) {
             throw new NullPointerException("the mAcTvSure is null");
         }
         mAcTvSure.setVisibility(View.GONE);
+        return this;
     }
 
-    public void dismiss(){
+    public AlterDialogBuilder dismiss(){
         if (dialog == null) {
             throw new NullPointerException("the dialog is null");
         }
         dialog.dismiss();
+        return this;
     }
 
 }

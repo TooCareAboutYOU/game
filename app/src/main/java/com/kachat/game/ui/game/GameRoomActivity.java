@@ -1,16 +1,20 @@
 package com.kachat.game.ui.game;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
@@ -22,8 +26,11 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.alibaba.fastjson.JSON;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
@@ -51,10 +58,8 @@ public class GameRoomActivity extends BaseActivity {
     public static final String Html_Url = "html_url";
     public static final String GAME_TYPE="game_type";
 
-    @BindView(R.id.rl_Loading)
-    RelativeLayout loadingView;
-    @BindView(R.id.sdv_Back)
-    SimpleDraweeView mSdvBack;
+    @BindView(R.id.fl_LoadingView)
+    FrameLayout mLoadLayout;
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
     @BindView(R.id.bridgeWebView)
@@ -98,7 +103,7 @@ public class GameRoomActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
-        mSdvBack.setOnClickListener(v -> finish());
+        mLoadLayout.setVisibility(View.VISIBLE);
         initGameHtml();
     }
 
@@ -152,85 +157,93 @@ public class GameRoomActivity extends BaseActivity {
 
     public void handleGameResponse(String msg) {
         Log.w(TAG, "handleGameResponse: "+msg);
-//        //Toast.makeText(this, "WebView应答:" + msg, //Toast.LENGTH_SHORT).show();
     }
 
     private void signalWebView(String cmd) {
-        //Toast.makeText(this, "通知WebView:" + cmd, //Toast.LENGTH_SHORT).show();
         Log.w(TAG, "signalWebView: "+cmd);
         mBridgeWebView.callHandler("ToJS", cmd, data -> handleGameResponse(data));
+        this.finish();
     }
 
+    @SuppressLint("InflateParams")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(DNGameEventMessage event) {
         switch (event.getEvent()) {
             case SESSION_READY:
                 Logger("onEvent:SESSION_READY");
-                //Toast.makeText(this, "SESSION_READY", //Toast.LENGTH_SHORT).show();
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
                 break;
             case SESSION_OCCUPY:
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                //Toast.makeText(this, "SESSION_OCCUPY", //Toast.LENGTH_SHORT).show();
                 break;
             case SESSION_KEEP_ALIVE:
                 Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
-                //Toast.makeText(this, "SESSION_KEEP_ALIVE", //Toast.LENGTH_SHORT).show();
                 break;
             case JOIN_SUCCESS:
                 Log.i(TAG, "onEvent: JOIN_SUCCESS");
-                loadingView.setVisibility(View.GONE);
+
                 break;
             case JOIN_FAILED:
                 Log.i(TAG, "onEvent: JOIN_FAILED");
-                //Toast.makeText(this, "JOIN_FAILED", //Toast.LENGTH_SHORT).show();
                 break;
             case MATCH_SUCCESS:
                 Log.i(TAG, "onEvent: MATCH_SUCCESS");
-                //Toast.makeText(this, "MATCH_SUCCESS", //Toast.LENGTH_SHORT).show();
                 break;
             case GAME_MESSAGE:
                 Log.i(TAG, "onEvent: GAME_MESSAGE");
-                //Toast.makeText(this, "GAME_MESSAGE", //Toast.LENGTH_SHORT).show();
                 if (!TextUtils.isEmpty(event.getString())) {
-                    DNGameEventMessage.OnGameMessageBean bean= JSON.parseObject(event.getString(),DNGameEventMessage.OnGameMessageBean.class);
-                    if (!TextUtils.isEmpty(bean.getType()) && bean.getType().equals("leave")) {
-                        if (flRemoteView.getChildCount() > 0) {
-                            flRemoteView.removeAllViews();
+                    DNGameEventMessage.OnGameMessageBean gameBean= JSON.parseObject(event.getString(),DNGameEventMessage.OnGameMessageBean.class);
+                    if (!TextUtils.isEmpty(gameBean.getType()) && gameBean.getType().equals("leave")) {
+                            SdkApi.getInstance().destroy(true);
+                    }
+
+                    DNGameEventMessage.OnBoxsMessageBean boxBean=JSON.parseObject(event.getString(),DNGameEventMessage.OnBoxsMessageBean.class);
+                    if (boxBean!= null) {
+
+                        View boxRootView= LayoutInflater.from(this).inflate(R.layout.dialog_box,null);
+                        ImageView sdvViewBG=boxRootView.findViewById(R.id.sdv_Box_bg);
+                        ImageView sdvView=boxRootView.findViewById(R.id.sdv_Box);
+                        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(sdvViewBG);
+                        switch (boxBean.getBox()) {
+                            case 0: Glide.with(this).asGif().load(R.drawable.gif_box_white).into(sdvView);break;//白色
+                            case 1: Glide.with(this).asGif().load(R.drawable.gif_box_blue).into(sdvView);break;//蓝色
+                            case 2: Glide.with(this).asGif().load(R.drawable.gif_box_purple).into(sdvView);break;//紫色
+                            case 3: Glide.with(this).asGif().load(R.drawable.gif_box_orange).into(sdvView);break;//橙色
+                            case 4: Glide.with(this).asGif().load(R.drawable.gif_box_yellow).into(sdvView);break;//金色
                         }
+                        AlterDialogBuilder builderView=new AlterDialogBuilder(this,boxRootView).hideRootSure();
+                        boxRootView.setOnClickListener(v -> {
+                            builderView.dismiss();
+                            DailogView(boxBean);
+                        });
                     }
                 }
+
                 signalWebView(event.getString());
                 break;
             case GAME_STAT:
                 Log.i(TAG, "onEvent: GAME_STAT");
-                //Toast.makeText(this, "GAME_STAT", //Toast.LENGTH_SHORT).show();
                 break;
-            case VIDEO_CHAT_START:  //远端断线  提前退出
+            case VIDEO_CHAT_START:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_START");
-                //Toast.makeText(this, "VIDEO_CHAT_START", //Toast.LENGTH_SHORT).show();
+                mLoadLayout.setVisibility(View.GONE);
                 break;
             case VIDEO_CHAT_FINISH:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
-                //Toast.makeText(this, "VIDEO_CHAT_FINISH", //Toast.LENGTH_SHORT).show();
                 break;
             case VIDEO_CHAT_TERMINATE:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
-                //Toast.makeText(this, "VIDEO_CHAT_TERMINATE", //Toast.LENGTH_SHORT).show();
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
-                //Toast.makeText(this, "VIDEO_CHAT_FAIL", //Toast.LENGTH_SHORT).show();
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");
-                //Toast.makeText(this, "GOT_GIFT", //Toast.LENGTH_SHORT).show();
                 break;
             case ERROR_MESSAGE:
                 Log.i(TAG, "onEvent: ERROR_MESSAGE");
-                //Toast.makeText(this, "ERROR_MESSAGE", //Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -437,6 +450,65 @@ public class GameRoomActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("InflateParams")
+    private void DailogView(DNGameEventMessage.OnBoxsMessageBean boxBean){
+        android.support.v7.app.AlertDialog.Builder builder=new android.support.v7.app.AlertDialog.Builder(this,R.style.AlertDialogStyle);
+        View view=LayoutInflater.from(this).inflate(R.layout.dialog_box_info,null);
+        ImageView imgBG=view.findViewById(R.id.imgBG);
+        SimpleDraweeView propOneView=view.findViewById(R.id.sdv_one);
+        AppCompatTextView propOneTvView=view.findViewById(R.id.acTv_One);
+        SimpleDraweeView propTwoView=view.findViewById(R.id.sdv_two);
+        AppCompatTextView propTwoTvView=view.findViewById(R.id.acTv_Two);
+        SimpleDraweeView chipsThreeView=view.findViewById(R.id.sdv_three);
+        AppCompatTextView chipsThreeTvView=view.findViewById(R.id.acTv_Three);
+        SimpleDraweeView getView=view.findViewById(R.id.sdv_Get);
+        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(imgBG);
+        if (boxBean != null && boxBean.getChips() != null && boxBean.getChips().size() != 0
+                && boxBean.getProps() != null && boxBean.getProps().size() != 0) {
+            propOneView.setImageResource(getDrawableView(boxBean.getProps().get(0).getProp()));
+            propOneTvView.setText("X"+boxBean.getProps().get(0).getNumber());
+            propTwoView.setImageResource(getDrawableView(boxBean.getProps().get(1).getProp()));
+            propTwoTvView.setText("X"+boxBean.getProps().get(1).getNumber());
+            chipsThreeView.setImageResource(getDrawableView(boxBean.getChips().get(0).getChip()));
+            chipsThreeTvView.setText("X"+boxBean.getChips().get(0).getNumber());
+
+        }
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.create();
+        android.support.v7.app.AlertDialog dialog=builder.show();
+        getView.setOnClickListener(v -> dialog.dismiss());
+    }
+
+
+    private @DrawableRes int getDrawableView(int index){
+        @DrawableRes int drawable=R.mipmap.ic_launcher;
+        switch (index) {
+            case 0: drawable= R.drawable.img_000_strong;break;
+            case 1: drawable= R.drawable.img_001_xiaofei;break;
+            case 2: drawable= R.drawable.img_002_shaizi;break;
+            case 3: drawable= R.drawable.img_003_gold;break;
+            case 100: drawable= R.drawable.img_100_yanjing;break;
+            case 101: drawable= R.drawable.img_101_wawaquan;break;
+            case 300: drawable= R.drawable.img_300_baba; break;
+            case 301: drawable= R.drawable.img_301_love;break;
+            case 302: drawable= R.drawable.img_302_caonima;break;
+            case 400: drawable= R.drawable.img_400_weikeda;break;
+            case 401: drawable= R.drawable.img_401_tiyana;break;
+            case 402: drawable= R.drawable.img_402_alaikesi;break;
+            case 403: drawable= R.drawable.img_403_niezheng;break;
+            case 404: drawable= R.drawable.img_404_kapa;break;
+            case 405: drawable= R.drawable.img_405_landiya;break;
+            case 406: drawable= R.drawable.img_406_mingqu;break;
+            case 407:drawable= R.drawable.img_407_chun;break;
+            case 408:drawable= R.drawable.img_408_cunhua;break;
+//            case 409:break;
+        }
+        return drawable;
+    }
+
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -472,7 +544,6 @@ public class GameRoomActivity extends BaseActivity {
         Log.i(TAG, "onDestroy: ");
 
         SdkApi.getInstance().destroy(isLoad);
-
 
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();

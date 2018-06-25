@@ -139,20 +139,10 @@ public class ShopActivity extends BaseActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fl_Container, GoldsFragment.newInstance(1)).commit();
             }
         }
-
         @Override
-        public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Toast(error.getToast());
-            }
-        }
-
+        public void onFailed(int errorCode, ErrorBean error) { if (error != null) { Toast(error.getToast()); } }
         @Override
-        public void onError(Throwable e) {
-            if (e != null) {
-                Toast(e.getMessage());
-            }
-        }
+        public void onError(Throwable e) { if (e != null) { Toast(e.getMessage()); } }
     }
 
     @Override

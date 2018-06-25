@@ -63,7 +63,7 @@ public class RankingListBean extends BaseBeans {
             private int uid;
             private int age;
             private int index;
-            private DetailBean detail;
+            private DetailBean user_detail;
 
             public String getUsername() {
                 return username;
@@ -105,12 +105,12 @@ public class RankingListBean extends BaseBeans {
                 this.index = index;
             }
 
-            public DetailBean getDetail() {
-                return detail;
+            public DetailBean getUser_detail() {
+                return user_detail;
             }
 
-            public void setDetail(DetailBean detail) {
-                this.detail = detail;
+            public void setUser_detail(DetailBean user_detail) {
+                this.user_detail = user_detail;
             }
 
             public static class DetailBean implements Serializable{

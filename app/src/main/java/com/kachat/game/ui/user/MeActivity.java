@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -213,7 +212,11 @@ public class MeActivity extends BaseActivity {
                 break;
             }
             case 5:{ //用户协议
-                View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_introductions,null);
+                View containerView=LayoutInflater.from(this).inflate(R.layout.dialog_custom_title_info,null);
+                AppCompatTextView titleView=containerView.findViewById(R.id.acTv_Title);
+                titleView.setText(R.string.app_name);
+                AppCompatTextView infoView=containerView.findViewById(R.id.acTv_Details);
+                infoView.setText(R.string.game_introductions_details);
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this,title,containerView,"同意");
                 dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
                 break;

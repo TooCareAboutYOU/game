@@ -209,7 +209,7 @@ public class SdkApi {
                 gameList.add(2.5f);gameList.add(0f);gameList.add(-0.7f);
             } break;
             case "kaPa": {
-                chatList.add(2.5f);chatList.add(-0.0416f);chatList.add(0f);
+                chatList.add(1.5f);chatList.add(-0.0416f);chatList.add(0f);
                 gameList.add(1.5f);gameList.add(0f);gameList.add(-0.041f);
             } break;
             case "lanTiYa": {
@@ -241,12 +241,12 @@ public class SdkApi {
                 gameList.add(1.7f);gameList.add(0f);gameList.add(-0.1333f);
             } break;
             case "yuLu": {
-                chatList.add(1.0f);chatList.add(0f);chatList.add(-0.1f);
-                gameList.add(1.7f);gameList.add(0f);gameList.add(-0.05f);
+                chatList.add(1.0f);chatList.add(0f);chatList.add(-0.05f);
+                gameList.add(1.5f);gameList.add(0f);gameList.add(-0.1333f);
             } break;
             case "yangYan":{
                 chatList.add(1.0f);chatList.add(0f);chatList.add(-0.1f);
-                gameList.add(1.7f);gameList.add(0f);gameList.add(-0.1933f);
+                gameList.add(1.7f);gameList.add(0f);gameList.add(-0.1333f);
             } break;
         }
         mDbLive2DBean.setChatMask(chatList);
@@ -254,6 +254,7 @@ public class SdkApi {
         if (matchType == 3) {
             this.faceRigItf.native_setModelZoomFraction(chatList.get(0));
             this.faceRigItf.native_setModelOffset(chatList.get(1), chatList.get(2));
+            return;
         }
         this.faceRigItf.native_setModelZoomFraction(gameList.get(0));
         this.faceRigItf.native_setModelOffset(gameList.get(1), gameList.get(2));
@@ -310,9 +311,9 @@ public class SdkApi {
         }
 
         if (isLoad) {
+            Log.i(TAG, "destroy: leave Room");
             VAGameAPI.getInstance().stopGameMatch();
             // TODO: 2018/6/25  离开发送消息
-//            sendMessage();
             VAGameAPI.getInstance().leaveGameRoom();
         }
 

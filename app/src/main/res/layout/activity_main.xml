@@ -162,6 +162,12 @@
             android:onClick="onSignClick"
             android:text="研究院"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onBarClick"
+            android:text="酒吧"/>
+
     </android.support.v7.widget.LinearLayoutCompat>
 
 </FrameLayout>

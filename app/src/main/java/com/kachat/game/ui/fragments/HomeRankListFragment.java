@@ -58,7 +58,10 @@ public class HomeRankListFragment extends BaseDialogFragment {
 
     private static List<RankingListBean.ResultBean.RanksBean> mRankList = null;
     private ExpLevelAdapter mExpLevelAdapter = null;
-
+    private static class EditUserFragmentHolder {
+        @SuppressLint("StaticFieldLeak")
+        public static final HomeRankListFragment instance = new HomeRankListFragment();
+    }
 
     public static HomeRankListFragment getInstance(String title, List<RankingListBean.ResultBean.RanksBean> data) {
         mRankList = new ArrayList<>();
@@ -67,10 +70,7 @@ public class HomeRankListFragment extends BaseDialogFragment {
         return EditUserFragmentHolder.instance;
     }
 
-    private static class EditUserFragmentHolder {
-        @SuppressLint("StaticFieldLeak")
-        public static final HomeRankListFragment instance = new HomeRankListFragment();
-    }
+
 
     @Override
     protected int setResLayoutId() {
@@ -96,11 +96,11 @@ public class HomeRankListFragment extends BaseDialogFragment {
                 if (mRankList.get(i).getGender().equals("male")) {
                     mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
                 }
-                if (mRankList.get(i).getDetail() != null) {
-                    mAcTvUserLevel.setText("LV"+mRankList.get(i).getDetail().getLevel());
+                if (mRankList.get(i).getUser_detail() != null) {
+                    mAcTvUserLevel.setText("LV"+mRankList.get(i).getUser_detail().getLevel());
                 }
             }else {
-                mAcTvIndex.setText(0+"");
+                mAcTvIndex.setText(""+0);
                 if (!TextUtils.isEmpty(Objects.requireNonNull(DaoQuery.queryUserData()).getUsername())) {
                     mAcTvUserName.setText(Objects.requireNonNull(DaoQuery.queryUserData()).getUsername());
                 }
@@ -108,7 +108,7 @@ public class HomeRankListFragment extends BaseDialogFragment {
                 if (Objects.requireNonNull(DaoQuery.queryUserData()).getGender().equals("male")) {
                     mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
                 }
-                if (mRankList.get(i).getDetail() != null) {
+                if (mRankList.get(i).getUser_detail() != null) {
                     mAcTvUserLevel.setText("LV"+Objects.requireNonNull(DaoQuery.queryUserData()).getLevel());
                 }
             }
@@ -164,11 +164,11 @@ public class HomeRankListFragment extends BaseDialogFragment {
                 if (mRankList.get(position).getGender().equals("male")) {
                     ((No1ViewHolder)holder).mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
                 }
-                if (mRankList.get(position).getDetail() != null) {
-                    ((No1ViewHolder)holder).mAcTvUserLevel.setText("LV"+mRankList.get(position).getDetail().getLevel());
+                if (mRankList.get(position).getUser_detail() != null) {
+                    ((No1ViewHolder)holder).mAcTvUserLevel.setText("LV"+mRankList.get(position).getUser_detail().getLevel());
                 }
             }else if (holder instanceof NormalViewHolder) {
-//                ((No1ViewHolder)holder).mSdvUserIndex.setBackgroundResource(R.drawable.icon_item_exprank_no1);
+
                 ((NormalViewHolder)holder).mAcTvIndex.setText(mRankList.get(position).getIndex() + "");
 
                 if (!TextUtils.isEmpty(mRankList.get(position).getUsername())) {
@@ -178,8 +178,8 @@ public class HomeRankListFragment extends BaseDialogFragment {
                 if (mRankList.get(position).getGender().equals("male")) {
                     ((NormalViewHolder)holder).mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
                 }
-                if (mRankList.get(position).getDetail() != null) {
-                    ((NormalViewHolder)holder).mAcTvUserLevel.setText("LV"+mRankList.get(position).getDetail().getLevel());
+                if (mRankList.get(position).getUser_detail() != null) {
+                    ((NormalViewHolder)holder).mAcTvUserLevel.setText("LV"+mRankList.get(position).getUser_detail().getLevel());
                 }
             }
 
@@ -231,7 +231,6 @@ public class HomeRankListFragment extends BaseDialogFragment {
             mRankList.clear();
             mRankList = null;
         }
-
         super.onDestroyView();
     }
 }

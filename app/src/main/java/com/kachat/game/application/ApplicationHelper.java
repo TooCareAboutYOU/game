@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.blankj.utilcode.util.Utils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
 import com.dnion.SharedRTCEnv;
 import com.dnion.VAGameAPI;
 import com.dnion.VAGameDelegate;
@@ -38,6 +40,8 @@ public class ApplicationHelper {
         initKaChatSDK(application.getApplicationContext());
 //        initCrash(application);
 
+        GlideBuilder glideBuilder=new GlideBuilder();
+        Glide.init(application.getApplicationContext(),glideBuilder);
         SharedPreferencesHelper.init(application.getApplicationContext(),"JX",Context.MODE_PRIVATE);
     }
 

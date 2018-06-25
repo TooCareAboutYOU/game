@@ -105,9 +105,9 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     }
 
     private void RequestNetWork() {
-        imgBg.setVisibility(View.VISIBLE);
-        Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
-        imgBg.setImageURI(uri);
+//        imgBg.setVisibility(View.VISIBLE);
+//        Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
+//        imgBg.setImageURI(uri);
         Intent intent=null;
         if (DaoQuery.queryUserListSize() == 1) {
             intent = new Intent(SplashActivity.this, MainActivity.class);

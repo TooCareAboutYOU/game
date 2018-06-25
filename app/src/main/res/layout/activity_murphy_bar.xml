@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/icon_bar_bg">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="110dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="260.33dp"
+            android:background="@drawable/icon_bar_info">
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10.67dp"
+                android:text="找人喝一杯？"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv1"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="52.67dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="210dp"
+            android:background="@drawable/icon_bar_start"
+            android:onClick="onStartMatchClick" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv2"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/sdv1"
+            android:background="@drawable/icon_bar_rangklist"
+            android:onClick="onRankListClick" />
+    </RelativeLayout>
+
+    <include layout="@layout/layout_loading"/>
+
+    <FrameLayout
+        android:id="@+id/fl_ChatView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <FrameLayout
+            android:id="@+id/fl_RemoteView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <FrameLayout
+            android:layout_width="104dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="36.67dp"
+            android:layout_marginEnd="13.33dp"
+            android:layout_gravity="end"
+            android:background="@drawable/icon_game_chat_bg_default">
+            <FrameLayout
+                android:id="@+id/fl_LocalView"
+                android:layout_width="98dp"
+                android:layout_height="105dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginStart="3dp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_Box"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="250dp"
+            android:layout_marginEnd="13.33dp"
+            android:background="@mipmap/ic_launcher">
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/acTv_Timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:text="30s"/>
+        </FrameLayout>
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_10dp"
+            android:layout_gravity="bottom|end">
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@mipmap/ic_launcher"
+                android:layout_marginEnd="20dp"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@mipmap/ic_launcher"/>
+        </android.support.v7.widget.LinearLayoutCompat>
+
+    </FrameLayout>
+
+    <include layout="@layout/base_toolbar"/>
+
+</FrameLayout>

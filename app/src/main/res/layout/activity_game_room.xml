@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@drawable/icon_app_bg_light">
-        <include layout="@layout/base_toolbar" />
 
         <LinearLayout
             android:id="@+id/ll_video"
@@ -17,18 +16,28 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/activity_vertical_margin">
-            <FrameLayout
-                android:id="@+id/fl_local"
+            android:layout_marginTop="?android:attr/actionBarSize">
+            <RelativeLayout
                 android:layout_width="128dp"
-                android:layout_height="144dp"
-                android:background="@drawable/icon_game_chat_bg_default"
-                android:layout_marginEnd="@dimen/activity_vertical_margin"/>
-            <FrameLayout
-                android:id="@+id/fl_remote"
+                android:layout_height="142dp"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:background="@drawable/icon_game_chat_bg_default">
+                <FrameLayout
+                    android:id="@+id/fl_local"
+                    android:layout_width="120dp"
+                    android:layout_height="126dp"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
                 android:layout_width="128dp"
-                android:layout_height="144dp"
-                android:background="@drawable/icon_game_chat_bg_default"/>
+                android:layout_height="142dp"
+                android:background="@drawable/icon_game_chat_bg_default" >
+                <FrameLayout
+                    android:id="@+id/fl_remote"
+                    android:layout_width="120dp"
+                    android:layout_height="126dp"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
         </LinearLayout>
 
         <com.github.lzyzsd.jsbridge.BridgeWebView
@@ -38,23 +47,10 @@
             android:layout_weight="1"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             app:layout_constraintTop_toBottomOf="@+id/ll_video"/>
-
     </android.support.v7.widget.LinearLayoutCompat>
 
-    <RelativeLayout
-        android:id="@+id/rl_Loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/icon_app_bg_light"/>
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/sdv_Back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="30dp"
-            android:background="@drawable/icon_back" />
-    </RelativeLayout>
+    <include layout="@layout/layout_loading"/>
+
+    <include layout="@layout/base_toolbar" />
 
 </FrameLayout>
