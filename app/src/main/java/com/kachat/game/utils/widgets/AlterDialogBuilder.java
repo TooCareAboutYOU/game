@@ -51,29 +51,31 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
     }
 
     private void initView(Context context,String title, String actionTxt,View containerView) {
-        @SuppressLint("InflateParams")
-        View rootView = LayoutInflater.from(context).inflate(R.layout.dialog_base_bg,null);
-        AppCompatTextView bgHintMsg=rootView.findViewById(R.id.acTV_Hint_bg);
-        ivClose=rootView.findViewById(R.id.acIV_Close);
-        ivClose.setOnClickListener(v -> dismiss());
+        synchronized (this) {
+            @SuppressLint("InflateParams")
+            View rootView = LayoutInflater.from(context).inflate(R.layout.dialog_base_bg, null);
+            AppCompatTextView bgHintMsg = rootView.findViewById(R.id.acTV_Hint_bg);
+            ivClose = rootView.findViewById(R.id.acIV_Close);
+            ivClose.setOnClickListener(v -> dismiss());
 
-        mAcTvSure=rootView.findViewById(R.id.acTv_Sure);
-        if (!TextUtils.isEmpty(actionTxt)) {
-            mAcTvSure.setText(actionTxt);
+            mAcTvSure = rootView.findViewById(R.id.acTv_Sure);
+            if (!TextUtils.isEmpty(actionTxt)) {
+                mAcTvSure.setText(actionTxt);
+            }
+
+            FrameLayout childContainer = rootView.findViewById(R.id.fl_Container);
+            childContainer.addView(containerView);
+
+            setView(rootView);
+            setCancelable(false);
+            create();
+            dialog = show();
+            if (!TextUtils.isEmpty(title)) {
+                bgHintMsg.setText(title);
+            }
+
+            dialog.setOnDismissListener(dialog1 -> childContainer.removeAllViews());
         }
-
-        FrameLayout childContainer=rootView.findViewById(R.id.fl_Container);
-        childContainer.addView(containerView);
-
-        setView(rootView);
-        setCancelable(false);
-        create();
-        dialog=show();
-        if (!TextUtils.isEmpty(title)) {
-            bgHintMsg.setText(title);
-        }
-
-        dialog.setOnDismissListener(dialog1 -> childContainer.removeAllViews());
     }
 
     public View getRootView(){

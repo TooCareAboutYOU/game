@@ -68,8 +68,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAcEtMobile.setText("15000000000");
-//        mAcEtMobile.setText("15821239216");
+//        mAcEtMobile.setText("15000000000");
+        mAcEtMobile.setText("15821239216");
     }
 
     String mobile;
