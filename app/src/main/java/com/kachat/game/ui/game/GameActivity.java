@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.Config;
+import com.kachat.game.Constant;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -72,7 +73,6 @@ public class GameActivity extends BaseActivity {
     private LinearLayoutManager manager;
 
     private GameListPresenter mPresenter;
-    private String GameURL="";
 
     @Override
     protected int onSetResourceLayout() {
@@ -248,7 +248,6 @@ public class GameActivity extends BaseActivity {
 
         class GameViewHolder extends RecyclerView.ViewHolder {
             SimpleDraweeView sdvImg, sdvMark,sdvTimeLimit, sdvStart;
-
             GameViewHolder(View itemView) {
                 super(itemView);
                 sdvImg = itemView.findViewById(R.id.sdv_img);
@@ -260,135 +259,37 @@ public class GameActivity extends BaseActivity {
     }
 
     private void loadGame(int index){
-        int htmlNum=-1;
+        Bundle bundle = new Bundle();
+        //        int htmlNum=-1;
         int matchType=-1;
         switch (index) {
             case 902: //晕头转向
-                htmlNum=9004;
+                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_HEXTRIS);
+//                htmlNum=9004;
                 matchType=2;
                 break;
             case 903: //娃娃机
-                htmlNum=-1;
+//                htmlNum=-1;
                 matchType=-1;
                 break;
             case 901://消灭星星
-                htmlNum=9003;
+                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_POPSTART);
+//                htmlNum=9003;
                 matchType=1;
                 break;
             case 900:  //盖房子
-                htmlNum=9002;
+                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_TOWER);
+//                htmlNum=9002;
                 matchType=0;
                 break;
         }
-        if (htmlNum != -1) {
-            GameURL = "http://demo.e3webrtc.com:" + htmlNum;
-            Bundle bundle = new Bundle();
-            bundle.putString(GameRoomActivity.Html_Url, GameURL);
+
+//        if (htmlNum != -1) {
+//            GameURL = "http://demo.e3webrtc.com:" + htmlNum;
             bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
             GameRoomActivity.newInstance(GameActivity.this, bundle);
 //            parentDialog.dismiss();
-        }
-    }
-
-
-    private void loadH5Game(int index) {
-        @SuppressLint("InflateParams")
-        View containerView = LayoutInflater.from(this).inflate(R.layout.dialog_find_friends_condition, null);
-        AlterDialogBuilder parentDialog=new AlterDialogBuilder(this, "寻找你的伙伴", containerView);
-        parentDialog.hideRootSure();
-        AppCompatTextView acTvSure = containerView.findViewById(R.id.acTv_sure);
-        SwitchCompat switch1 = containerView.findViewById(R.id.switch_1);
-        SimpleDraweeView sdvCondition1 = containerView.findViewById(R.id.sdv_Condition1);
-        SwitchCompat switch2 = containerView.findViewById(R.id.switch_2);
-        SimpleDraweeView sdvCondition2 = containerView.findViewById(R.id.sdv_Condition2);
-        SwitchCompat switch3 = containerView.findViewById(R.id.switch_3);
-        SimpleDraweeView sdvCondition3 = containerView.findViewById(R.id.sdv_Condition3);
-        switch1.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.i(TAG, "switch1: " + isChecked);
-            if (isChecked) {
-
-            }
-        });
-        switch2.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.i(TAG, "switch2: " + isChecked);
-            if (isChecked) {
-
-            }
-        });
-        switch3.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.i(TAG, "switch3: " + isChecked);
-            if (isChecked) {
-
-            }
-        });
-
-        sdvCondition1.setOnClickListener(v -> {
-
-        });
-
-        sdvCondition2.setOnClickListener(v -> {
-            @SuppressLint("InflateParams")
-            View sexView = LayoutInflater.from(this).inflate(R.layout.dialog_matching_sex, null);
-            AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, "性别匹配", sexView);
-            dialogBuilder.hideRootSure();
-
-            AppCompatTextView sexSure = sexView.findViewById(R.id.acTv_sure);
-            sexSure.setText("确定");
-            sexSure.setOnClickListener(vSex -> dialogBuilder.dismiss());
-            sexSure.setOnClickListener(v1 -> {
-                // TODO: 2018/6/11  临时保存选中性别
-                dialogBuilder.dismiss();
-            });
-
-            RadioGroup rg =  sexView.findViewById(R.id.rg_);
-            rg.setOnCheckedChangeListener((group, checkedId) -> {
-                // TODO: 2018/6/11 选择性别
-                switch (checkedId) {
-                    case R.id.acRbtn_Male:{
-                        break;
-                    }
-                    case R.id.acRbtn_Remale:{
-                        break;
-                    }
-                }
-            });
-
-        });
-
-        sdvCondition3.setOnClickListener(v -> {
-
-        });
-
-        acTvSure.setOnClickListener(v -> {
-            int htmlNum=-1;
-            int matchType=-1;
-            switch (index) {
-                case 902: //晕头转向
-                    htmlNum=9004;
-                    matchType=2;
-                    break;
-                case 903: //娃娃机
-                    htmlNum=-1;
-                    matchType=-1;
-                    break;
-                case 901://消灭星星
-                    htmlNum=9003;
-                    matchType=1;
-                    break;
-                case 900:  //盖房子
-                    htmlNum=9002;
-                    matchType=0;
-                    break;
-            }
-            if (htmlNum != -1) {
-                GameURL = "http://demo.e3webrtc.com:" + htmlNum;
-                Bundle bundle = new Bundle();
-                bundle.putString(GameRoomActivity.Html_Url, GameURL);
-                bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
-                GameRoomActivity.newInstance(GameActivity.this, bundle);
-                parentDialog.dismiss();
-            }
-        });
+//        }
     }
 
     @Override

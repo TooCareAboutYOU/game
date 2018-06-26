@@ -97,6 +97,14 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
         return mAcTvSure;
     }
 
+    public AlterDialogBuilder hideClose(){
+        if (ivClose == null) {
+            throw new NullPointerException("the ivClose is null");
+        }
+        ivClose.setVisibility(View.GONE);
+        return this;
+    }
+
     public AlterDialogBuilder hideRootSure() {
         if (mAcTvSure == null) {
             throw new NullPointerException("the mAcTvSure is null");

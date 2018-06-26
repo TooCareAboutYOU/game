@@ -30,6 +30,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
+import com.kachat.game.events.PublicEventMessage;
+import com.kachat.game.ui.bar.MurphyBarActivity;
+import com.kachat.game.ui.user.MeActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.alibaba.fastjson.JSON;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -42,6 +45,7 @@ import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
+import com.kachat.game.utils.widgets.DialogTextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,6 +73,7 @@ public class GameRoomActivity extends BaseActivity {
     @BindView(R.id.fl_remote)
     FrameLayout flRemoteView;
 
+    private int register=0;
 
     public static void newInstance(Context context, Bundle bundle) {
         Intent intent = new Intent(context, GameRoomActivity.class);
@@ -174,16 +179,28 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
+                register++;
+                if (register == 7) {
+                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this, new DialogTextView(GameRoomActivity.this,"连接超时，请重新连接！"));
+                    dialogBroken.getRootSure().setOnClickListener(v -> {
+                        SdkApi.getInstance().sdkExit();
+                        SdkApi.getInstance().create(this);
+                    });
+                }
                 break;
-            case SESSION_OCCUPY:
+            case SESSION_OCCUPY:  // 同一个账号登录
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, new DialogTextView(GameRoomActivity.this,"账号异地登录，请重新?"));
+                dialogBuilder.getRootSure().setOnClickListener(v -> {
+                    PublicEventMessage.ExitAccount(this);
+                    dialogBuilder.dismiss();
+                });
                 break;
             case SESSION_KEEP_ALIVE:
                 Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
                 break;
             case JOIN_SUCCESS:
                 Log.i(TAG, "onEvent: JOIN_SUCCESS");
-
                 break;
             case JOIN_FAILED:
                 Log.i(TAG, "onEvent: JOIN_FAILED");

@@ -306,6 +306,7 @@ public class SdkApi {
 
         this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
         if (this.videoProcessorToCamera != null) {
+            Log.i(TAG, "destroy: videoProcessorToCamera");
             this.videoProcessorToCamera.native_stop();
             this.videoProcessorToCamera = null;
         }

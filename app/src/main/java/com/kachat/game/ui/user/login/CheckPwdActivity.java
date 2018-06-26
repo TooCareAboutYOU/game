@@ -54,7 +54,7 @@ public class CheckPwdActivity extends BaseActivity {
 
     @Override
     protected boolean onSetStatusBar() {
-        return true;
+        return false;
     }
 
     @Override
@@ -82,8 +82,8 @@ public class CheckPwdActivity extends BaseActivity {
 
         @Override
         public void onSuccess(UserBean result) {
+            Log.i(TAG, "onSuccess: "+result.toString());
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_ok);
-
             // TODO: 2018/6/5 保存用户信息大本地数据库
             Log.i(TAG, "onSuccess: "+result.toString());
             mAcTvErrorMsg.setVisibility(View.GONE);
@@ -94,8 +94,8 @@ public class CheckPwdActivity extends BaseActivity {
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
+            Log.i(TAG, "onFailed: "+error.getToast());
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
-
             mSdvGo.setEnabled(true);
             if (error != null) {
                 Log.i(TAG, "onFailed: "+errorCode+"\t\t"+error.getToast());
@@ -107,6 +107,7 @@ public class CheckPwdActivity extends BaseActivity {
 
         @Override
         public void onError(Throwable e) {
+            Log.i(TAG, "onError: "+e.getMessage());
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
             mSdvGo.setEnabled(true);
             if (e != null) {

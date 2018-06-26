@@ -76,7 +76,7 @@ public class LivePersonModeListFragment extends BaseFragment {
         mListLocal.add(new Live2DModel("kaPa", R.drawable.icon_person_kapa_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("lanTiYa", R.drawable.icon_person_landiya_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("murahana", R.drawable.icon_person_jianniang_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("neiLin", R.drawable.ic_launcher, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("neiLin", R.drawable.icon_person_zhishii_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("natori", R.drawable.icon_person_natori_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("tiYaNa", R.drawable.icon_person_tiyana_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("weiKeTa", R.drawable.icon_person_weikeya_default, false, true, 0, 0));

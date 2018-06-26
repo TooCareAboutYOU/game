@@ -22,6 +22,10 @@ public class Config {
     public static void setFirst(int value){ SharedPreferencesHelper.getInstance().setIntValue(isFirstStartGame,value); }
     public static int getFirst(){ return SharedPreferencesHelper.getInstance().getIntValueByKey(isFirstStartGame); }
 
+    private static String SdkBroken="sdkBroken";
+    public static void setBrokenState(boolean isBroken){ SharedPreferencesHelper.getInstance().setBooleanValue(SdkBroken,isBroken); }
+    public static boolean getBrokenState(){ return SharedPreferencesHelper.getInstance().getBooleanValueByKey(SdkBroken); }
+
 
 
 

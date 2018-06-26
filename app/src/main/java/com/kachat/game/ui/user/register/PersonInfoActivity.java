@@ -142,10 +142,8 @@ public class PersonInfoActivity extends BaseActivity {
         } else {
             gender = "male";
         }
-
         return true;
     }
-
 
     private class RegisterCallBack implements OnPresenterListeners.OnViewListener<UserBean> {
         @Override
@@ -156,35 +154,30 @@ public class PersonInfoActivity extends BaseActivity {
                     SuccessDialog();
                 }
             }
-
         }
 
         @Override
-        public void onFailed(int errorCode, ErrorBean error) {
-            Log.i(TAG, "onFailed: " + error);
-            if (error != null) {
-                Toast(error.getToast());
-            }
-        }
+        public void onFailed(int errorCode, ErrorBean error) { Log.i(TAG, "onFailed: " + error); if (error != null) { Toast(error.getToast()); } }
 
         @Override
-        public void onError(Throwable e) {
-            if (e != null) {
-                Toast(e.getMessage());
-            }
-        }
+
+        public void onError(Throwable e) { Log.i(TAG, "onFailed: " + e.getMessage()); if (e != null) { Toast(e.getMessage()); } }
     }
 
     private void SuccessDialog() {
-        AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(PersonInfoActivity.this, new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!"));
-        dialogBuilder.getRootSure().setOnClickListener(v1 ->dialogBuilder.dismiss());
+        AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(PersonInfoActivity.this,
+                new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!"));
+        dialogBuilder.getRootSure().setOnClickListener(v1 ->{
+//            MainActivity.getInstance(this);
+            AutoLogin();
+            dialogBuilder.dismiss();
+        });
     }
 
     // TODO: 2018/6/11 自动跳转登录
-    private void AutoLogin(AlterDialogBuilder alterDialog) {
+    private void AutoLogin() {
         String mobile = Config.getMobile();
         mPresenter.attachPresenter(mobile, mAcEtPassWord.getText().toString());
-        alterDialog.dismiss();
     }
 
     private class LoginCallBack implements OnPresenterListeners.OnViewListener<UserBean> {
@@ -192,8 +185,10 @@ public class PersonInfoActivity extends BaseActivity {
         @Override
         public void onSuccess(UserBean result) {
             if (result != null) {
-                MainActivity.getInstance(PersonInfoActivity.this);
-                PersonInfoActivity.this.finish();
+                if (!TextUtils.isEmpty(result.getResult().getUser().getUsername())) {
+                    MainActivity.getInstance(PersonInfoActivity.this);
+                    PersonInfoActivity.this.finish();
+                }
             }
         }
 

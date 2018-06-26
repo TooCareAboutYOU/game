@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.SdkApi;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -225,15 +227,7 @@ public class MeActivity extends BaseActivity {
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this,title,
                         new DialogTextView(MeActivity.this,"确定退出？"));
                 dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    if (DaoDelete.deleteUserAll()) {
-//                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
-                        ActivityManager.getInstance().removeActivity("MainActivity");
-                        DaoDelete.deleteUserAll();
-                        DaoDelete.deleteLiveModelAll();
-                        SdkApi.getInstance().sdkExit();
-                        LoginActivity.newInstance(MeActivity.this);
-                        this.finish();
-                    }
+                    PublicEventMessage.ExitAccount(this);
                     dialogBuilder.dismiss();
                 });
                 break;

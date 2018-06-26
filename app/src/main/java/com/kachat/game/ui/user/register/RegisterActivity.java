@@ -101,11 +101,9 @@ public class RegisterActivity extends BaseActivity {
         mToolbarBase.setBackgroundResource(R.color.colorNormal);
         getToolBarBack().setOnClickListener(View::forceLayout);
 
-
         ((AppCompatTextView) findViewById(R.id.atv_ToolBar_Base_Title)).setText("注册");
 
         mPresenter = new VerifyCaptchaPresenter(new VerifyCaptchaCallBack());
-
 
         mAcTvMobile.setText("短信已发送至:" + mobile);
 
@@ -121,8 +119,7 @@ public class RegisterActivity extends BaseActivity {
 
         mAcEtCaptcha4.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -131,26 +128,16 @@ public class RegisterActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+
             }
         });
     }
 
     private void check() {
         String VCode = "";
-        if (mAcEtCaptcha1.getText().toString().trim().isEmpty()) {
-            Toast("验证码不能为空!");
-            return;
-        }
-        if (mAcEtCaptcha2.getText().toString().trim().isEmpty()) {
-            Toast("验证码不能为空!");
-            return;
-        }
-        if (mAcEtCaptcha3.getText().toString().trim().isEmpty()) {
-            Toast("验证码不能为空!");
-            return;
-        }
-        if (mAcEtCaptcha4.getText().toString().trim().isEmpty()) {
-            Toast("验证码不能为空!");
+        if (mAcEtCaptcha1.getText().toString().trim().isEmpty() || mAcEtCaptcha2.getText().toString().trim().isEmpty()
+                || mAcEtCaptcha3.getText().toString().trim().isEmpty() || mAcEtCaptcha4.getText().toString().trim().isEmpty()) {
+            Toast("请输入正确验证码！");
             return;
         }
 

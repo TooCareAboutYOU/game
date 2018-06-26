@@ -21,9 +21,11 @@ import com.kachat.game.R;
 import com.kachat.game.SdkApi;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.events.DNGameEventMessage;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.ui.game.GameActivity;
+import com.kachat.game.ui.game.GameRoomActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
@@ -37,7 +39,7 @@ import butterknife.BindView;
 
 public class MurphyBarActivity extends BaseActivity {
 
-    private static final String TAG = "MurphyBarActivity";
+    private static final String TAG = "SdkApi";
 
     @BindView(R.id.toolbar_base)
     Toolbar mToolbar;
@@ -52,6 +54,7 @@ public class MurphyBarActivity extends BaseActivity {
     @BindView(R.id.fl_LocalView)
     FrameLayout mLocalView;
 
+    private int register=0;
 
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, MurphyBarActivity.class);
@@ -109,8 +112,8 @@ public class MurphyBarActivity extends BaseActivity {
 
     @SuppressLint("InflateParams")
     public void onRankListClick(View v){
-        View rankView=LayoutInflater.from(this).inflate(R.layout.layout_bar_charmlist,null);
-        new AlterDialogBuilder(MurphyBarActivity.this,"魅力",rankView).hideRootSure();
+//        View rankView=LayoutInflater.from(this).inflate(R.layout.layout_bar_charmlist,null);
+//        new AlterDialogBuilder(MurphyBarActivity.this,"魅力",rankView).hideRootSure();
     }
 
     @SuppressLint("InflateParams")
@@ -122,9 +125,23 @@ public class MurphyBarActivity extends BaseActivity {
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
+                register++;
+                if (register == 7) {
+                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"连接超时，请重新连接！"));
+                    dialogBroken.getRootSure().setOnClickListener(v -> {
+                        SdkApi.getInstance().sdkExit();
+                        SdkApi.getInstance().create(this);
+                    });
+                }
                 break;
             case SESSION_OCCUPY:
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                register=0;
+                AlterDialogBuilder dialog=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"账号异地登录，退出?"));
+                dialog.getRootSure().setOnClickListener(v -> {
+                    PublicEventMessage.ExitAccount(this);
+                    dialog.dismiss();
+                });
                 break;
             case SESSION_KEEP_ALIVE:
                 Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
@@ -146,6 +163,7 @@ public class MurphyBarActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_START:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_START");
+                register=0;
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.VISIBLE);
                 break;
@@ -153,10 +171,10 @@ public class MurphyBarActivity extends BaseActivity {
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
                 break;
             case VIDEO_CHAT_TERMINATE:
+                SdkApi.getInstance().destroy(isLoadVideo);
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
-                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！"));
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！")).hideClose();
                 dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    SdkApi.getInstance().destroy(isLoadVideo);
                     isLoadVideo=!isLoadVideo;
                     mFlLoading.setVisibility(View.GONE);
                     mContainer.setVisibility(View.GONE);

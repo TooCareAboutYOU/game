@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -61,7 +62,7 @@ public class GraduateSchoolActivity extends BaseActivity  {
     @BindView(R.id.sdv_Left)
     SimpleDraweeView mSdvLeft;
     @BindView(R.id.fl_PropsList)   //素材容器
-            FrameLayout mFlPropsList;
+    FrameLayout mFlPropsList;
     @BindView(R.id.sdv_Right)
     SimpleDraweeView mSdvRight;
 
@@ -100,7 +101,10 @@ public class GraduateSchoolActivity extends BaseActivity  {
 
     @Override
     protected void onInitView() {
-        getToolBarBack().setOnClickListener(v -> this.finish());
+        getToolBarBack().setOnClickListener(v -> {
+            Log.i(TAG, "onInitView: ");
+            this.finish();
+        });
         getToolbarMenu().setImageResource(R.drawable.icon_graduate_school);
         getToolbarMenu().setOnClickListener(v -> {
             boolean isSave=SdkApi.getInstance().save();
@@ -254,7 +258,7 @@ public class GraduateSchoolActivity extends BaseActivity  {
 
     @Override
     protected void onDestroy() {
-
+        Log.i(TAG, "onDestroy: ");
         if (mLivesPresenter != null) {
             mLivesPresenter.detachPresenter();
             mLivesPresenter=null;
@@ -268,7 +272,6 @@ public class GraduateSchoolActivity extends BaseActivity  {
         if (sFragmentHashMap != null) {
             sFragmentHashMap.clear();
         }
-
 
         super.onDestroy();
     }

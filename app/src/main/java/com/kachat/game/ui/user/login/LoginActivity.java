@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected boolean onSetStatusBar() {
-        return true;
+        return false;
     }
 
     @SuppressLint("CommitTransaction")
@@ -68,7 +68,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAcEtMobile.setText("15000000000");
+//        mAcEtMobile.setText("15000000000");
+        mAcEtMobile.setText("15821239216");
     }
 
     String mobile;

@@ -1,6 +1,16 @@
 package com.kachat.game.events;
 
+import android.content.Context;
+
+import com.kachat.game.Config;
+import com.kachat.game.SdkApi;
+import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.model.CategoryListBean;
+import com.kachat.game.ui.user.MeActivity;
+import com.kachat.game.ui.user.login.LoginActivity;
+import com.kachat.game.utils.manager.ActivityManager;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 
 import java.util.List;
 
@@ -8,6 +18,20 @@ import java.util.List;
  *
  */
 public class PublicEventMessage {
+
+    public static void ExitAccount(Context context){
+
+            if (DaoDelete.deleteUserAll()) {
+//                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
+                ActivityManager.getInstance().removeActivity("MainActivity");
+                DaoDelete.deleteUserAll();
+                if (Config.getFirst() == 200) {
+                    DaoDelete.deleteLiveModelAll();
+                }
+                SdkApi.getInstance().sdkExit();
+                LoginActivity.newInstance(context);
+            }
+    }
 
     public static class TransmitMobile{
         private String mobile;
