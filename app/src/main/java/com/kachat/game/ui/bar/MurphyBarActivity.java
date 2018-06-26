@@ -44,7 +44,6 @@ public class MurphyBarActivity extends BaseActivity {
     @BindView(R.id.toolbar_base)
     Toolbar mToolbar;
 
-    private boolean isLoadVideo;
     @BindView(R.id.fl_LoadingView)
     FrameLayout mFlLoading;
     @BindView(R.id.fl_ChatView)
@@ -80,21 +79,15 @@ public class MurphyBarActivity extends BaseActivity {
         setToolBarTitle("");
         getToolBarTitle().setVisibility(View.GONE);
         getToolBarBack().setOnClickListener(v -> {
-            if (isLoadVideo) {
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.GONE);
-                SdkApi.getInstance().destroy(isLoadVideo);
-                isLoadVideo=!isLoadVideo;
-            }else {
                 finish();
-            }
         });
 
     }
 
     public void onStartMatchClick(View v){
         if (Config.getFirst() == 200) {
-            isLoadVideo=!isLoadVideo;
             mFlLoading.setVisibility(View.VISIBLE);
             SdkApi.getInstance().create(this);
             SdkApi.getInstance().loadLocalView(this, mLocalView);
@@ -125,22 +118,29 @@ public class MurphyBarActivity extends BaseActivity {
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
-                register++;
-                if (register == 7) {
-                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"连接超时，请重新连接！"));
-                    dialogBroken.getRootSure().setOnClickListener(v -> {
-                        SdkApi.getInstance().sdkExit();
-                        SdkApi.getInstance().create(this);
-                    });
-                }
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"请重新连接！"));
+                dialogBuilder.getRootSure().setOnClickListener(v -> {
+
+                    dialogBuilder.dismiss();
+                });
+
+                // TODO: 2018/6/26  退出登录界面
+//                register++;
+//                if (register == 7) {
+//                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"连接超时，请重新连接！"));
+//                    dialogBroken.getRootSure().setOnClickListener(v -> {
+//                        SdkApi.getInstance().sdkExit();
+//                        SdkApi.getInstance().create(this);
+//                    });
+//                }
                 break;
             case SESSION_OCCUPY:
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
                 register=0;
-                AlterDialogBuilder dialog=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"账号异地登录，退出?"));
-                dialog.getRootSure().setOnClickListener(v -> {
+                AlterDialogBuilder dialog1=new AlterDialogBuilder(this, new DialogTextView(MurphyBarActivity.this,"账号异地登录，退出?"));
+                dialog1.getRootSure().setOnClickListener(v -> {
                     PublicEventMessage.ExitAccount(this);
-                    dialog.dismiss();
+                    dialog1.dismiss();
                 });
                 break;
             case SESSION_KEEP_ALIVE:
@@ -173,13 +173,11 @@ public class MurphyBarActivity extends BaseActivity {
             case VIDEO_CHAT_TERMINATE:
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.GONE);
-                SdkApi.getInstance().destroy(isLoadVideo);
-                removeView();
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
-                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！")).hideClose();
-                dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    isLoadVideo=!isLoadVideo;
-                    dialogBuilder.dismiss();
+                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！")).hideClose();
+                dialogBuilder1.getRootSure().setOnClickListener(v -> {
+                    dialogBuilder1.dismiss();
+                    finish();
                 });
                 break;
             case VIDEO_CHAT_FAIL:
@@ -211,10 +209,8 @@ public class MurphyBarActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         register=0;
-        if (isLoadVideo) {
-            SdkApi.getInstance().destroy(isLoadVideo);
-            removeView();
-        }
+        removeView();
+        SdkApi.getInstance().destroy(true);
         super.onDestroy();
     }
 

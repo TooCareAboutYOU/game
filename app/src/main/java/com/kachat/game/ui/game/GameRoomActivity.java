@@ -85,7 +85,6 @@ public class GameRoomActivity extends BaseActivity {
 
     private DbUserBean mDbUserBean = DaoQuery.queryUserData();
     private int type;
-    private boolean isLoad=false;
 
     @Override
     protected int onSetResourceLayout() {
@@ -145,7 +144,6 @@ public class GameRoomActivity extends BaseActivity {
     }
 
     private void loadVideo(){
-        isLoad=true;
         SdkApi.getInstance().loadLocalView(this, flLocalView);
         SdkApi.getInstance().loadRemoteView(this, flRemoteView);
         SdkApi.getInstance().enableVideoView();
@@ -192,8 +190,9 @@ public class GameRoomActivity extends BaseActivity {
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, new DialogTextView(GameRoomActivity.this,"账号异地登录，请重新?"));
                 dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    PublicEventMessage.ExitAccount(this);
                     dialogBuilder.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
                 });
                 break;
             case SESSION_KEEP_ALIVE:
@@ -213,7 +212,14 @@ public class GameRoomActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(event.getString())) {
                     DNGameEventMessage.OnGameMessageBean gameBean= JSON.parseObject(event.getString(),DNGameEventMessage.OnGameMessageBean.class);
                     if (!TextUtils.isEmpty(gameBean.getType()) && gameBean.getType().equals("leave")) {
-                            SdkApi.getInstance().destroy(true);
+//                        SdkApi.getInstance().destroy(true);
+//                        finish();
+                        AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
+                                new DialogTextView(GameRoomActivity.this,"对方已下线！！！")).hideClose();
+                        dialogBuilder1.getRootSure().setOnClickListener(v -> {
+                            dialogBuilder1.dismiss();
+                            finish();
+                        });
                     }
 
                     DNGameEventMessage.OnBoxsMessageBean boxBean=JSON.parseObject(event.getString(),DNGameEventMessage.OnBoxsMessageBean.class);
@@ -252,6 +258,12 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_TERMINATE:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
+//                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
+//                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！")).hideClose();
+//                dialogBuilder1.getRootSure().setOnClickListener(v -> {
+//                    dialogBuilder1.dismiss();
+//                    finish();
+//                });
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
@@ -560,7 +572,7 @@ public class GameRoomActivity extends BaseActivity {
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
 
-        SdkApi.getInstance().destroy(isLoad);
+        SdkApi.getInstance().destroy(true);
 
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();
