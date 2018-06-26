@@ -171,18 +171,20 @@ public class MurphyBarActivity extends BaseActivity {
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
                 break;
             case VIDEO_CHAT_TERMINATE:
+                mFlLoading.setVisibility(View.GONE);
+                mContainer.setVisibility(View.GONE);
                 SdkApi.getInstance().destroy(isLoadVideo);
+                removeView();
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！")).hideClose();
                 dialogBuilder.getRootSure().setOnClickListener(v -> {
                     isLoadVideo=!isLoadVideo;
-                    mFlLoading.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.GONE);
                     dialogBuilder.dismiss();
                 });
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
+
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");
@@ -208,9 +210,20 @@ public class MurphyBarActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        register=0;
         if (isLoadVideo) {
             SdkApi.getInstance().destroy(isLoadVideo);
+            removeView();
         }
         super.onDestroy();
+    }
+
+    private void removeView(){
+        if (mRemoteView.getChildCount() > 0) {
+            mRemoteView.removeAllViews();
+        }
+        if (mLocalView.getChildCount() > 0){
+            mLocalView.removeAllViews();
+        }
     }
 }
