@@ -10,10 +10,13 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.DeviceUtils;
@@ -24,6 +27,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.SdkApi;
+import com.kachat.game.events.DNGameEventMessage;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.model.ErrorBean;
@@ -43,6 +48,10 @@ import com.kachat.game.ui.user.MeActivity;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +62,8 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
 
-    private boolean isLogin=false;
-
+    @BindView(R.id.fl_Root)
+    FrameLayout rootView;
     @BindView(R.id.toolbar_Home)
     Toolbar mToolbar;
     @BindView(R.id.sdv_UserLogo)
@@ -69,9 +78,6 @@ public class MainActivity extends BaseActivity {
     AppCompatTextView mAcTvUserGold;
     @BindView(R.id.acTv_UserDiamonds)
     AppCompatTextView mAcTvUserDiamonds;
-
-    private List<RankingListBean.ResultBean.RanksBean> mRankList = null;
-    private ExperienceRankPresenter mPresenter = null;
 
     private SignsStatusPresenter mStatusPresenter=null;
     private SignsPresenter mSignsPresenter=null;
@@ -103,8 +109,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onInitView() {
-        mRankList = new ArrayList<>();
-        mPresenter = new ExperienceRankPresenter(new ExpLevelCallBack());
         mStatusPresenter=new SignsStatusPresenter(new SignsStatusCallBack());
         mSignsPresenter=new SignsPresenter(new SignsInCallBack());
         checkLogin();
@@ -124,9 +128,7 @@ public class MainActivity extends BaseActivity {
 //                TestActivity.newInstance(this);
                 break;
             case R.id.sdv_RankingList:
-                if (mPresenter != null) {
-                    mPresenter.attachPresenter();
-                }
+                HomeRankListFragment.getInstance().show(getSupportFragmentManager(),HomeRankListFragment.TAG);
                 break;
             case R.id.sdv_SignIn:
                 if (mStatusPresenter != null) {
@@ -139,33 +141,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private class ExpLevelCallBack implements OnPresenterListeners.OnViewListener<RankingListBean> {
-        @Override
-        public void onSuccess(RankingListBean result) {
-            Log.i(TAG, "onSuccess: "+result.toString());
-            if (result.getResult() != null && result.getResult().getRanks() != null && result.getResult().getRanks().size() > 0) {
-                HomeRankListFragment.getInstance("等级", result.getResult().getRanks()).show(getSupportFragmentManager(), HomeRankListFragment.TAG);
-            } else {
-                HomeRankListFragment.getInstance("等级", mRankList).show(getSupportFragmentManager(), HomeRankListFragment.TAG);
-            }
-        }
-
-        @Override
-        public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Logger(error.getToast());
-                Toast(error.getToast());
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            if (e != null) {
-                Logger(e.getMessage());
-                Toast(e.getMessage());
-            }
-        }
-    }
 
     private class SignsStatusCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
         @SuppressLint("InflateParams")
@@ -250,6 +225,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         Log.i(TAG, "onStart: ");
         DbUserBean dbUserBean = DaoQuery.queryUserData();
         if (dbUserBean != null) {
@@ -277,16 +253,51 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(this, "用户账号异常", Toast.LENGTH_SHORT).show();
             return;
         }
-        isLogin=true;
+        Log.i(TAG, "checkLogin: ");
         SdkApi.getInstance().sdkLogin(mDbUserBean.getUid(), mDbUserBean.getToken());
     }
 
+    int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        broken=0;
+                        dialogOccupy.dismiss();
+                        PublicEventMessage.ExitAccount(this);
+                        finish();
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
+                });
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+
     @Override
     protected void onDestroy() {
-        if (mPresenter != null) {
-            mPresenter.detachPresenter();
-            mPresenter = null;
-        }
 
         if (mStatusPresenter != null) {
             mStatusPresenter.detachPresenter();
@@ -296,9 +307,6 @@ public class MainActivity extends BaseActivity {
             mSignsPresenter.detachPresenter();
             mSignsPresenter=null;
         }
-//        if (isLogin) {
-
-//        }
         super.onDestroy();
         SdkApi.getInstance().sdkExit();
     }
@@ -307,9 +315,10 @@ public class MainActivity extends BaseActivity {
     private long firstTime = 0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        broken=0;
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - firstTime > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                Toast("再按一次退出程序");
                 firstTime = System.currentTimeMillis();
             } else {
                 System.exit(0);

@@ -3,6 +3,7 @@ package com.kachat.game.ui.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AlertDialogLayout;
@@ -24,6 +25,8 @@ import com.kachat.game.Config;
 import com.kachat.game.Constant;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.DNGameEventMessage;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.model.ErrorBean;
@@ -32,8 +35,13 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.GameListPresenter;
 import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
+import com.kachat.game.utils.OnCheckNetClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +104,7 @@ public class GameActivity extends BaseActivity {
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> this.finish());
         getToolbarMenu().setImageResource(R.drawable.icon_ranklist);
+        getToolbarMenu().setOnClickListener(v -> RankListActivity.newInstance(this));
         SimpleDraweeView sdvView=findViewById(R.id.sdv_ToolBar_BaseMenu2);
         sdvView.setImageResource(R.drawable.icon_hint);
         sdvView.setOnClickListener(v -> {
@@ -108,10 +117,6 @@ public class GameActivity extends BaseActivity {
         mRvGameList.addItemDecoration(new SpaceItemDecoration(0, 10, 0, 0));
         mRvGameList.setLayoutManager(manager);
         mRvGameList.setAdapter(mAdapter);
-        getToolbarMenu().setOnClickListener(v -> {
-//            MeActivity.newInstance(this);
-            new AlterDialogBuilder(this,"提示",new DialogTextView(this,"排行榜功能暂未开放!")).hideRootSure();
-        });
 
         mPresenter = new GameListPresenter(new GameListCallBack());
     }
@@ -122,6 +127,7 @@ public class GameActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         DbUserBean dbUserBean = DaoQuery.queryUserData();
         if (dbUserBean != null) {
             if (dbUserBean.getGender().equals("male")) {
@@ -135,7 +141,6 @@ public class GameActivity extends BaseActivity {
             mAcTvUserDiamonds.setText(dbUserBean.getDiamond() + "");
             mAcTvUserGold.setText(dbUserBean.getGold() + "");
         }
-
         mPresenter.attachPresenter();
     }
 
@@ -227,16 +232,18 @@ public class GameActivity extends BaseActivity {
             holder.sdvStart.setImageResource(mList.get(position).getImgStart());
 
 
-            holder.sdvStart.setOnClickListener(v -> {
-                if (Config.getFirst() != 200) {
-                    new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
-                    return;
-                }
-                if (mList.get(position).getIndex() != 903) {
-//                    loadH5Game(mList.get(position).getIndex());
-                    loadGame(mList.get(position).getIndex());
-                }else {
-                    new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"限时游戏，敬请期待!")).hideRootSure();
+            holder.sdvStart.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    if (Config.getIsFiguresMask()) {
+                        if (mList.get(position).getIndex() != 903) {
+                            loadGame(mList.get(position).getIndex());
+                        }else {
+                            new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"限时游戏，敬请期待!")).hideRootSure();
+                        }
+                    }else {
+                        new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
+                    }
                 }
             });
         }
@@ -260,41 +267,59 @@ public class GameActivity extends BaseActivity {
 
     private void loadGame(int index){
         Bundle bundle = new Bundle();
-        //        int htmlNum=-1;
-        int matchType=-1;
         switch (index) {
             case 902: //晕头转向
                 bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_HEXTRIS);
-//                htmlNum=9004;
-                matchType=2;
-                break;
-            case 903: //娃娃机
-//                htmlNum=-1;
-                matchType=-1;
+                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_HEXTRIS);
                 break;
             case 901://消灭星星
                 bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_POPSTART);
-//                htmlNum=9003;
-                matchType=1;
+                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_POPSTART);
                 break;
             case 900:  //盖房子
                 bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_TOWER);
-//                htmlNum=9002;
-                matchType=0;
+                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_TOWER);
                 break;
         }
+        GameRoomActivity.newInstance(GameActivity.this, bundle);
+    }
 
-//        if (htmlNum != -1) {
-//            GameURL = "http://demo.e3webrtc.com:" + htmlNum;
-            bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
-            GameRoomActivity.newInstance(GameActivity.this, bundle);
-//            parentDialog.dismiss();
-//        }
+    int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "数据连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        broken=0;
+                        dialogOccupy.dismiss();
+                        PublicEventMessage.ExitAccount(this);
+                        finish();
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
+                });
+                break;
+            }
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
         mList.clear();
     }
 

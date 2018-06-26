@@ -2,12 +2,43 @@
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:layout_gravity="center">
 
+    <RadioGroup
+        android:id="@+id/rg_Charm"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="@dimen/margin_10dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:visibility="gone">
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/acRbtn_Total"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_tag_frame"
+            android:textColor="@drawable/selector_tag_textcolor"
+            android:gravity="center"
+            android:checked="true"
+            android:button="@null"
+            android:layout_weight="1"
+            android:text="总排行榜"/>
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/acRbtn_Week"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_tag_frame"
+            android:textColor="@drawable/selector_tag_textcolor"
+            android:gravity="center"
+            android:button="@null"
+            android:layout_weight="1"
+            android:text="周排行榜"/>
+    </RadioGroup>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_Prop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:overScrollMode="never" />
 

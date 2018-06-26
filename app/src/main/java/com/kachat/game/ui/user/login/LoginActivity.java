@@ -4,19 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.events.services.NetConnectService;
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
@@ -24,15 +21,13 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.CaptchaPresenter;
 import com.kachat.game.ui.user.register.RegisterActivity;
 import com.kachat.game.utils.MyUtils;
-import com.kachat.game.utils.OnClickListener;
-
+import com.kachat.game.utils.OnCheckNetClickListener;
 import butterknife.BindView;
 
 
 public class LoginActivity extends BaseActivity {
 
     private static final String TAG = "LoginActivity";
-    private static FragmentTransaction mTransaction;
 
     public static void newInstance(Context context){
         Intent intent=new Intent(context,LoginActivity.class);
@@ -60,8 +55,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         mCaptchaPresenter = new CaptchaPresenter(new CheckAccount());
-        findViewById(R.id.sdv_go).setOnClickListener(v-> {
-            Check();
+        findViewById(R.id.sdv_go).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                check();
+            }
+        });
+        getLoadView().setOnClickListener(v -> {
+            hideLoadView();
         });
     }
 
@@ -72,10 +73,10 @@ public class LoginActivity extends BaseActivity {
         mAcEtMobile.setText("15821239216");
     }
 
-    String mobile;
-    private void Check() {
-        mobile = mAcEtMobile.getText().toString().trim();
 
+    private String mobile;
+    private void check() {
+        mobile = mAcEtMobile.getText().toString().trim();
         if (TextUtils.isEmpty(mobile)) {
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
             Toast(R.string.toast_mobile_is_null);
@@ -87,9 +88,8 @@ public class LoginActivity extends BaseActivity {
             mAcEtMobile.setText("");
             return;
         }
-
+        showLoadView();
         mCaptchaPresenter.attachPresenter(mobile);
-
     }
 
     //0   验证码发送成功   --调到输入验证码
@@ -100,6 +100,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onSuccess(GetCaptchaBean result) {  //不存在,发送验证码
             Toast("验证码：" + result.getResult().getCaptcha());
+            hideLoadView();
             if (result.getResult() != null) {
                 Config.setMobile(mobile);
                 RegisterActivity.newInstance(LoginActivity.this);
@@ -110,7 +111,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
             Log.i(TAG, "onFailed: "+error.toString());
-
+            hideLoadView();
             if (errorCode == CodeType.CODE_RESPONSE_INPUT_PWD) {  //  已注册,输入密码登录
                 mClContainer.setBackgroundResource(R.drawable.img_bg_login_ok);
                 Config.setMobile(mobile);
@@ -125,6 +126,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onError(Throwable e) {
+            hideLoadView();
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
             if (e != null) {
                 Log.i(TAG, "onError: "+e.getMessage());
@@ -147,7 +149,6 @@ public class LoginActivity extends BaseActivity {
         }
         super.onDestroy();
     }
-
 
     @Override
     public void onBackPressed() {

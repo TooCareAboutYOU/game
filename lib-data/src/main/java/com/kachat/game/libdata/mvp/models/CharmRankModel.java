@@ -15,8 +15,8 @@ public class CharmRankModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getCharm(final OnPresenterListeners.OnModelListener<RankingListBean> listener){
-        mSubscription= GameApi.getCharm(new Observer<RankingListBean>() {
+    public void getCharm(int type,final OnPresenterListeners.OnModelListener<RankingListBean> listener){
+        mSubscription= GameApi.getCharm(type,new Observer<RankingListBean>() {
             @Override
             public void onCompleted() { }
 

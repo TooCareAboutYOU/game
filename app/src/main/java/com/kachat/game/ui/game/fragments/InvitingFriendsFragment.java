@@ -29,7 +29,6 @@ public class InvitingFriendsFragment extends BaseDialogFragment {
     AppCompatImageView mAcInvClose;
     @BindView(R.id.rl_friends)
     RecyclerView mRlFriends;
-    Unbinder unbinder;
 
     @Override
     protected int setResLayoutId() {

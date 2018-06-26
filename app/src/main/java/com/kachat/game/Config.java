@@ -18,9 +18,9 @@ public class Config {
     public static void setMobile(String value){ SharedPreferencesHelper.getInstance().setStringValue(mobile,value); }
     public static String getMobile(){ return SharedPreferencesHelper.getInstance().getStringValueByKey(mobile); }
 
-    private static String isFirstStartGame="startGame";
-    public static void setFirst(int value){ SharedPreferencesHelper.getInstance().setIntValue(isFirstStartGame,value); }
-    public static int getFirst(){ return SharedPreferencesHelper.getInstance().getIntValueByKey(isFirstStartGame); }
+    private static String isFiguresMask="figuresMask";
+    public static void setIsFiguresMask(boolean value){ SharedPreferencesHelper.getInstance().setBooleanValue(isFiguresMask,value); }
+    public static boolean getIsFiguresMask(){ return SharedPreferencesHelper.getInstance().getBooleanValueByKey(isFiguresMask); }
 
     private static String SdkBroken="sdkBroken";
     public static void setBrokenState(boolean isBroken){ SharedPreferencesHelper.getInstance().setBooleanValue(SdkBroken,isBroken); }

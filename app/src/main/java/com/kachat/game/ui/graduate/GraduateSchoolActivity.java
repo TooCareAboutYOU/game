@@ -13,10 +13,12 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.base.BaseFragment;
 import com.kachat.game.SdkApi;
+import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.model.ErrorBean;
@@ -109,6 +111,7 @@ public class GraduateSchoolActivity extends BaseActivity  {
         getToolbarMenu().setOnClickListener(v -> {
             boolean isSave=SdkApi.getInstance().save();
             if (isSave) {
+                Config.setIsFiguresMask(isSave);
                 new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存成功!")).hideRootSure();
             }else {
                 new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存失败!")).hideRootSure();
@@ -121,12 +124,12 @@ public class GraduateSchoolActivity extends BaseActivity  {
         }else {
             String fileName= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0).getLiveFileName();
             String bgName= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0).getBgFileName();
-            initVideo1(fileName, bgName);
+            initVideo(fileName, bgName);
         }
         initLive();
     }
 
-    private void initVideo1(String model, String bgImg) {
+    private void initVideo(String model, String bgImg) {
         SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadLocalView(this, mFlContainer);
         SdkApi.getInstance().enableVideoView();
@@ -138,7 +141,7 @@ public class GraduateSchoolActivity extends BaseActivity  {
         public void onSuccess(LivesBean result) {
             if (result.getResult() != null && result.getResult().getLives() != null && result.getResult().getLives().size() > 0) {
                 if (!TextUtils.isEmpty(result.getResult().getLives().get(0).getLive().getName())) {
-                    initVideo1(result.getResult().getLives().get(0).getLive().getName(), "bg_1.png");
+                    initVideo(result.getResult().getLives().get(0).getLive().getName(), "bg_1.png");
                 }
             }
         }
@@ -201,6 +204,40 @@ public class GraduateSchoolActivity extends BaseActivity  {
             }
         }
     }
+
+    int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        broken=0;
+                        dialogOccupy.dismiss();
+                        PublicEventMessage.ExitAccount(this);
+                        finish();
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
+                });
+                break;
+            }
+        }
+    }
+
+
 
     private void loadLive2DPersons() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(0)).commit(); }
     private void loadVoice() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(2)).commit(); }

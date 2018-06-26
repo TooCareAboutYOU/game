@@ -25,7 +25,7 @@ public class PublicEventMessage {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
                 ActivityManager.getInstance().removeActivity("MainActivity");
                 DaoDelete.deleteUserAll();
-                if (Config.getFirst() == 200) {
+                if (Config.getIsFiguresMask()) {
                     DaoDelete.deleteLiveModelAll();
                 }
                 SdkApi.getInstance().sdkExit();

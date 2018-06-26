@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -67,13 +68,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 //    private View mLoadView=LayoutInflater.from(this).inflate(R.layout.base_loading,null);
 //    public ContentLoadingProgressBar getLoadView(){ return findViewById(R.id.clPb_Loading); }
-    private ConstraintLayout getLoadView() {return findViewById(R.id.cl_LoadView);}
+    public ConstraintLayout getLoadView() {return findViewById(R.id.cl_LoadView);}
     public void showLoadView(){ getLoadView().setVisibility(View.VISIBLE); }
     public void hideLoadView(){ getLoadView().setVisibility(View.GONE); }
 
 
     private Unbinder unbinder;
-    private Intent mIntent=null;
 
     @SuppressLint({"RestrictedApi", "InflateParams"})
     @Override
@@ -109,12 +109,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
 
-//        mIntent=new Intent(this,NetConnectService.class);
-//        startService(mIntent);
-
         onInitView();
         initImmersionBar();
+
     }
+
 
     @Override
     protected void onDestroy() {

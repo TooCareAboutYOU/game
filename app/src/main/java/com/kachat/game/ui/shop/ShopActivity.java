@@ -1,5 +1,6 @@
 package com.kachat.game.ui.shop;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.widget.RadioGroup;
 
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.CategoryListBean;
@@ -144,6 +146,39 @@ public class ShopActivity extends BaseActivity {
         @Override
         public void onError(Throwable e) { if (e != null) { Toast(e.getMessage()); } }
     }
+
+    int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        broken=0;
+                        dialogOccupy.dismiss();
+                        PublicEventMessage.ExitAccount(this);
+                        finish();
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
+                });
+                break;
+            }
+        }
+    }
+
 
     @Override
     protected void onStart() {

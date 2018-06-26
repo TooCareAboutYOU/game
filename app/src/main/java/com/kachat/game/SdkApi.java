@@ -14,10 +14,14 @@ import com.RtcVideoProcess.VideoProcessItf;
 import com.dnion.RenderProxy;
 import com.dnion.VAGameAPI;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.controls.DaoInsert;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
+import com.kachat.game.ui.MainActivity;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,12 +291,11 @@ public class SdkApi {
         }
         DaoInsert.insertLive2DModel(mDbLive2DBean);
         Log.i(TAG, "save: ");
-        Config.setFirst(200);
         return true;
     }
 
-    public void destroy(boolean isLoad) {
-        Log.i(TAG, "destroy: ");
+    public void destroy(boolean isJoinRoom) {
+        Log.i(TAG, "sdk -->>>  destroy: ");
         if (this.mBridgeWebView != null) {
             if (this.mWebSettings != null) {
                 this.mWebSettings = null;
@@ -311,7 +314,7 @@ public class SdkApi {
             this.videoProcessorToCamera = null;
         }
 
-        if (isLoad) {
+        if (isJoinRoom) {
             Log.i(TAG, "destroy: leave Room");
             VAGameAPI.getInstance().stopGameMatch();
             // TODO: 2018/6/25  离开发送消息
@@ -334,7 +337,6 @@ public class SdkApi {
         if (this.mContext != null) {
             this.mContext=null;
         }
-
     }
 
 }

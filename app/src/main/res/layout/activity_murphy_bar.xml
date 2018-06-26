@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
@@ -11,7 +12,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <RelativeLayout
             android:layout_width="110dp"
             android:layout_height="56dp"
@@ -34,8 +34,7 @@
             android:layout_marginStart="52.67dp"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="210dp"
-            android:background="@drawable/icon_bar_start"
-            android:onClick="onStartMatchClick" />
+            android:background="@drawable/icon_bar_start"  />
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv2"
@@ -43,8 +42,7 @@
             android:layout_height="72dp"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/sdv1"
-            android:background="@drawable/icon_bar_rangklist"
-            android:onClick="onRankListClick" />
+            android:background="@drawable/icon_bar_rangklist"  />
     </RelativeLayout>
 
     <include layout="@layout/layout_loading"/>
@@ -72,16 +70,14 @@
                 android:layout_marginTop="6dp"
                 android:layout_marginStart="3dp"/>
         </FrameLayout>
-
         <FrameLayout
             android:id="@+id/fl_Box"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="end"
             android:layout_marginTop="250dp"
             android:layout_marginEnd="13.33dp"
-            android:background="@mipmap/ic_launcher"
-            android:visibility="gone">
+            android:background="@drawable/icon_bar_box_default" >
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/acTv_Timer"
                 android:layout_width="wrap_content"
@@ -91,22 +87,22 @@
                 android:textSize="18sp"
                 android:text="30s"/>
         </FrameLayout>
-
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_10dp"
-            android:layout_gravity="bottom|end"
-            android:visibility="gone">
+            android:layout_gravity="bottom|end" >
             <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/sdv_Report"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@mipmap/ic_launcher"
-                android:layout_marginEnd="20dp"/>
+                android:background="@drawable/icon_bar_report"
+                android:layout_marginEnd="20dp" />
             <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/sdv_ChoiceGift"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@mipmap/ic_launcher"/>
+                android:background="@drawable/icon_bar_sendgift"/>
         </android.support.v7.widget.LinearLayoutCompat>
 
     </FrameLayout>

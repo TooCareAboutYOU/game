@@ -18,8 +18,8 @@ public class CharmRankPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(){
-        this.mModel.getCharm(new OnPresenterListeners.OnModelListener<RankingListBean>() {
+    public void attachPresenter(int type){
+        this.mModel.getCharm(type,new OnPresenterListeners.OnModelListener<RankingListBean>() {
             @Override
             public void onSuccess(RankingListBean result) {
                 if (mView != null) {

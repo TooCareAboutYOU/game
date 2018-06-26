@@ -29,7 +29,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.dnion.VAGameAPI;
+import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.ui.bar.MurphyBarActivity;
 import com.kachat.game.ui.user.MeActivity;
@@ -117,15 +121,6 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
 
-        //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
-        SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
-            Log.i(TAG, "接受Js消息: ");
-//            显示接收的消息
-            handleGameRequest(data);
-//            返回给html的消息
-            function.onCallBack("返回给//Toast的alert");
-        });
-
         Bundle bundle = getIntent().getExtras();
         String url = Objects.requireNonNull(bundle).getString(Html_Url);
         type=bundle.getInt(GAME_TYPE);
@@ -136,11 +131,17 @@ public class GameRoomActivity extends BaseActivity {
             Toast("游戏地址为空!");
             this.finish();
         }
-
-
         SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadGame(url);
 
+        //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
+        SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
+            Log.i(TAG, "接受Js消息: ");
+//            显示接收的消息
+            handleGameRequest(data);
+//            返回给html的消息
+            function.onCallBack("返回给//Toast的alert");
+        });
     }
 
     private void loadVideo(){
@@ -153,30 +154,16 @@ public class GameRoomActivity extends BaseActivity {
     }
 
     public void handleGameRequest(String msg) {
+
+        Log.w(TAG, "发送消息 handleGameRequest: "+msg);
         SdkApi.getInstance().sendMessage(msg);
-        Log.w(TAG, "handleGameRequest: "+msg);
         DNGameEventMessage.OnGameMessageBean gameBean= JSON.parseObject(msg,DNGameEventMessage.OnGameMessageBean.class);
         if (!TextUtils.isEmpty(gameBean.getType()) && gameBean.getType().equals("leave")) {
-////                        SdkApi.getInstance().destroy(true);
-////                        finish();
-//            AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
-//                    new DialogTextView(GameRoomActivity.this,"对方已下线！！！")).hideClose();
-//            dialogBuilder1.getRootSure().setOnClickListener(v -> {
-//                dialogBuilder1.dismiss();
-                finish();
-//            });
+            finish();
         }
     }
 
-    public void handleGameResponse(String msg) {
-        Log.w(TAG, "handleGameResponse: "+msg);
-    }
-
-    private void signalWebView(String cmd) {
-        Log.w(TAG, "signalWebView: "+cmd);
-        mBridgeWebView.callHandler("ToJS", cmd, data -> handleGameResponse(data));
-//        this.finish();
-    }
+    public void handleGameResponse(String msg) { Log.w(TAG, "handleGameResponse: "+msg); }
 
     @SuppressLint("InflateParams")
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -187,20 +174,32 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
+//                if (NetworkUtils.isConnected()) {
+//                    if (!NetworkUtils.isAvailableByPing()) {
+//                        ToastUtils.showShort("当前网络不可用！");
+//                    }
+//                }else {
+//                    if (flRemoteView.getChildCount() > 0) {
+//                        flRemoteView.removeAllViews();
+//                    }
+//                    ToastUtils.showShort("网络已断开！");
+//                }
                 register++;
                 if (register == 7) {
-                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this, new DialogTextView(GameRoomActivity.this,"连接超时，请重新连接！"));
+                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this,new DialogTextView(GameRoomActivity.this,"连接异常，请重新登录！"),"退出").hideClose();
                     dialogBroken.getRootSure().setOnClickListener(v -> {
-                        SdkApi.getInstance().sdkExit();
-                        SdkApi.getInstance().create(this);
+                        PublicEventMessage.ExitAccount(this);
+                        dialogBroken.dismiss();
+                        finish();
                     });
+
                 }
                 break;
             case SESSION_OCCUPY:  // 同一个账号登录
                 Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(this, new DialogTextView(GameRoomActivity.this,"账号异地登录，请重新?"));
-                dialogBuilder.getRootSure().setOnClickListener(v -> {
-                    dialogBuilder.dismiss();
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
                     PublicEventMessage.ExitAccount(this);
                     finish();
                 });
@@ -210,6 +209,7 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case JOIN_SUCCESS:
                 Log.i(TAG, "onEvent: JOIN_SUCCESS");
+                mLoadLayout.setVisibility(View.GONE);
                 break;
             case JOIN_FAILED:
                 Log.i(TAG, "onEvent: JOIN_FAILED");
@@ -219,64 +219,54 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case GAME_MESSAGE:
                 Log.i(TAG, "onEvent: GAME_MESSAGE");
+                mBridgeWebView.callHandler("ToJS", event.getString(), data -> handleGameResponse(data));
                 if (!TextUtils.isEmpty(event.getString())) {
-                    DNGameEventMessage.OnGameMessageBean gameBean= JSON.parseObject(event.getString(),DNGameEventMessage.OnGameMessageBean.class);
-                    if (!TextUtils.isEmpty(gameBean.getType()) && gameBean.getType().equals("leave")) {
-//                        SdkApi.getInstance().destroy(true);
-//                        finish();
-                        AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
-                                new DialogTextView(GameRoomActivity.this,"对方已下线！！！")).hideClose();
-                        dialogBuilder1.getRootSure().setOnClickListener(v -> {
-                            dialogBuilder1.dismiss();
-                            finish();
+                    DNGameEventMessage.OnBoxsMessageBean boxBean=JSON.parseObject(event.getString(),DNGameEventMessage.OnBoxsMessageBean.class);
+                    if (boxBean!= null) {
+
+                        View boxRootView= LayoutInflater.from(this).inflate(R.layout.dialog_box,null);
+                        ImageView sdvViewBG=boxRootView.findViewById(R.id.sdv_Box_bg);
+                        ImageView sdvView=boxRootView.findViewById(R.id.sdv_Box);
+                        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(sdvViewBG);
+                        switch (boxBean.getBox()) {
+                            case 0: Glide.with(this).asGif().load(R.drawable.gif_box_white).into(sdvView);break;//白色
+                            case 1: Glide.with(this).asGif().load(R.drawable.gif_box_blue).into(sdvView);break;//蓝色
+                            case 2: Glide.with(this).asGif().load(R.drawable.gif_box_purple).into(sdvView);break;//紫色
+                            case 3: Glide.with(this).asGif().load(R.drawable.gif_box_orange).into(sdvView);break;//橙色
+                            case 4: Glide.with(this).asGif().load(R.drawable.gif_box_yellow).into(sdvView);break;//金色
+                        }
+                        AlterDialogBuilder builderView=new AlterDialogBuilder(this,boxRootView).hideRootSure();
+                        boxRootView.setOnClickListener(v -> {
+                            builderView.dismiss();
+                            DialogView(boxBean);
                         });
                     }
-
-//                    DNGameEventMessage.OnBoxsMessageBean boxBean=JSON.parseObject(event.getString(),DNGameEventMessage.OnBoxsMessageBean.class);
-//                    if (boxBean!= null) {
-//
-//                        View boxRootView= LayoutInflater.from(this).inflate(R.layout.dialog_box,null);
-//                        ImageView sdvViewBG=boxRootView.findViewById(R.id.sdv_Box_bg);
-//                        ImageView sdvView=boxRootView.findViewById(R.id.sdv_Box);
-//                        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(sdvViewBG);
-//                        switch (boxBean.getBox()) {
-//                            case 0: Glide.with(this).asGif().load(R.drawable.gif_box_white).into(sdvView);break;//白色
-//                            case 1: Glide.with(this).asGif().load(R.drawable.gif_box_blue).into(sdvView);break;//蓝色
-//                            case 2: Glide.with(this).asGif().load(R.drawable.gif_box_purple).into(sdvView);break;//紫色
-//                            case 3: Glide.with(this).asGif().load(R.drawable.gif_box_orange).into(sdvView);break;//橙色
-//                            case 4: Glide.with(this).asGif().load(R.drawable.gif_box_yellow).into(sdvView);break;//金色
-//                        }
-//                        AlterDialogBuilder builderView=new AlterDialogBuilder(this,boxRootView).hideRootSure();
-//                        boxRootView.setOnClickListener(v -> {
-//                            builderView.dismiss();
-//                            DailogView(boxBean);
-//                        });
-//                    }
                 }
-
-                signalWebView(event.getString());
                 break;
             case GAME_STAT:
                 Log.i(TAG, "onEvent: GAME_STAT");
                 break;
             case VIDEO_CHAT_START:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_START");
-                mLoadLayout.setVisibility(View.GONE);
                 break;
             case VIDEO_CHAT_FINISH:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
                 break;
             case VIDEO_CHAT_TERMINATE:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
-//                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
-//                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！")).hideClose();
-//                dialogBuilder1.getRootSure().setOnClickListener(v -> {
-//                    dialogBuilder1.dismiss();
-//                    finish();
-//                });
+                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
+                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！"),"退出游戏");
+                if (flRemoteView.getChildCount() > 0) {
+                    flRemoteView.removeAllViews();
+                }
+                dialogBuilder1.getRootSure().setOnClickListener(v -> {
+                    dialogBuilder1.dismiss();
+                    finish();
+                });
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
+                Logger("VIDEO_CHAT_FAIL");
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");
@@ -490,7 +480,7 @@ public class GameRoomActivity extends BaseActivity {
     }
 
     @SuppressLint("InflateParams")
-    private void DailogView(DNGameEventMessage.OnBoxsMessageBean boxBean){
+    private void DialogView(DNGameEventMessage.OnBoxsMessageBean boxBean){
         android.support.v7.app.AlertDialog.Builder builder=new android.support.v7.app.AlertDialog.Builder(this,R.style.AlertDialogStyle);
         View view=LayoutInflater.from(this).inflate(R.layout.dialog_box_info,null);
         ImageView imgBG=view.findViewById(R.id.imgBG);
@@ -519,7 +509,6 @@ public class GameRoomActivity extends BaseActivity {
         getView.setOnClickListener(v -> dialog.dismiss());
     }
 
-
     private @DrawableRes int getDrawableView(int index){
         @DrawableRes int drawable=R.mipmap.ic_launcher;
         switch (index) {
@@ -545,7 +534,6 @@ public class GameRoomActivity extends BaseActivity {
         }
         return drawable;
     }
-
 
 
     @Override

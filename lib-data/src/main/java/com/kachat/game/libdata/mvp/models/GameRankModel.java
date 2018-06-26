@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
 import com.kachat.game.libdata.model.GameRankBean;
+import com.kachat.game.libdata.model.RankListBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -18,8 +19,8 @@ public class GameRankModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getGameRankList(int gameIndex, int type, final OnPresenterListeners.OnModelListener<GameRankBean> listener){
-        mSubscription= GameApi.getGameRankList(gameIndex,type,new Observer<GameRankBean>() {
+    public void getGameRankList(int gameIndex, int type, final OnPresenterListeners.OnModelListener<RankListBean> listener){
+        mSubscription= GameApi.getGameRankList(gameIndex,type,new Observer<RankListBean>() {
             @Override
             public void onCompleted() { }
 
@@ -29,7 +30,7 @@ public class GameRankModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final GameRankBean bean) {
+            public void onNext(final RankListBean bean) {
                     if (listener != null) { listener.onSuccess(bean); }
             }
         });

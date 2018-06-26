@@ -19,6 +19,7 @@ import com.kachat.game.libdata.model.UserBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.LoginPresenter;
 import com.kachat.game.ui.MainActivity;
+import com.kachat.game.utils.OnCheckNetClickListener;
 
 import java.util.Objects;
 
@@ -66,15 +67,18 @@ public class CheckPwdActivity extends BaseActivity {
 
         mPresenter=new LoginPresenter(new LoginCallBack());
 
-        findViewById(R.id.sdv_go).setOnClickListener(v->{
-            String pwd=mAcEtPwd.getText().toString();
-            if (TextUtils.isEmpty(pwd)) {
-                mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
-                Toast(R.string.toast_pwd_is_null);
-                return;
+        findViewById(R.id.sdv_go).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                String pwd=mAcEtPwd.getText().toString();
+                if (TextUtils.isEmpty(pwd)) {
+                    mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
+                    Toast(R.string.toast_pwd_is_null);
+                    return;
+                }
+                mPresenter.attachPresenter(mobile,pwd);
+                mSdvGo.setEnabled(false);
             }
-            mPresenter.attachPresenter(mobile,pwd);
-            mSdvGo.setEnabled(false);
         });
     }
 

@@ -10,6 +10,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.SdkApi;
 import com.kachat.game.base.BaseActivity;
+import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
@@ -30,6 +32,10 @@ import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.manager.ActivityManager;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +122,7 @@ public class MeActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         DbUserBean dbUserBean= DaoQuery.queryUserData();
         if (dbUserBean != null) {
             mAcTvUserName.setText(dbUserBean.getUsername());
@@ -238,5 +245,48 @@ public class MeActivity extends BaseActivity {
             }
         }
     }
-    
+
+
+    int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        dialogOccupy.dismiss();
+                        PublicEventMessage.ExitAccount(this);
+                        finish();
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    PublicEventMessage.ExitAccount(this);
+                    finish();
+                });
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        broken=0;
+        super.onDestroy();
+    }
 }

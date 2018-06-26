@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.GameRankBean;
+import com.kachat.game.libdata.model.RankListBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.ExperienceRankModel;
@@ -16,17 +17,17 @@ public class GameRankPresenter {
     private static final String TAG = "CheckMobileFragment";
 
     private GameRankModel mModel;
-    private OnPresenterListeners.OnViewListener<GameRankBean> mView;
+    private OnPresenterListeners.OnViewListener<RankListBean> mView;
 
-    public GameRankPresenter(OnPresenterListeners.OnViewListener<GameRankBean> view) {
+    public GameRankPresenter(OnPresenterListeners.OnViewListener<RankListBean> view) {
         this.mModel=new GameRankModel();
         this.mView = view;
     }
 
-    public void attachPresenter(@IntegerRes int gameIndex, @IntegerRes int type){
-        this.mModel.getGameRankList(gameIndex,type,new OnPresenterListeners.OnModelListener<GameRankBean>() {
+    public void attachPresenter(int gameIndex, int type){
+        this.mModel.getGameRankList(gameIndex,type,new OnPresenterListeners.OnModelListener<RankListBean>() {
             @Override
-            public void onSuccess(GameRankBean result) {
+            public void onSuccess(RankListBean result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         GameRankPresenter.this.mView.onSuccess(result);

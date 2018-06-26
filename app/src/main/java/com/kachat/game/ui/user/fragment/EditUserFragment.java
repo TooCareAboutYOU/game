@@ -65,7 +65,6 @@ public class EditUserFragment extends BaseDialogFragment {
             dismiss();
         });
         View containerView=LayoutInflater.from(getContext()).inflate(R.layout.dialog_user_edit,null);
-
         mFlContainer.addView(containerView);
     }
 

@@ -38,4 +38,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/sdv_go"/>
 
+    <include layout="@layout/base_loading"/>
+
 </android.support.constraint.ConstraintLayout>

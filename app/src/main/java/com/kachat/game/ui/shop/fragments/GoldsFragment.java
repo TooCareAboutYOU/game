@@ -139,6 +139,9 @@ public class GoldsFragment extends BaseFragment {
         @Override
         public void onSuccess(CategoryListBean result) {
             if (result.getResult() != null && result.getResult().getGoods() != null && result.getResult().getGoods().size() > 0) {
+                if (mGoodsBeanList != null) {
+                    mGoodsBeanList.clear();
+                }
                 mGoodsBeanList.addAll(result.getResult().getGoods());
                 mGoldsAdapter.notifyDataSetChanged();
             }
