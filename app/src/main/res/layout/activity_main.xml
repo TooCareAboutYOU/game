@@ -147,21 +147,21 @@
         </android.support.v7.widget.Toolbar>
 
         <Button
+            android:id="@+id/btn_Game"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onGameClick"
             android:text="游戏"/>
 
         <Button
+            android:id="@+id/btn_YJY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onSignClick"
             android:text="研究院"/>
 
         <Button
+            android:id="@+id/btn_Bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onBarClick"
             android:text="酒吧"/>
 
     </android.support.v7.widget.LinearLayoutCompat>

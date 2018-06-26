@@ -54,6 +54,8 @@ public class LoginActivity extends BaseActivity {
     @SuppressLint("CommitTransaction")
     @Override
     protected void onInitView() {
+        Config.setMobile("");
+        Config.setIsFiguresMask(false);
         mCaptchaPresenter = new CaptchaPresenter(new CheckAccount());
         findViewById(R.id.sdv_go).setOnClickListener(new OnCheckNetClickListener() {
             @Override

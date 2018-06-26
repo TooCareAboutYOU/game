@@ -22,12 +22,4 @@ public class Config {
     public static void setIsFiguresMask(boolean value){ SharedPreferencesHelper.getInstance().setBooleanValue(isFiguresMask,value); }
     public static boolean getIsFiguresMask(){ return SharedPreferencesHelper.getInstance().getBooleanValueByKey(isFiguresMask); }
 
-    private static String SdkBroken="sdkBroken";
-    public static void setBrokenState(boolean isBroken){ SharedPreferencesHelper.getInstance().setBooleanValue(SdkBroken,isBroken); }
-    public static boolean getBrokenState(){ return SharedPreferencesHelper.getInstance().getBooleanValueByKey(SdkBroken); }
-
-
-
-
-
 }

@@ -20,6 +20,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.DeviceUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.bumptech.glide.Glide;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
@@ -45,6 +46,7 @@ import com.kachat.game.ui.game.GameActivity;
 import com.kachat.game.ui.graduate.GraduateSchoolActivity;
 import com.kachat.game.ui.shop.ShopActivity;
 import com.kachat.game.ui.user.MeActivity;
+import com.kachat.game.utils.OnCheckNetClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
@@ -112,35 +114,54 @@ public class MainActivity extends BaseActivity {
         mStatusPresenter=new SignsStatusPresenter(new SignsStatusCallBack());
         mSignsPresenter=new SignsPresenter(new SignsInCallBack());
         checkLogin();
-    }
+        findViewById(R.id.sdv_UserLogo).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                MeActivity.newInstance(MainActivity.this);
+            }
+        });
 
-    public void onGameClick(View v){ GameActivity.newInstance(this); }
-
-    public void onSignClick(View v){ GraduateSchoolActivity.newInstance(this); }
-
-    public void onBarClick(View view) { MurphyBarActivity.newInstance(this); }
-
-    @OnClick({R.id.sdv_UserLogo, R.id.sdv_RankingList, R.id.sdv_SignIn, R.id.sdv_Shop})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.sdv_UserLogo:
-                MeActivity.newInstance(this);
-//                TestActivity.newInstance(this);
-                break;
-            case R.id.sdv_RankingList:
+        findViewById(R.id.sdv_RankingList).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
                 HomeRankListFragment.getInstance().show(getSupportFragmentManager(),HomeRankListFragment.TAG);
-                break;
-            case R.id.sdv_SignIn:
+            }
+        });
+        findViewById(R.id.sdv_SignIn).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
                 if (mStatusPresenter != null) {
                     mStatusPresenter.attachPresenter();
                 }
-                break;
-            case R.id.sdv_Shop:
-                ShopActivity.newInstance(this);
-                break;
-        }
-    }
+            }
+        });
+        findViewById(R.id.sdv_Shop).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                ShopActivity.newInstance(MainActivity.this);
+            }
+        });
 
+        findViewById(R.id.btn_Game).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                GameActivity.newInstance(MainActivity.this);
+            }
+        });
+        findViewById(R.id.btn_YJY).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                GraduateSchoolActivity.newInstance(MainActivity.this);
+            }
+        });
+        findViewById(R.id.btn_Bar).setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                MurphyBarActivity.newInstance(MainActivity.this);
+            }
+        });
+
+    }
 
     private class SignsStatusCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
         @SuppressLint("InflateParams")

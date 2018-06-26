@@ -85,7 +85,7 @@ public class MurphyBarActivity extends BaseActivity {
     private AppCompatTextView mAcTvTimer;
 
     private int register=0;
-    private boolean isStart=false,timerRunning=false;
+    private boolean isStartChat=false,timerRunning=false;
    
 
     public static void newInstance(Context context) {
@@ -119,14 +119,14 @@ public class MurphyBarActivity extends BaseActivity {
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.GONE);
                 removeView();
-                isStart=false;
+                isStartChat=false;
             } else {
-                if (isStart) {
+                if (isStartChat) {
                     Log.i(TAG, "onInitView: GONE--> true");
                     mFlLoading.setVisibility(View.GONE);
                     mContainer.setVisibility(View.GONE);
                     removeView();
-                    isStart=false;
+                    isStartChat=false;
                     return;
                 }
                 Log.i(TAG, "onInitView: GONE--> false");
@@ -157,7 +157,7 @@ public class MurphyBarActivity extends BaseActivity {
                     DbLive2DBean dbLive2DBean = Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
                     SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(), Constant.MATCH_TYPE_CHAT);
                     SdkApi.getInstance().startGameMatch(Constant.MATCH_TYPE_CHAT);
-                    isStart=true;
+                    isStartChat=true;
                 }else {
                     new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
                 }
@@ -269,7 +269,7 @@ public class MurphyBarActivity extends BaseActivity {
 //                mContainer.setVisibility(View.GONE);
 //                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"对方已下线！！！")).hideClose();
 //                dialogBuilder1.getRootSure().setOnClickListener(v -> {
-//                    isStart=false;
+//                    isStartChat=false;
 //                    dialogBuilder1.dismiss();
 //                    removeView();
 //                });
@@ -280,7 +280,7 @@ public class MurphyBarActivity extends BaseActivity {
                 dialogFail.getRootSure().setOnClickListener(v -> {
                     mFlLoading.setVisibility(View.GONE);
                     mContainer.setVisibility(View.GONE);
-                    isStart=false;
+                    isStartChat=false;
                     dialogFail.dismiss();
                     removeView();
                 });
@@ -307,9 +307,31 @@ public class MurphyBarActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (mFlLoading.getVisibility() == View.VISIBLE) {
+            Log.i(TAG, "onInitView: VISIBLE");
+            mFlLoading.setVisibility(View.GONE);
+            mContainer.setVisibility(View.GONE);
+            removeView();
+            isStartChat=false;
+        } else {
+            if (isStartChat) {
+                Log.i(TAG, "onInitView: GONE--> true");
+                mFlLoading.setVisibility(View.GONE);
+                mContainer.setVisibility(View.GONE);
+                removeView();
+                isStartChat=false;
+                return;
+            }
+            Log.i(TAG, "onInitView: GONE--> false");
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         
-        if (isStart) {
+        if (isStartChat) {
             Log.i(TAG, "onDestroy: ->>>");
             removeView();
         }
