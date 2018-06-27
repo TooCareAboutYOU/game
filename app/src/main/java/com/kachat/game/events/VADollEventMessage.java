@@ -1,7 +1,6 @@
 package com.kachat.game.events;
 
 import com.dnion.DollRoomSignaling;
-import com.dnion.VAChatSignaling;
 import com.dnion.VADollSignaling;
 
 /**

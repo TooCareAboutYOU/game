@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -17,8 +18,9 @@ public class StatsPagesModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void postStatPages(@NonNull String type, @NonNull String uid, final OnPresenterListeners.OnModelListener<MessageBean> listener){
-        mSubscription= GameApi.postStatPages(type,uid,new Observer<MessageBean>() {
+    public void postStatPages(@NonNull String type, @NonNull String uid,
+                              final OnPresenterListeners.OnModelListener<BaseBean<MessageBean>> listener){
+        mSubscription= GameApi.postStatPages(type,uid,new Observer<BaseBean<MessageBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -32,7 +34,7 @@ public class StatsPagesModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final MessageBean bean) {
+            public void onNext(final BaseBean<MessageBean> bean) {
 //                LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onSuccess(bean);

@@ -7,32 +7,7 @@ import java.io.Serializable;
 /**
  *
  */
-public class UpdateUserData extends BaseBeans {
-
-
-    /**
-     * result : {"username":"张帅","gender":"female","uid":19,"age":0,"detail":{"gold":400,"hp":100,"exp":0,"number":"fbf23a","exp_to_level_up":200,"diamond":9960,"charm":0,"level":1}}
-     */
-
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable{
-        /**
-         * username : 张帅
-         * gender : female
-         * uid : 19
-         * age : 0
-         * detail : {"gold":400,"hp":100,"exp":0,"number":"fbf23a","exp_to_level_up":200,"diamond":9960,"charm":0,"level":1}
-         */
-
+public class UpdateUserData implements Serializable {
         private String username;
         private String gender;
         private int uid;
@@ -174,12 +149,5 @@ public class UpdateUserData extends BaseBeans {
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
-
 
 }

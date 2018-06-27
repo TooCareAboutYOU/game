@@ -1,9 +1,8 @@
 package com.kachat.game.libdata.apiServices;
 
 import com.kachat.game.libdata.http.HttpManager;
-import com.kachat.game.libdata.model.PostFileBean;
+
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import rx.Observer;
 import rx.Subscription;
 

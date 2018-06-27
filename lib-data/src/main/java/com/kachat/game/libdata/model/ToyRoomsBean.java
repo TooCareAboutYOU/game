@@ -2,24 +2,14 @@ package com.kachat.game.libdata.model;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  */
-public class ToyRoomsBean extends BaseBeans {
+public class ToyRoomsBean implements Serializable {
 
-    private ResultBeanX result;
-
-    public ResultBeanX getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBeanX result) {
-        this.result = result;
-    }
-
-    public static class ResultBeanX {
         private List<RoomsBean> rooms;
 
         public List<RoomsBean> getRooms() {
@@ -154,10 +144,4 @@ public class ToyRoomsBean extends BaseBeans {
                 return JSON.toJSONString(this);
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.FeedBacksBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -14,14 +15,15 @@ import rx.Subscription;
 /**
  *
  */
-public class FeedbacksModel extends BaseModel {
+public class FeedBacksModel extends BaseModel {
 
     private static final String TAG = "LoginModel";
 
     private Subscription mSubscription;
 
-    public void requestFeedBacks(@NonNull String content,final OnPresenterListeners.OnModelListener<FeedBacksBean> listener){
-        mSubscription= UserApi.requestFeedBacks(content, new Observer<FeedBacksBean>() {
+    public void requestFeedBacks(int type,@NonNull String content,
+                                 final OnPresenterListeners.OnModelListener<BaseBean<FeedBacksBean>> listener){
+        mSubscription= UserApi.requestFeedBacks(type,content, new Observer<BaseBean<FeedBacksBean>>() {
             @Override
             public void onCompleted() {
             }
@@ -37,7 +39,7 @@ public class FeedbacksModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final FeedBacksBean result) {
+            public void onNext(final BaseBean<FeedBacksBean> result) {
                 Log.i(TAG, "onNext: "+result.getResult().toString());
 //                LocalHandler().post(() -> {
                     if (listener != null) {

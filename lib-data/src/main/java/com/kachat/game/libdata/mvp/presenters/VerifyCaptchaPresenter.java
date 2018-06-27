@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.VerifyCaptchaModel;
@@ -19,12 +20,12 @@ public class VerifyCaptchaPresenter {
     }
 
     public void attachPresenter(@NonNull String mobile,@NonNull String captcha){
-        this.mModel.verifyCaptcha(mobile, captcha, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.verifyCaptcha(mobile, captcha, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
-                        VerifyCaptchaPresenter.this.mView.onSuccess(result);
+                        VerifyCaptchaPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         VerifyCaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

@@ -146,6 +146,10 @@
         <activity
             android:name=".ui.game.RankListActivity"
             android:label="@string/title_activity_ranklist"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.NewGuidesLineActivity"
+            android:label="@string/title_activity_guides"
             android:screenOrientation="portrait"/>
     </application>
 

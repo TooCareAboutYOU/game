@@ -96,7 +96,7 @@
                 android:id="@+id/sdv_Report"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@drawable/icon_bar_report"
+                android:background="@drawable/icon_report"
                 android:layout_marginEnd="20dp" />
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/sdv_ChoiceGift"

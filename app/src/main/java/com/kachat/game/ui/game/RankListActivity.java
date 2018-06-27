@@ -4,7 +4,6 @@ package com.kachat.game.ui.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class RankListActivity extends BaseActivity {
 
@@ -67,7 +65,7 @@ public class RankListActivity extends BaseActivity {
     private DbUserBean mDbUserBean=DaoQuery.queryUserData();
     private GameRankPresenter mRankPresenter = null;
     private RankListAdapter mAdapter = null;
-    private List<RankListBean.ResultBean.RanksBean> mRankList;
+    private List<RankListBean.RanksBean> mRankList;
     private int GameIndex = 901, ScoreType = 0;
 
     public static void newInstance(Context context) {
@@ -105,7 +103,6 @@ public class RankListActivity extends BaseActivity {
         mRgGameType.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.acRbtn_Start:
-
                     GameIndex = 901;
                     loadData(GameIndex, ScoreType);
                     break;
@@ -144,43 +141,42 @@ public class RankListActivity extends BaseActivity {
         @Override
         public void onSuccess(RankListBean result) {
             if (result != null) {
-                if (result.getResult() != null) {
-                    if(result.getResult().getCount() > 0 && result.getResult().getRanks() != null && result.getResult().getRanks().size() > 0) {
-                        mRankList.clear();
-                        mRankList.addAll(result.getResult().getRanks());
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    if (result.getResult().getRank() != null) {
-                        Log.i(TAG, "onSuccess: 1："+result.getResult().getRank().toString());
-                        mAcTvMyNumber.setText(result.getResult().getRank().getIndex()+"");
-                        if (result.getResult().getRank().getUser() != null) {
-                            Log.i(TAG, "onSuccess: 2："+result.getResult().getRank().getUser().toString());
-                            if (!TextUtils.isEmpty(result.getResult().getRank().getUser().getUsername())) {
-                                mAcTvMyName.setText(result.getResult().getRank().getUser().getUsername());
+
+                if(result.getCount() > 0 && result.getRanks() != null && result.getRanks().size() > 0) {
+                    mRankList.clear();
+                    mRankList.addAll(result.getRanks());
+                    mAdapter.notifyDataSetChanged();
+                }
+                if (result.getRank() != null) {
+                    Log.i(TAG, "onSuccess: 1："+result.getRank().toString());
+                    mAcTvMyNumber.setText(result.getRank().getIndex()+"");
+                    if (result.getRank().getUser() != null) {
+                        Log.i(TAG, "onSuccess: 2："+result.getRank().getUser().toString());
+                        if (!TextUtils.isEmpty(result.getRank().getUser().getUsername())) {
+                            mAcTvMyName.setText(result.getRank().getUser().getUsername());
+                        }
+                        if (!TextUtils.isEmpty(result.getRank().getUser().getGender()) && result.getRank().getUser().getGender().equals("female")) {
+                            mSdvMySex.setBackgroundResource(R.drawable.icon_ranklist_female);
+                        }
+                    }else {
+                        if (mDbUserBean != null) {
+                            Log.i(TAG, "onSuccess: 3");
+                            if (!TextUtils.isEmpty(mDbUserBean.getUsername())) {
+                                mAcTvMyName.setText(mDbUserBean.getUsername());
                             }
-                            if (!TextUtils.isEmpty(result.getResult().getRank().getUser().getGender()) && result.getResult().getRank().getUser().getGender().equals("female")) {
+                            if (!TextUtils.isEmpty(mDbUserBean.getGender()) && mDbUserBean.getGender().equals("female")) {
                                 mSdvMySex.setBackgroundResource(R.drawable.icon_ranklist_female);
                             }
-                        }else {
-                            if (mDbUserBean != null) {
-                                Log.i(TAG, "onSuccess: 3");
-                                if (!TextUtils.isEmpty(mDbUserBean.getUsername())) {
-                                    mAcTvMyName.setText(mDbUserBean.getUsername());
-                                }
-                                if (!TextUtils.isEmpty(mDbUserBean.getGender()) && mDbUserBean.getGender().equals("female")) {
-                                    mSdvMySex.setBackgroundResource(R.drawable.icon_ranklist_female);
-                                }
-                            }
                         }
-                        mAcTvMyScore.setText(result.getResult().getRank().getScore()+"");
                     }
+                    mAcTvMyScore.setText(result.getRank().getScore()+"");
                 }
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }
@@ -193,29 +189,46 @@ public class RankListActivity extends BaseActivity {
         }
     }
 
-    public class RankListAdapter extends RecyclerView.Adapter<RankListAdapter.ItemViewHolder> {
+    private int LAYOUT_ONE=0,LAYOUT_TWO=1;
+
+    public class RankListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @SuppressLint("InflateParams")
         @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(RankListActivity.this).inflate(R.layout.item_ranklist, null));
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == LAYOUT_ONE) {
+                return new ItemViewHolder1(LayoutInflater.from(RankListActivity.this).inflate(R.layout.item_ranklist1, null)); //男
+            }
+            return new ItemViewHolder2(LayoutInflater.from(RankListActivity.this).inflate(R.layout.item_ranklist2, null)); //女
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (mRankList.get(position).getUser().getGender().equals("male")) {
+                return LAYOUT_ONE;
+            }
+            return LAYOUT_TWO;
         }
 
         @SuppressLint("SetTextI18n")
         @Override
-        public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-            holder.mAcTvUserNumber.setText(mRankList.get(position).getIndex() + "");
-            if (!TextUtils.isEmpty(mRankList.get(position).getUser().getUsername())) {
-                holder.mAcTvUserName.setText(mRankList.get(position).getUser().getUsername());
-            }
-            if (mRankList.get(position).getUser() != null) {
-                if (!TextUtils.isEmpty(mRankList.get(position).getUser().getGender()) && mRankList.get(position).getUser().getGender().equals("female")) {
-                    holder.mSdvUserSex.setBackgroundResource(R.drawable.icon_ranklist_female);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof ItemViewHolder1) {  //男
+                ((ItemViewHolder1)holder).mAcTvUserNumber.setText(mRankList.get(position).getIndex() + "");
+                if (!TextUtils.isEmpty(mRankList.get(position).getUser().getUsername())) {
+                    ((ItemViewHolder1)holder).mAcTvUserName.setText(mRankList.get(position).getUser().getUsername());
                 }
+                ((ItemViewHolder1)holder).mAcTvUserScore.setText(mRankList.get(position).getScore() + "");
+            }
+            if (holder instanceof ItemViewHolder2) {  //男
+                ((ItemViewHolder2)holder).mAcTvUserNumber.setText(mRankList.get(position).getIndex() + "");
+                if (!TextUtils.isEmpty(mRankList.get(position).getUser().getUsername())) {
+                    ((ItemViewHolder2)holder).mAcTvUserName.setText(mRankList.get(position).getUser().getUsername());
+                }
+                ((ItemViewHolder2)holder).mAcTvUserScore.setText(mRankList.get(position).getScore() + "");
             }
 
-            holder.mAcTvUserScore.setText(mRankList.get(position).getScore() + "");
         }
 
         @Override
@@ -223,13 +236,27 @@ public class RankListActivity extends BaseActivity {
             return mRankList.size() > 0 ? mRankList.size() : 0;
         }
 
-        class ItemViewHolder extends RecyclerView.ViewHolder {
+        class ItemViewHolder1 extends RecyclerView.ViewHolder {  //男
             AppCompatTextView mAcTvUserNumber;
             AppCompatTextView mAcTvUserName;
             SimpleDraweeView mSdvUserSex;
             AppCompatTextView mAcTvUserScore;
 
-            public ItemViewHolder(View itemView) {
+            public ItemViewHolder1(View itemView) {
+                super(itemView);
+                mAcTvUserNumber = itemView.findViewById(R.id.acTv_userNumber);
+                mAcTvUserName = itemView.findViewById(R.id.acTv_UserName);
+                mSdvUserSex = itemView.findViewById(R.id.sdv_UserSex);
+                mAcTvUserScore = itemView.findViewById(R.id.acTv_UserScore);
+            }
+        }
+        class ItemViewHolder2 extends RecyclerView.ViewHolder {  //男
+            AppCompatTextView mAcTvUserNumber;
+            AppCompatTextView mAcTvUserName;
+            SimpleDraweeView mSdvUserSex;
+            AppCompatTextView mAcTvUserScore;
+
+            public ItemViewHolder2(View itemView) {
                 super(itemView);
                 mAcTvUserNumber = itemView.findViewById(R.id.acTv_userNumber);
                 mAcTvUserName = itemView.findViewById(R.id.acTv_UserName);

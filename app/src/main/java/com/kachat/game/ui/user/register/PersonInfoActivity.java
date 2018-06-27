@@ -1,6 +1,8 @@
 package com.kachat.game.ui.user.register;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
@@ -71,6 +73,11 @@ public class PersonInfoActivity extends BaseActivity {
     private LoginPresenter mPresenter;
 
 
+    public static void newInstance(Context context) {
+        Intent intent = new Intent(context, PersonInfoActivity.class);
+        context.startActivity(intent);
+    }
+
     @Override
     protected int onSetResourceLayout() {
         return R.layout.activity_person_info;
@@ -131,6 +138,11 @@ public class PersonInfoActivity extends BaseActivity {
             Toast("密码不能为空!");
             return false;
         }
+        if (pwd.length() < 6) {
+            Toast("设置密码6位数以上");
+            return false;
+        }
+
 
         if (!mAcCbAgreement.isChecked()) {
             Toast("请勾选用户协议");
@@ -149,15 +161,19 @@ public class PersonInfoActivity extends BaseActivity {
         @Override
         public void onSuccess(UserBean result) {
             Log.i(TAG, "onSuccess: " + result.toString());
-            if (result.getResult() != null) {
-                if (result.getResult().getUser().getDetail() != null) {
+            if (result!= null) {
+                if (result.getUser().getDetail() != null) {
                     SuccessDialog();
                 }
             }
         }
 
         @Override
-        public void onFailed(int errorCode, ErrorBean error) { Log.i(TAG, "onFailed: " + error); if (error != null) { Toast(error.getToast()); } }
+        public void onFailed(int errorCode, ErrorBean error) {
+            if (error != null && error != null && !TextUtils.isEmpty(error.getToast())) {
+                Toast(error.getToast());
+            }
+        }
 
         @Override
 
@@ -166,9 +182,8 @@ public class PersonInfoActivity extends BaseActivity {
 
     private void SuccessDialog() {
         AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(PersonInfoActivity.this,
-                new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!"));
+                new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!")).hideClose();
         dialogBuilder.getRootSure().setOnClickListener(v1 ->{
-//            MainActivity.getInstance(this);
             AutoLogin();
             dialogBuilder.dismiss();
         });
@@ -185,7 +200,7 @@ public class PersonInfoActivity extends BaseActivity {
         @Override
         public void onSuccess(UserBean result) {
             if (result != null) {
-                if (!TextUtils.isEmpty(result.getResult().getUser().getUsername())) {
+                if (!TextUtils.isEmpty(result.getUser().getUsername())) {
                     MainActivity.getInstance(PersonInfoActivity.this);
                     PersonInfoActivity.this.finish();
                 }
@@ -194,7 +209,7 @@ public class PersonInfoActivity extends BaseActivity {
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null && error != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }
@@ -217,7 +232,7 @@ public class PersonInfoActivity extends BaseActivity {
         TextView tvCancel = mView.findViewById(R.id.tv_cancel);
         TextView tvSure = mView.findViewById(R.id.tv_sure);
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 1950; i <= 2009; i++) {
+        for (int i = 1950; i <= 2016; i++) {
             list.add(i + "");
         }
         wheelview.setItems(list, list.size() - 1);

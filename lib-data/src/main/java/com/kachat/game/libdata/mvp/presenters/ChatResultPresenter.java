@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.IntegerRes;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.ChatGiftsModel;
@@ -20,12 +21,12 @@ public class ChatResultPresenter {
     }
 
     public void attachPresenter(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int time){
-        this.mModel.postChatResult(userFromId,userToId,time, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.postChatResult(userFromId,userToId,time, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        ChatResultPresenter.this.mView.onSuccess(result);
+                        ChatResultPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         ChatResultPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

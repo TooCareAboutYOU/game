@@ -25,9 +25,10 @@ import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.LivesPresenter;
+import com.kachat.game.ui.MainActivity;
 import com.kachat.game.ui.graduate.fragments.LiveBackGroundModeListFragment;
 import com.kachat.game.ui.graduate.fragments.LivePersonModeListFragment;
-import com.kachat.game.ui.graduate.fragments.LiveVoiceModeListFragment;
+import com.kachat.game.ui.graduate.fragments.LiveAudioModeListFragment;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
@@ -129,27 +130,32 @@ public class GraduateSchoolActivity extends BaseActivity  {
         initLive();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
     private void initVideo(String model, String bgImg) {
         SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadLocalView(this, mFlContainer);
         SdkApi.getInstance().enableVideoView();
-        SdkApi.getInstance().loadFaceRigItf(personPath + model, model, bgPath, bgImg,-1);
+        SdkApi.getInstance().loadFaceRigItf(personPath + model, model, bgPath, bgImg,5,3);
     }
 
     private class MaskCallBack implements OnPresenterListeners.OnViewListener<LivesBean> {
         @Override
         public void onSuccess(LivesBean result) {
-            if (result.getResult() != null && result.getResult().getLives() != null && result.getResult().getLives().size() > 0) {
-                if (!TextUtils.isEmpty(result.getResult().getLives().get(0).getLive().getName())) {
-                    initVideo(result.getResult().getLives().get(0).getLive().getName(), "bg_1.png");
+            if (result != null && result.getLives() != null && result.getLives().size() > 0) {
+                if (!TextUtils.isEmpty(result.getLives().get(0).getLive().getName())) {
+                    initVideo(result.getLives().get(0).getLive().getName(), "bg_1.png");
                 }
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Logger(error.getToast());
+            if (error != null &&  !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }
@@ -162,6 +168,7 @@ public class GraduateSchoolActivity extends BaseActivity  {
             }
         }
     }
+
 
     private void initLive() {
         loadLive2DPersons();
@@ -186,18 +193,26 @@ public class GraduateSchoolActivity extends BaseActivity  {
     public void onEvent(PublicEventMessage.OnGraduateEvent event) {
         if (event != null) {
             switch (event.getType()) {
-                case LAYOUT_FIGURES_MASK: {
-                    SdkApi.getInstance().setLive2DModel(personPath + event.getMsg(), event.getMsg(),-1);
+                case LAYOUT_FIGURES_MASK: {  //人物遮罩
+                    SdkApi.getInstance().setLive2DModel(personPath + event.getMsg(), event.getMsg(),3);
                     break;
                 }
-                case LAYOUT_ACCESSORY: {
+                case LAYOUT_ACCESSORY: {  //饰品
                     break;
                 }
-                case LAYOUT_VOICE: {
-                    Toast.makeText(this, "变声：" + event.getMsg(), Toast.LENGTH_SHORT).show();
+                case LAYOUT_VOICE: {   //变声
+                    int pitch=5;
+                    switch (event.getMsg()) {
+                        case "level_1":pitch=1;break;
+                        case "level_2":pitch=2;break;
+                        case "level_3":pitch=3;break;
+                        case "level_4":pitch=4;break;
+                        case "level_5":pitch=5;break;
+                    }
+                    SdkApi.getInstance().setAudioPitch(pitch);
                     break;
                 }
-                case LAYOUT_BACKGROUND: {
+                case LAYOUT_BACKGROUND: { //背景
                     SdkApi.getInstance().setModelBackgroundImage(bgPath, event.getMsg());
                     break;
                 }
@@ -237,8 +252,6 @@ public class GraduateSchoolActivity extends BaseActivity  {
         }
     }
 
-
-
     private void loadLive2DPersons() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(0)).commit(); }
     private void loadVoice() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(2)).commit(); }
     private void loadLive2DBackGround() { getSupportFragmentManager().beginTransaction().replace(R.id.fl_PropsList, createFragment(3)).commit(); }
@@ -250,8 +263,8 @@ public class GraduateSchoolActivity extends BaseActivity  {
         if (baseFragment == null) {
             switch (position) {
                 case 0: baseFragment = LivePersonModeListFragment.getInstance();break;
-                case 1: break;
-                case 2: baseFragment = LiveVoiceModeListFragment.getInstance();break;
+                case 1: new AlterDialogBuilder(GraduateSchoolActivity.this,new DialogTextView(GraduateSchoolActivity.this,"功能暂未开放，敬请期待!")).hideRootSure();break;
+                case 2: baseFragment = LiveAudioModeListFragment.getInstance();break;
                 case 3: baseFragment = LiveBackGroundModeListFragment.getInstance();break;
             }
         }
@@ -280,12 +293,6 @@ public class GraduateSchoolActivity extends BaseActivity  {
 //            SdkApi.getInstance().setFaceRigItf(params[0][1],params[0][2],params[0][3]);
 //        }
 //    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
 
     @Override
     protected void onStop() {

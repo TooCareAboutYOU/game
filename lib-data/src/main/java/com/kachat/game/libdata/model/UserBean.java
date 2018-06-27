@@ -5,51 +5,37 @@ import com.alibaba.fastjson.JSON;
 import java.io.Serializable;
 
 
-public class UserBean extends BaseBeans {
+public class UserBean implements Serializable {
 
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
+    public UserBean() {
     }
 
-    public void setResult(ResultBean result) {
-        this.result = result;
+    public UserBean(String token, UserInfoBean user) {
+        this.token = token;
+        this.user = user;
     }
 
-    public static class ResultBean implements Serializable {
+    private String token;
+    private UserInfoBean user;
 
-        private String token;
-        private UserInfoBean user;
+    public String getToken() {
+        return token;
+    }
 
-        public ResultBean() {
-        }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-        public String getToken() {
-            return token;
-        }
+    public UserInfoBean getUser() {
+        return user;
+    }
 
-        public void setToken(String token) {
-            this.token = token;
-        }
-
-        public UserInfoBean getUser() {
-            return user;
-        }
-
-        public void setUser(UserInfoBean user) {
-            this.user = user;
-        }
-
+    public void setUser(UserInfoBean user) {
+        this.user = user;
+    }
 
         @Override
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/img_bg_login_loading">
 
+    <include layout="@layout/base_toolbar"/>
+
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/acTv_ErrorMsg"
         android:layout_width="wrap_content"
@@ -27,7 +29,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="437dp"/>
+        android:layout_marginBottom="450dp"/>
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/sdv_go"
@@ -38,16 +40,31 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="73dp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/acTv_ResetPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="84dp"
+        android:layout_marginStart="24dp"
+        android:text="忘记密码"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/sdv_go" />
+
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/acEt_pwd"
         android:layout_width="248dp"
         android:layout_height="?android:attr/actionBarSize"
         android:layout_marginBottom="10dp"
+        android:inputType="phone|number"
         android:padding="5dp"
         android:hint="@string/hint_input_password"
         android:background="@drawable/radius_10_stroke_red"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/sdv_go"/>
+
 
 </android.support.constraint.ConstraintLayout>

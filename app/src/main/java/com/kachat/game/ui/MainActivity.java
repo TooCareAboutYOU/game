@@ -5,18 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvView;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.DeviceUtils;
@@ -51,6 +57,7 @@ import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Logger;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -58,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
@@ -109,10 +117,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onInitView() {
+        initMap();
         mStatusPresenter=new SignsStatusPresenter(new SignsStatusCallBack());
         mSignsPresenter=new SignsPresenter(new SignsInCallBack());
+
         checkLogin();
         findViewById(R.id.sdv_UserLogo).setOnClickListener(new OnCheckNetClickListener() {
             @Override
@@ -141,51 +152,104 @@ public class MainActivity extends BaseActivity {
                 ShopActivity.newInstance(MainActivity.this);
             }
         });
-
-        findViewById(R.id.btn_Game).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                GameActivity.newInstance(MainActivity.this);
-            }
-        });
-        findViewById(R.id.btn_YJY).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                GraduateSchoolActivity.newInstance(MainActivity.this);
-            }
-        });
-        findViewById(R.id.btn_Bar).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                MurphyBarActivity.newInstance(MainActivity.this);
-            }
-        });
-
     }
+
+    private void initMap(){
+        RecyclerView recyclerView=findViewById(R.id.rv_Map);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setAdapter(new MapAdapter());
+    }
+    private class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
+        @NonNull
+        @Override
+        public MapViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new MapViewHolder(LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_home_map,null));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MapViewHolder holder, int position) {
+            //遗迹
+            holder.mSdvRelic.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure();
+                }
+            });
+            //研究院
+            holder.mSdvGraduateSchool.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    GraduateSchoolActivity.newInstance(MainActivity.this);
+                }
+            });
+            holder.mSdvGameTower.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    GameActivity.newInstance(MainActivity.this);
+                }
+            });
+            holder.mSdvShop.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    ShopActivity.newInstance(MainActivity.this);
+                }
+            });
+            holder.mSdvScience.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure();
+                }
+            });
+            holder.mSdvBar.setOnClickListener(new OnCheckNetClickListener() {
+                @Override
+                public void onMultiClick(View v) {
+                    MurphyBarActivity.newInstance(MainActivity.this);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() { return 1; }
+
+        class MapViewHolder extends RecyclerView.ViewHolder{
+            SimpleDraweeView mSdvRelic,mSdvGraduateSchool,mSdvGameTower,mSdvShop,mSdvScience,mSdvBar;
+            MapViewHolder(View itemView) {
+                super(itemView);
+                mSdvRelic=itemView.findViewById(R.id.sdv_Relic);
+                mSdvGraduateSchool=itemView.findViewById(R.id.sdv_GraduateSchool);
+                mSdvGameTower=itemView.findViewById(R.id.sdv_GameTower);
+                mSdvShop=itemView.findViewById(R.id.sdv_Shop);
+                mSdvScience=itemView.findViewById(R.id.sdv_Science);
+                mSdvBar=itemView.findViewById(R.id.sdv_Bar);
+            }
+        }
+    }
+
 
     private class SignsStatusCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
         @SuppressLint("InflateParams")
         @Override
         public void onSuccess(MessageBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
-            if (result.getResult() != null) {
-                if (result.getResult().getStatus() == 1) {
-                    AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MainActivity.this, new DialogTextView(MainActivity.this,"今天已经签到，请明天继续继续!"));
-                    dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
-                }else {
-                    if (mSignsPresenter != null) {
-                        mSignsPresenter.attachPresenter(DeviceUtils.getAndroidID());
-                    }
+            Logger(result.toString());
+            if (result.getStatus() == 1) {
+                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MainActivity.this, new DialogTextView(MainActivity.this,"今天已经签到，请明天继续继续!"));
+                dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
+            }else {
+                if (mSignsPresenter != null) {
+                    mSignsPresenter.attachPresenter(DeviceUtils.getAndroidID());
                 }
             }
+
         }
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null && !TextUtils.isEmpty(error.getToast())) {
                 Logger(error.getToast());
                 Toast(error.getToast());
             }
         }
+
         @Override
         public void onError(Throwable e) {
             if (e != null) {
@@ -200,14 +264,11 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onSuccess(SingsBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
-            if (result.getResult() != null) {
-                dialogView(result.getResult());
-            }
+            dialogView(result);
         }
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Logger(error.getToast());
+            if (error != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }
@@ -221,7 +282,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @SuppressLint({"InflateParams", "SetTextI18n"})
-    private void dialogView(SingsBean.ResultBean result){
+    private void dialogView(SingsBean result){
 
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.AlertDialogStyle);
         builder.setCancelable(false);

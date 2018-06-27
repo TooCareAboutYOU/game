@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.models;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GamesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -15,8 +16,8 @@ public class GameListModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void requestGameList(final OnPresenterListeners.OnModelListener<GamesBean> listener){
-        mSubscription= GameApi.requestGameList(new Observer<GamesBean>() {
+    public void requestGameList(final OnPresenterListeners.OnModelListener<BaseBean<GamesBean>> listener){
+        mSubscription= GameApi.requestGameList(new Observer<BaseBean<GamesBean>>() {
             @Override
             public void onCompleted() {
             }
@@ -32,7 +33,7 @@ public class GameListModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final GamesBean bean) {
+            public void onNext(final BaseBean<GamesBean> bean) {
 //                LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onSuccess(bean);

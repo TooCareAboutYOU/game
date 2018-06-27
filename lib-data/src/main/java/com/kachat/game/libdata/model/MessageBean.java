@@ -7,26 +7,12 @@ import java.io.Serializable;
 /**
  *
  */
-public class MessageBean extends BaseBeans {
+public class MessageBean implements Serializable {
 
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable {
         private String message;
         private int ticket;
         private int hp;
         private int status;  // 是否签到，0-未签到，1-已签到
-
-        public ResultBean() {
-        }
 
         public String getMessage() {
             return message;
@@ -65,11 +51,5 @@ public class MessageBean extends BaseBeans {
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }
 

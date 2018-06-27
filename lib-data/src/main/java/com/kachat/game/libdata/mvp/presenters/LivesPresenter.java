@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -21,12 +22,12 @@ public class LivesPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.getUserLives( new OnPresenterListeners.OnModelListener<LivesBean>() {
+        this.mModel.getUserLives( new OnPresenterListeners.OnModelListener<BaseBean<LivesBean>>() {
             @Override
-            public void onSuccess(LivesBean result) {
+            public void onSuccess(BaseBean<LivesBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        LivesPresenter.this.mView.onSuccess(result);
+                        LivesPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         LivesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

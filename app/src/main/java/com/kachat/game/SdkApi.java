@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.RtcVideoProcess.FaceRigItf;
 import com.RtcVideoProcess.VideoProcessItf;
+import com.blankj.utilcode.util.ToastUtils;
 import com.dnion.RenderProxy;
 import com.dnion.VAGameAPI;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
@@ -25,6 +26,7 @@ import com.kachat.game.utils.widgets.DialogTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SdkApi {
 
@@ -124,7 +126,22 @@ public class SdkApi {
         this.localProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
         this.localProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
         this.localView = this.localProxy.getDisplay();
+        this.localProxy.setEnableMirror(true);
         localContainer.addView(this.localView);
+    }
+
+    public RenderProxy getLocalProxy() {
+        if (this.localProxy == null) {
+            throw new NullPointerException("the localProxy  is null");
+        }
+        return this.localProxy;
+    }
+
+    public SurfaceView getLocalView() {
+        if (this.localView == null) {
+            throw new NullPointerException("the localView  is null");
+        }
+        return this.localView;
     }
 
     public void loadRemoteView(Context context, ViewGroup remoteContainer) {
@@ -132,14 +149,16 @@ public class SdkApi {
         this.remoteProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
         this.remoteProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
         this.remoteView = this.remoteProxy.getDisplay();
+        this.remoteProxy.setEnableMirror(!remoteProxy.enableMirror());
         remoteContainer.addView(this.remoteView);
     }
+
 
     public void enableVideoView() {
         Log.i(TAG, "enableVideoView: ");
         VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localProxy, remoteProxy); }
 
-    public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName,int matchType) {
+    public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName, int pitch,int matchType) {
         Log.i(TAG, "loadFaceRigItf: ");
 
         if (TextUtils.isEmpty(fileName)) {
@@ -177,22 +196,35 @@ public class SdkApi {
             });
 //            this.faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
 //            this.faceRigItf.native_setModelBackgroundImage(bgPath, bgName);
+            setAudioPitch(pitch);
             setModelBackgroundImage(bgPath, bgName);
-            save();
+//            save();
         }
     }
 
+    public void setAudioPitch(int pitch){
+        VAGameAPI.getInstance().setAudioPitch(pitch);
+        mDbLive2DBean.setPitchLevel(pitch);
+    }
 
-    public void sendMessage(String msg) { VAGameAPI.getInstance().sendGameMessage(msg); }
-
-    public void sendGift(int giftId) { VAGameAPI.getInstance().sendGift(giftId); }
+    public void setModelBackgroundImage(String filePath, String fileName) {
+        if (this.faceRigItf == null || TextUtils.isEmpty(fileName)) {
+            ToastUtils.showShort("faceRigItf or fileName is null");
+            return;
+        }
+        mDbLive2DBean.setBgFilePath(filePath);
+        mDbLive2DBean.setBgFileName(fileName);
+        this.faceRigItf.native_setModelBackgroundImage(filePath, fileName );
+    }
 
     public void setLive2DModel(String filePath, String fileName,int matchType) {
         if (this.faceRigItf == null || TextUtils.isEmpty(fileName)) {
-            throw new NullPointerException("the faceRigItf or fileName is null");
+            ToastUtils.showShort("faceRigItf or fileName is null");
+            return;
         }
         mDbLive2DBean.setLiveFilePath(filePath);
         mDbLive2DBean.setLiveFileName(fileName);
+
         this.faceRigItf.native_setLive2DModel(filePath, fileName);
         setFaceRigItf(fileName,matchType);
     }
@@ -253,27 +285,29 @@ public class SdkApi {
                 gameList.add(1.7f);gameList.add(0f);gameList.add(-0.1333f);
             } break;
         }
+
         mDbLive2DBean.setChatMask(chatList);
         mDbLive2DBean.setGameMask(gameList);
         if (matchType == 3) {
+            Log.i(TAG, "setFaceRigItf聊天："+chatList.get(0)+"\t\t"+chatList.get(1)+"\t\t"+chatList.get(2)+"\t\t");
             this.faceRigItf.native_setModelZoomFraction(chatList.get(0));
             this.faceRigItf.native_setModelOffset(chatList.get(1), chatList.get(2));
             return;
         }
+
+        Log.i(TAG, "setFaceRigItf: 游戏："+gameList.get(0)+"\t\t"+gameList.get(1)+"\t\t"+gameList.get(2)+"\t\t");
+
         this.faceRigItf.native_setModelZoomFraction(gameList.get(0));
-        this.faceRigItf.native_setModelOffset(gameList.get(1), gameList.get(2));
-
+        this.faceRigItf.native_setModelOffset(gameList.get(1),gameList.get(2));
     }
 
 
-    public void setModelBackgroundImage(String filePath, String fileName) {
-        if (this.faceRigItf == null || TextUtils.isEmpty(fileName)) {
-            throw new NullPointerException("the faceRigItf or fileName is null");
-        }
-        mDbLive2DBean.setBgFilePath(filePath);
-        mDbLive2DBean.setBgFileName(fileName);
-        this.faceRigItf.native_setModelBackgroundImage(filePath, fileName );
-    }
+
+    public void setAudioLoopBack(boolean enable){ VAGameAPI.getInstance().setAudioLoopback(enable); }
+
+    public void sendMessage(String msg) { VAGameAPI.getInstance().sendGameMessage(msg); }
+
+    public void sendGift(int giftId) { VAGameAPI.getInstance().sendGift(giftId); }
 
     public boolean save(){
         if (mDbLive2DBean == null) {
@@ -281,7 +315,7 @@ public class SdkApi {
         }
         String fileName=mDbLive2DBean.getLiveFileName();
         if (TextUtils.isEmpty(fileName)) {
-            Toast.makeText(mContext, "未选中任何人物遮罩", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "保存失败!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -290,7 +324,6 @@ public class SdkApi {
             DaoDelete.deleteLiveModelAll();
         }
         DaoInsert.insertLive2DModel(mDbLive2DBean);
-        Log.i(TAG, "save: ");
         return true;
     }
 

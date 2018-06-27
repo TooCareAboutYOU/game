@@ -2,15 +2,17 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.CaptchaModel;
 
 public class CaptchaPresenter {
 
-    private static final String TAG = "CheckMobileFragment";
+    private static final String TAG = "LoginActivity";
 
     private CaptchaModel mModel;
     private OnPresenterListeners.OnViewListener<GetCaptchaBean> mView;
@@ -21,12 +23,13 @@ public class CaptchaPresenter {
     }
 
     public void attachPresenter(@NonNull String mobile){
-        this.mModel.getCaptcha(mobile, new OnPresenterListeners.OnModelListener<GetCaptchaBean>() {
+        this.mModel.getCaptcha(mobile, new OnPresenterListeners.OnModelListener<BaseBean<GetCaptchaBean>>() {
             @Override
-            public void onSuccess(GetCaptchaBean result) {
+            public void onSuccess(BaseBean<GetCaptchaBean> result) {
+                Log.i(TAG, "onSuccess: "+result.toString());
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        CaptchaPresenter.this.mView.onSuccess(result);
+                        CaptchaPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         CaptchaPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

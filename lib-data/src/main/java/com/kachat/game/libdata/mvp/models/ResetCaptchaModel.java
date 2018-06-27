@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -16,9 +17,9 @@ import rx.Subscription;
 public class ResetCaptchaModel extends BaseModel {
     private Subscription mSubscription;
 
-    public void getResetCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<GetCaptchaBean> listener){
+    public void getResetCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<BaseBean<GetCaptchaBean>> listener){
 
-        mSubscription= UserApi.requestResetCaptcha(mobile,new Observer<GetCaptchaBean>() {
+        mSubscription= UserApi.requestResetCaptcha(mobile,new Observer<BaseBean<GetCaptchaBean>>() {
             @Override
             public void onCompleted() {
             }
@@ -34,7 +35,7 @@ public class ResetCaptchaModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final GetCaptchaBean bean) {
+            public void onNext(final BaseBean<GetCaptchaBean> bean) {
                 LocalHandler().post(() -> {
                     if (listener != null) {
                         listener.onSuccess(bean);

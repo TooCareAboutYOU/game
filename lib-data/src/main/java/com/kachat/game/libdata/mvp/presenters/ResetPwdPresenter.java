@@ -5,6 +5,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.ResetPwdModel;
@@ -22,12 +23,12 @@ public class ResetPwdPresenter {
     }
 
     public void attachPresenter(@NonNull String mobile, @NonNull String captcha, @NonNull String pwd) {
-        this.mModel.resetPwd(mobile, captcha, pwd, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.resetPwd(mobile, captcha, pwd, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
-                        ResetPwdPresenter.this.mView.onSuccess(result);
+                        ResetPwdPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         ResetPwdPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

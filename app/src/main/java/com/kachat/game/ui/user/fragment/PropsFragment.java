@@ -45,12 +45,10 @@ public class PropsFragment extends BaseDialogFragment {
     @BindView(R.id.acTv_Sure)
     AppCompatTextView mAcTvSure;
 
-    private static String mTitle="";
     public PropsFragment() {
     }
 
-    public static PropsFragment getInstance(String title) {
-        mTitle=title;
+    public static PropsFragment getInstance() {
         return PropsFragmentHolder.instance;
     }
 
@@ -62,7 +60,7 @@ public class PropsFragment extends BaseDialogFragment {
     RecyclerView mRecyclerView;
 
     private PropsPresenter mPresenter = null;
-    private List<PropsBean.ResultBean.ChildPropsBean> mPropsBeanList;
+    private List<PropsBean.ChildPropsBean> mPropsBeanList;
     private PropsAdapter adapter = null;
 
 
@@ -70,7 +68,6 @@ public class PropsFragment extends BaseDialogFragment {
     public void show(FragmentManager manager, String tag) {
         super.show(manager, tag);
         Log.i(TAG, "show: ");
-
     }
 
     @Override
@@ -81,7 +78,7 @@ public class PropsFragment extends BaseDialogFragment {
     @SuppressLint("InflateParams")
     @Override
     protected void initView(View view) {
-        mAcTVHintBg.setText(mTitle);
+        mAcTVHintBg.setText("道具");
         mAcIVClose.setOnClickListener(v -> dismiss());
         mAcTvSure.setVisibility(View.GONE);
 
@@ -141,16 +138,15 @@ public class PropsFragment extends BaseDialogFragment {
         @Override
         public void onSuccess(PropsBean result) {
             Log.i(TAG, "onSuccess: " + result.toString());
-            if (result.getResult() != null && result.getResult().getProps() != null && result.getResult().getProps().size() > 0) {
-                mPropsBeanList.addAll(result.getResult().getProps());
+            if (result.getProps() != null && result.getProps().size() > 0) {
+                mPropsBeanList.addAll(result.getProps());
                 adapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Logger(error.getToast());
+            if (!TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

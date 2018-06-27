@@ -5,46 +5,24 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Environment;
-import android.os.Process;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ZipUtils;
-import com.kachat.game.Constant;
 import com.kachat.game.libdata.apiServices.FileApi;
-import com.kachat.game.libdata.apiServices.UserApi;
-import com.kachat.game.libdata.http.BaseModel;
-import com.kachat.game.libdata.model.GetCaptchaBean;
-import com.kachat.game.libdata.model.PostFileBean;
-import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.ui.MainActivity;
-import com.orhanobut.logger.Logger;
-
-import org.webrtc.ThreadUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import rx.Observer;
-import rx.Subscription;
-
-import static android.provider.CallLog.Calls.TYPE;
 
 /**
  * 上传日志

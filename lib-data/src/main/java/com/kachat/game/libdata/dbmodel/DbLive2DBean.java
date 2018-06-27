@@ -35,15 +35,12 @@ public class DbLive2DBean {
     @Convert(columnType = String.class, converter = FloatConverter.class)
     private List<Float> gameMask;
 
+    private int pitchLevel;
 
-    @Generated(hash = 1418784454)
-    public DbLive2DBean(Long id,
-                        String liveFilePath,
-                        @NotNull String liveFileName,
-                        String bgFilePath,
-                        @NotNull String bgFileName,
-                        List<Float> chatMask,
-                        List<Float> gameMask) {
+    @Generated(hash = 2116295053)
+    public DbLive2DBean(Long id, String liveFilePath, @NotNull String liveFileName,
+            String bgFilePath, @NotNull String bgFileName, List<Float> chatMask,
+            List<Float> gameMask, int pitchLevel) {
         this.id = id;
         this.liveFilePath = liveFilePath;
         this.liveFileName = liveFileName;
@@ -51,6 +48,7 @@ public class DbLive2DBean {
         this.bgFileName = bgFileName;
         this.chatMask = chatMask;
         this.gameMask = gameMask;
+        this.pitchLevel = pitchLevel;
     }
 
 
@@ -133,4 +131,16 @@ public class DbLive2DBean {
     public void setGameMask(List<Float> gameMask) {
         this.gameMask = gameMask;
     }
+
+
+    public int getPitchLevel() {
+        return this.pitchLevel;
+    }
+
+
+    public void setPitchLevel(int pitchLevel) {
+        this.pitchLevel = pitchLevel;
+    }
+
+
 }

@@ -5,6 +5,7 @@ import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GameRankBean;
 import com.kachat.game.libdata.model.RankListBean;
 import com.kachat.game.libdata.model.RankingListBean;
@@ -25,12 +26,12 @@ public class GameRankPresenter {
     }
 
     public void attachPresenter(int gameIndex, int type){
-        this.mModel.getGameRankList(gameIndex,type,new OnPresenterListeners.OnModelListener<RankListBean>() {
+        this.mModel.getGameRankList(gameIndex,type,new OnPresenterListeners.OnModelListener<BaseBean<RankListBean>>() {
             @Override
-            public void onSuccess(RankListBean result) {
+            public void onSuccess(BaseBean<RankListBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        GameRankPresenter.this.mView.onSuccess(result);
+                        GameRankPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         GameRankPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

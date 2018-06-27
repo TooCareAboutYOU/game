@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.HpModel;
@@ -22,12 +23,12 @@ public class HpPresenter {
     }
 
     public void attachPresenter(@NonNull String game, @NonNull String uid){
-        this.mModel.postHp(game,uid, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.postHp(game,uid, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        HpPresenter.this.mView.onSuccess(result); // result.getResult().getHp();
+                        HpPresenter.this.mView.onSuccess(result.getResult()); // result.getResult().getHp();
                     }else {
                         HpPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

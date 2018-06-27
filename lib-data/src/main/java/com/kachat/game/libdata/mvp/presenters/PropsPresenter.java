@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -22,12 +23,12 @@ public class PropsPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.getUserTicket(new OnPresenterListeners.OnModelListener<PropsBean>() {
+        this.mModel.getUserTicket(new OnPresenterListeners.OnModelListener<BaseBean<PropsBean>>() {
             @Override
-            public void onSuccess(PropsBean result) {
+            public void onSuccess(BaseBean<PropsBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        PropsPresenter.this.mView.onSuccess(result);
+                        PropsPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         PropsPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

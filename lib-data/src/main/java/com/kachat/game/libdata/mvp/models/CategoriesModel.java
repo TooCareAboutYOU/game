@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.models;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -15,8 +16,8 @@ public class CategoriesModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getCategories(final OnPresenterListeners.OnModelListener<CategoryTypeBean> listener){
-        mSubscription= GameApi.getCategories(new Observer<CategoryTypeBean>() {
+    public void getCategories(final OnPresenterListeners.OnModelListener<BaseBean<CategoryTypeBean>> listener){
+        mSubscription= GameApi.getCategories(new Observer<BaseBean<CategoryTypeBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -26,7 +27,7 @@ public class CategoriesModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final CategoryTypeBean bean) {
+            public void onNext(final BaseBean<CategoryTypeBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

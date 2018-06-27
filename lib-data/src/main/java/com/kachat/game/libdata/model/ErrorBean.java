@@ -11,10 +11,15 @@ import java.util.List;
  */
 public class ErrorBean implements Serializable {
 
-    private List<String> message;
     private String toast;
+    private List<String> message;
 
-    public ErrorBean() {
+    public String getToast() {
+        return toast;
+    }
+
+    public void setToast(String toast) {
+        this.toast = toast;
     }
 
     public List<String> getMessage() {
@@ -23,14 +28,6 @@ public class ErrorBean implements Serializable {
 
     public void setMessage(List<String> message) {
         this.message = message;
-    }
-
-    public String getToast() {
-        return toast;
-    }
-
-    public void setToast(String toast) {
-        this.toast = toast;
     }
 
     @Override

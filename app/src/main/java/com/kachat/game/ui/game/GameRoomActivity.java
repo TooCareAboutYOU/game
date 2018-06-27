@@ -27,16 +27,12 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
-import com.dnion.VAGameAPI;
-import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.ui.bar.MurphyBarActivity;
-import com.kachat.game.ui.user.MeActivity;
+import com.kachat.game.utils.OnCheckNetClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.alibaba.fastjson.JSON;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -108,9 +104,26 @@ public class GameRoomActivity extends BaseActivity {
         }
     }
 
+    private boolean isLoopBack=true;
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
+        getToolbarMenu2().setBackgroundResource(R.drawable.icon_report);
+        getToolbarMenu2().setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                new AlterDialogBuilder(GameRoomActivity.this,new DialogTextView(GameRoomActivity.this,"举报成功!")).hideRootSure();
+            }
+        });
+        getToolbarMenu().setBackgroundResource(R.drawable.icon_audio_open);
+        getToolbarMenu().setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                isLoopBack=!isLoopBack;
+                SdkApi.getInstance().setAudioLoopBack(isLoopBack);
+                getToolbarMenu().setBackgroundResource(isLoopBack ? R.drawable.icon_audio_open : R.drawable.icon_audio_close);
+            }
+        });
         mLoadLayout.setVisibility(View.VISIBLE);
         initGameHtml();
     }
@@ -121,18 +134,6 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
 
-        Bundle bundle = getIntent().getExtras();
-        String url = Objects.requireNonNull(bundle).getString(Html_Url);
-        type=bundle.getInt(GAME_TYPE);
-
-        Log.i(TAG, "initGameHtml: "+url+"\t\t"+type);
-
-        if (TextUtils.isEmpty(url)) {
-            Toast("游戏地址为空!");
-            this.finish();
-        }
-        SdkApi.getInstance().create(this);
-        SdkApi.getInstance().loadGame(url);
 
         //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
         SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
@@ -142,14 +143,26 @@ public class GameRoomActivity extends BaseActivity {
 //            返回给html的消息
             function.onCallBack("返回给//Toast的alert");
         });
+        loadVideo();
     }
 
     private void loadVideo(){
+        Bundle bundle = getIntent().getExtras();
+        String url = Objects.requireNonNull(bundle).getString(Html_Url);
+        if (TextUtils.isEmpty(url)) {
+            Log.i(TAG, "游戏地址为空");
+            Toast("游戏异常!");
+            this.finish();
+        }
+        type=bundle.getInt(GAME_TYPE);
+        Log.i(TAG, "initGameHtml: "+url+"\t\t"+type);
+        SdkApi.getInstance().create(this);
+        SdkApi.getInstance().loadGame(url);
         SdkApi.getInstance().loadLocalView(this, flLocalView);
         SdkApi.getInstance().loadRemoteView(this, flRemoteView);
         SdkApi.getInstance().enableVideoView();
         DbLive2DBean dbLive2DBean= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
-        SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),type);//
+        SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),dbLive2DBean.getPitchLevel(),type);//
         SdkApi.getInstance().startGameMatch(type);
     }
 
@@ -174,16 +187,6 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case SESSION_BROKEN:
                 Log.i(TAG, "onEvent: SESSION_BROKEN");
-//                if (NetworkUtils.isConnected()) {
-//                    if (!NetworkUtils.isAvailableByPing()) {
-//                        ToastUtils.showShort("当前网络不可用！");
-//                    }
-//                }else {
-//                    if (flRemoteView.getChildCount() > 0) {
-//                        flRemoteView.removeAllViews();
-//                    }
-//                    ToastUtils.showShort("网络已断开！");
-//                }
                 register++;
                 if (register == 7) {
                     AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this,new DialogTextView(GameRoomActivity.this,"连接异常，请重新登录！"),"退出").hideClose();
@@ -266,7 +269,6 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
-                Logger("VIDEO_CHAT_FAIL");
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");
@@ -316,7 +318,7 @@ public class GameRoomActivity extends BaseActivity {
             super.onProgressChanged(view, newProgress);
             Log.i(TAG, "onProgressChanged: " + newProgress);
             if (newProgress == 100) {
-                loadVideo();
+
             }
         }
 

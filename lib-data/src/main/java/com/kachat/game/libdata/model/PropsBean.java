@@ -14,20 +14,8 @@ import java.util.List;
  - index: 道具编号
  - category: 道具类别，0-通用道具，1-游戏道具，2-聊天道具
  */
-public class PropsBean extends BaseBeans {
+public class PropsBean implements Serializable {
 
-
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable{
         private List<ChildPropsBean> props;
 
         public List<ChildPropsBean> getProps() {
@@ -114,10 +102,4 @@ public class PropsBean extends BaseBeans {
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

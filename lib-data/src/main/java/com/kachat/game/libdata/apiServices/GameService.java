@@ -1,5 +1,6 @@
 package com.kachat.game.libdata.apiServices;
 
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.model.GameRankBean;
@@ -26,14 +27,14 @@ public interface GameService {
 
     // http://101.132.144.196:6004/games
     @GET("/games")
-    Observable<GamesBean> getGameListImpl();
+    Observable<BaseBean<GamesBean>> getGameListImpl();
 
     //玩家获取宝箱
 
     // 玩游戏扣除体力
     @FormUrlEncoded
     @POST("/games/play")
-    Observable<MessageBean> postHp(@Field("game") String game, @Field("user") String user);
+    Observable<BaseBean<MessageBean>> postHp(@Field("game") String game, @Field("user") String user);
 
 
     //使用道具
@@ -43,34 +44,34 @@ public interface GameService {
 
     //获取房间列表
     @GET("/games/toy/rooms")
-    Observable<ToyRoomsBean> getToyRooms();
+    Observable<BaseBean<ToyRoomsBean>> getToyRooms();
 
     // 统计进入游戏主页次数
     @FormUrlEncoded
     @POST("/stats/pages")
-    Observable<MessageBean> postStatPages( @Field("user") String user, @Field("type") String type);
+    Observable<BaseBean<MessageBean>> postStatPages( @Field("user") String user, @Field("type") String type);
 
     //查询商品类别列表  http://api.e3webrtc.com:8004/v2/shop/categories
     @GET("v2/shop/categories")
-    Observable<CategoryTypeBean> getCategories();
+    Observable<BaseBean<CategoryTypeBean>> getCategories();
 
     //查询商品列表 http://api.e3webrtc.com:8004/v2/shop/goods?category=1
     @GET("v2/shop/goods")
-    Observable<CategoryListBean> getGoods(@Query("category") int category);
+    Observable<BaseBean<CategoryListBean>> getGoods(@Query("category") int category);
 
     // http://api.e3webrtc.com:8004/shop/orders
     //购买商品
     @FormUrlEncoded
     @POST("/shop/orders")
-    Observable<MessageBean> postGoods(@Header("Authorization") String token, @Field("good") int good_id, @Field("amount") int amount);
+    Observable<BaseBean<MessageBean>> postGoods(@Header("Authorization") String token, @Field("good") int good_id, @Field("amount") int amount);
 
     //魅力排行榜  http://api.e3webrtc.com:8004/ranks/charm
     @GET("/ranks/charm")
-    Observable<RankingListBean> getCharm(@Header("Authorization") String token, @Query("type") int type);
+    Observable<BaseBean<RankingListBean>> getCharm(@Header("Authorization") String token, @Query("type") int type);
 
     //经验排行榜  http://api.e3webrtc.com:8004/ranks/exp
     @GET("/ranks/exp")
-    Observable<RankingListBean> getExperience(@Header("Authorization") String token);
+    Observable<BaseBean<RankingListBean>> getExperience(@Header("Authorization") String token);
 
 
     //  http://api.e3webrtc.com:8004/ranks/game/901?type=1
@@ -79,10 +80,10 @@ public interface GameService {
      * 排行榜分类 0-总排行榜，1-周排行榜
      */
      @GET("/ranks/game/{game_index}")
-    Observable<RankListBean> getGameRankList(@Header("Authorization") String token, @Path("game_index") int game_index, @Query("type") int type);
+    Observable<BaseBean<RankListBean>> getGameRankList(@Header("Authorization") String token, @Path("game_index") int game_index, @Query("type") int type);
 
     //  http://api.e3webrtc.com:8004/users/19/lives
     //人物遮罩
     @GET("/users/{uid}/lives")
-    Observable<LivesBean> getUserLives(@Path("uid") int uid);
+    Observable<BaseBean<LivesBean>> getUserLives(@Path("uid") int uid);
 }

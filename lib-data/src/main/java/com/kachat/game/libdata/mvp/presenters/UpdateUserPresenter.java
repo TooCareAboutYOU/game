@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.controls.DaoInsert;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.UpdateUserData;
 import com.kachat.game.libdata.model.UserBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -22,13 +23,13 @@ public class UpdateUserPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.updateUserData(new OnPresenterListeners.OnModelListener<UpdateUserData>() {
+        this.mModel.updateUserData(new OnPresenterListeners.OnModelListener<BaseBean<UpdateUserData>>() {
             @Override
-            public void onSuccess(UpdateUserData result) {
+            public void onSuccess(BaseBean<UpdateUserData> result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
 //                        DaoInsert.insterLogin(true);
-                        UpdateUserPresenter.this.mView.onSuccess(result);
+                        UpdateUserPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         UpdateUserPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

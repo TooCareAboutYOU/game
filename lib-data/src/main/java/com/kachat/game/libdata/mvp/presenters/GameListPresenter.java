@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GamesBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.GameListModel;
@@ -17,12 +18,12 @@ public class GameListPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.requestGameList(new OnPresenterListeners.OnModelListener<GamesBean>() {
+        this.mModel.requestGameList(new OnPresenterListeners.OnModelListener<BaseBean<GamesBean>>() {
             @Override
-            public void onSuccess(GamesBean result) {
+            public void onSuccess(BaseBean<GamesBean> result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
-                        GameListPresenter.this.mView.onSuccess(result);
+                        GameListPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         GameListPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

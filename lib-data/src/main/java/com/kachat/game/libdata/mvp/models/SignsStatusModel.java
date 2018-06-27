@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -15,8 +16,8 @@ public class SignsStatusModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getSignsStatusModel(final OnPresenterListeners.OnModelListener<MessageBean> listener){
-        mSubscription= UserApi.getUserSignsStatus(new Observer<MessageBean>() {
+    public void getSignsStatusModel(final OnPresenterListeners.OnModelListener<BaseBean<MessageBean>> listener){
+        mSubscription= UserApi.getUserSignsStatus(new Observer<BaseBean<MessageBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -26,7 +27,7 @@ public class SignsStatusModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final MessageBean bean) {
+            public void onNext(final BaseBean<MessageBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

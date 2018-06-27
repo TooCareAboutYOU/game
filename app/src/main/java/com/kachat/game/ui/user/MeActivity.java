@@ -26,6 +26,7 @@ import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoDelete;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.controls.DaoQuery;
+import com.kachat.game.ui.fragments.FeedBackFragment;
 import com.kachat.game.ui.user.fragment.EditUserFragment;
 import com.kachat.game.ui.user.fragment.PropsFragment;
 import com.kachat.game.ui.user.login.LoginActivity;
@@ -193,7 +194,7 @@ public class MeActivity extends BaseActivity {
 //                dialogBuilder.getRootSure().setOnClickListener(v -> {
 //                    dialogBuilder.dismiss();
 //                });
-                PropsFragment.getInstance(title).show(getSupportFragmentManager(),PropsFragment.TAG);
+                PropsFragment.getInstance().show(getSupportFragmentManager(),PropsFragment.TAG);
                 break;
             }
             case 1:{  //邀请好友
@@ -201,12 +202,12 @@ public class MeActivity extends BaseActivity {
                 dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
                 break;
             }
-            case 2:{   //新手反馈
-
+            case 2:{   //新手指引
+                NewGuidesLineActivity.newInstance(this);
                 break;
             }
             case 3:{  //意见反馈
-
+                FeedBackFragment.getInstance().show(getSupportFragmentManager(),FeedBackFragment.TAG);
                 break;
             }
             case 4:{ //关于我们
@@ -217,7 +218,6 @@ public class MeActivity extends BaseActivity {
                 name.setText(AppUtils.getAppName());
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MeActivity.this,title,containerView);
                 dialogBuilder.getRootSure().setVisibility(View.GONE);
-
                 break;
             }
             case 5:{ //用户协议
@@ -236,6 +236,7 @@ public class MeActivity extends BaseActivity {
                 dialogBuilder.getRootSure().setOnClickListener(v -> {
                     PublicEventMessage.ExitAccount(this);
                     dialogBuilder.dismiss();
+                    finish();
                 });
                 break;
             }
@@ -245,7 +246,6 @@ public class MeActivity extends BaseActivity {
             }
         }
     }
-
 
     int broken=0;
     @SuppressLint("InflateParams")
@@ -263,6 +263,7 @@ public class MeActivity extends BaseActivity {
                         finish();
                     });
                 }
+
                 break;
             }
             case SESSION_OCCUPY: {

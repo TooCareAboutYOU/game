@@ -4,10 +4,9 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
-import com.kachat.game.libdata.model.FeedBacksBean;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.SingsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
-import com.kachat.game.libdata.mvp.models.FeedbacksModel;
 import com.kachat.game.libdata.mvp.models.SignsModel;
 
 public class SignsPresenter {
@@ -21,12 +20,12 @@ public class SignsPresenter {
     }
 
     public void attachPresenter(@NonNull String deviceId){
-        this.mModel.requestSigns(deviceId, new OnPresenterListeners.OnModelListener<SingsBean>() {
+        this.mModel.requestSigns(deviceId, new OnPresenterListeners.OnModelListener<BaseBean<SingsBean>>() {
             @Override
-            public void onSuccess(SingsBean result) {
+            public void onSuccess(BaseBean<SingsBean> result) {
                 if (mView != null) {
                     if (result.getCode()== CodeType.CODE_RESPONSE_SUCCESS) {
-                        SignsPresenter.this.mView.onSuccess(result);
+                        SignsPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         SignsPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

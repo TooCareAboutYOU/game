@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +77,7 @@ public class GameActivity extends BaseActivity {
     @BindView(R.id.rv_GameList)
     RecyclerView mRvGameList;
 
-    private List<GamesBean.ResultBean.GameBean> mList = null;
+    private List<GamesBean.GameBean> mList = null;
     private GameListAdapter mAdapter;
     private LinearLayoutManager manager;
 
@@ -147,42 +148,41 @@ public class GameActivity extends BaseActivity {
     private class GameListCallBack implements OnPresenterListeners.OnViewListener<GamesBean> {
         @Override
         public void onSuccess(GamesBean result) {
-            if (result != null && result.getResult().getGames() != null && result.getResult().getGames().size() > 0) {
-                int size=result.getResult().getGames().size();
-                Log.i(TAG, "onSuccess: "+result.getResult().getGames().toString());
+            if (result != null && result.getGames() != null && result.getGames().size() > 0) {
+                int size=result.getGames().size();
+                Log.i(TAG, "onSuccess: "+result.getGames().toString());
                 for (int i = 0; i < size; i++) {
-                    switch (result.getResult().getGames().get(i).getIndex()) {
+                    switch (result.getGames().get(i).getIndex()) {
                         case 903: //  娃娃机
-                            result.getResult().getGames().get(0).setImage(R.drawable.icon_game_bg_chat);
-                            result.getResult().getGames().get(0).setImgStart(R.drawable.icon_game_start);
-                            result.getResult().getGames().get(0).setImgTimeLimit(R.drawable.icon_game_slice);
+                            result.getGames().get(0).setImage(R.drawable.icon_game_bg_chat);
+                            result.getGames().get(0).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(0).setImgTimeLimit(R.drawable.icon_game_slice);
                             break;
                         case 902: //  晕头转向
-                            result.getResult().getGames().get(1).setImage(R.drawable.icon_game_bg_fourytzx);
-                            result.getResult().getGames().get(1).setImgHint(R.drawable.icon_game_hint);
-                            result.getResult().getGames().get(1).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(1).setImage(R.drawable.icon_game_bg_fourytzx);
+                            result.getGames().get(1).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(1).setImgStart(R.drawable.icon_game_start);
                             break;
                         case 901:  //  消灭星星
-                            result.getResult().getGames().get(2).setImage(R.drawable.icon_game_bg_star);
-                            result.getResult().getGames().get(2).setImgHint(R.drawable.icon_game_hint);
-                            result.getResult().getGames().get(2).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(2).setImage(R.drawable.icon_game_bg_star);
+                            result.getGames().get(2).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(2).setImgStart(R.drawable.icon_game_start);
                             break;
                         case 900:  //  盖房子
-                            result.getResult().getGames().get(3).setImage(R.drawable.icon_game_bg_house);
-                            result.getResult().getGames().get(3).setImgHint(R.drawable.icon_game_hint);
-                            result.getResult().getGames().get(3).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(3).setImage(R.drawable.icon_game_bg_house);
+                            result.getGames().get(3).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(3).setImgStart(R.drawable.icon_game_start);
                             break;
                     }
                 }
-                mList.addAll(result.getResult().getGames());
+                mList.addAll(result.getGames());
                 mAdapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Log.i(TAG, "onFailed: "+error.getToast());
+            if (!TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

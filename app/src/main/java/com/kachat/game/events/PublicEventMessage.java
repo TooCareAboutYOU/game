@@ -46,23 +46,23 @@ public class PublicEventMessage {
     }
 
     public static class ShopBuy{
-        private CategoryListBean.ResultBean.GoodsBean mGoodsBean;
+        private CategoryListBean.GoodsBean mGoodsBean;
 
-        public ShopBuy(CategoryListBean.ResultBean.GoodsBean goodsBean) {
+        public ShopBuy(CategoryListBean.GoodsBean goodsBean) {
             mGoodsBean = goodsBean;
         }
 
-        public CategoryListBean.ResultBean.GoodsBean getGoodsBean() {
+        public CategoryListBean.GoodsBean getGoodsBean() {
             return mGoodsBean;
         }
 
-        public void setGoodsBean(CategoryListBean.ResultBean.GoodsBean goodsBean) {
+        public void setGoodsBean(CategoryListBean.GoodsBean goodsBean) {
             mGoodsBean = goodsBean;
         }
     }
 
     public static class OnGraduateEvent{
-        private int type; // 0：人物遮罩 ,1：饰品, 2：变身, 3：背景
+        private int type; // 0：人物遮罩 ,1：饰品, 2：变声, 3：背景
         private String msg;
 
         public OnGraduateEvent(int type, String msg) {

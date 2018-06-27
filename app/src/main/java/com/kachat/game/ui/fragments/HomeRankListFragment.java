@@ -59,7 +59,7 @@ public class HomeRankListFragment extends BaseDialogFragment {
 
     private RecyclerView mRecyclerView;
 
-    private static List<RankingListBean.ResultBean.RanksBean> mRankList = null;
+    private static List<RankingListBean.RanksBean> mRankList = null;
     private ExperienceRankPresenter mPresenter=null;
     private ExpLevelAdapter mExpLevelAdapter = null;
     private static class EditUserFragmentHolder {
@@ -92,9 +92,9 @@ public class HomeRankListFragment extends BaseDialogFragment {
 
         View listView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_dialog_recyclerview, null);
         mRecyclerView = listView.findViewById(R.id.rv_Prop);
-        ViewGroup.LayoutParams params=mRecyclerView.getLayoutParams();
-        params.height=1044;
-        mRecyclerView.setLayoutParams(params);
+//        ViewGroup.LayoutParams params=mRecyclerView.getLayoutParams();
+//        params.height=1044;
+//        mRecyclerView.setLayoutParams(params);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(0, 10, 0, 0));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mExpLevelAdapter);
@@ -106,30 +106,28 @@ public class HomeRankListFragment extends BaseDialogFragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onSuccess(RankingListBean result) {
-            if (result.getResult() != null) {
-                if (result.getResult().getCount() > 0 && result.getResult().getRanks() != null && result.getResult().getRanks().size() >0) {
-                    mRankList.addAll(result.getResult().getRanks());
-                    mExpLevelAdapter.notifyDataSetChanged();
+            if (result.getCount() > 0 && result.getRanks() != null && result.getRanks().size() >0) {
+                mRankList.addAll(result.getRanks());
+                mExpLevelAdapter.notifyDataSetChanged();
+            }
+            if (result.getRank() != null){
+                mAcTvIndex.setText(result.getRank().getIndex()+"");
+                if (!TextUtils.isEmpty(result.getRank().getUsername())) {
+                    mAcTvUserName.setText(result.getRank().getUsername());
                 }
-                if (result.getResult().getRank() != null){
-                    mAcTvIndex.setText(result.getResult().getRank().getIndex()+"");
-                    if (!TextUtils.isEmpty(result.getResult().getRank().getUsername())) {
-                        mAcTvUserName.setText(result.getResult().getRank().getUsername());
-                    }
 
-                    if (result.getResult().getRank().getGender().equals("male")) {
-                        mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
-                    }
-                    if (result.getResult().getRank().getUser_detail() != null) {
-                        mAcTvUserLevel.setText("LV"+result.getResult().getRank().getUser_detail().getLevel());
-                    }
+                if (result.getRank().getGender().equals("male")) {
+                    mSdvUserSex.setBackgroundResource(R.drawable.icon_item_exprank_male);
+                }
+                if (result.getRank().getUser_detail() != null) {
+                    mAcTvUserLevel.setText("LV"+result.getRank().getUser_detail().getLevel());
                 }
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null && error.getToast() != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

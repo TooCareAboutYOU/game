@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected boolean onSetStatusBar() {
-        return true;
+        return false;
     }
 
     @SuppressLint("CommitTransaction")
@@ -71,8 +72,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        mAcEtMobile.setText("15000000000");
-        mAcEtMobile.setText("15821239216");
+        mAcEtMobile.setText("15000000000");
+//        mAcEtMobile.setText("15821239216");
     }
 
 
@@ -101,9 +102,9 @@ public class LoginActivity extends BaseActivity {
     private class CheckAccount implements OnPresenterListeners.OnViewListener<GetCaptchaBean> {
         @Override
         public void onSuccess(GetCaptchaBean result) {  //不存在,发送验证码
-            Toast("验证码：" + result.getResult().getCaptcha());
+            Toast("验证码：" + result.getCaptcha());
             hideLoadView();
-            if (result.getResult() != null) {
+            if (result != null) {
                 Config.setMobile(mobile);
                 RegisterActivity.newInstance(LoginActivity.this);
                 finish();
@@ -121,7 +122,9 @@ public class LoginActivity extends BaseActivity {
                 finish();
             }else {
                 mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
-                Toast(error.getToast());
+                if (error != null && !TextUtils.isEmpty(error.getToast())) {
+                    Toast(error.getToast());
+                }
             }
 
         }
@@ -152,14 +155,21 @@ public class LoginActivity extends BaseActivity {
         super.onDestroy();
     }
 
+
+    //记录用户首次点击返回键的时间
+    private long firstTime = 0;
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Toast.makeText(this, "返回", Toast.LENGTH_SHORT).show();
-        if (DaoQuery.queryUserListSize() == 0) {
-            Toast.makeText(this, "退出", Toast.LENGTH_SHORT).show();
-            System.exit(0);
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (System.currentTimeMillis() - firstTime > 2000) {
+                Toast("再按一次退出程序");
+                firstTime = System.currentTimeMillis();
+            } else {
+                System.exit(0);
+            }
+            return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
 
 

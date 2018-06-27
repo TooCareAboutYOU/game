@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.models;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -15,8 +16,8 @@ public class CharmRankModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getCharm(int type,final OnPresenterListeners.OnModelListener<RankingListBean> listener){
-        mSubscription= GameApi.getCharm(type,new Observer<RankingListBean>() {
+    public void getCharm(int type,final OnPresenterListeners.OnModelListener<BaseBean<RankingListBean>> listener){
+        mSubscription= GameApi.getCharm(type,new Observer<BaseBean<RankingListBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -26,7 +27,7 @@ public class CharmRankModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final RankingListBean bean) {
+            public void onNext(final BaseBean<RankingListBean> bean) {
                     if (listener != null) { listener.onSuccess(bean); }
             }
         });

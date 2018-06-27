@@ -1,6 +1,5 @@
 package com.kachat.game.events;
 
-import com.dnion.VAChatSignaling;
 
 /**
  *
@@ -22,7 +21,6 @@ public class VAChatEventMessage {
 
     private VAChatEvent eventType;
     private String msg;
-    private VAChatSignaling.ChatInfo mChatInfo;
     private long dollId;
     private int i;
 
@@ -37,12 +35,6 @@ public class VAChatEventMessage {
         this.eventType = eventType;
         this.msg = msg;
     }
-
-    public VAChatEventMessage(VAChatEvent eventType, VAChatSignaling.ChatInfo chatInfo) {
-        this.eventType = eventType;
-        mChatInfo = chatInfo;
-    }
-
     public VAChatEventMessage(VAChatEvent eventType, long dollId) {
         this.eventType = eventType;
         this.dollId = dollId;
@@ -67,14 +59,6 @@ public class VAChatEventMessage {
 
     public void setMsg(String msg) {
         this.msg = msg;
-    }
-
-    public VAChatSignaling.ChatInfo getChatInfo() {
-        return mChatInfo;
-    }
-
-    public void setChatInfo(VAChatSignaling.ChatInfo chatInfo) {
-        mChatInfo = chatInfo;
     }
 
     public long getDollId() {

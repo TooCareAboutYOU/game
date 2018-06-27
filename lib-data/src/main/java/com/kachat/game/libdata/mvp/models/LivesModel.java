@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.LivesBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -17,8 +18,8 @@ public class LivesModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserLives(final OnPresenterListeners.OnModelListener<LivesBean> listener){
-        mSubscription= GameApi.getUserLives(new Observer<LivesBean>() {
+    public void getUserLives(final OnPresenterListeners.OnModelListener<BaseBean<LivesBean>> listener){
+        mSubscription= GameApi.getUserLives(new Observer<BaseBean<LivesBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -28,7 +29,7 @@ public class LivesModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final LivesBean bean) {
+            public void onNext(final BaseBean<LivesBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

@@ -50,7 +50,7 @@ public class GoldsFragment extends BaseFragment {
     private GoldsAdapter mGoldsAdapter=null;
     private LinearLayoutManager manager=null;
 
-    private List<CategoryListBean.ResultBean.GoodsBean> mGoodsBeanList=null;
+    private List<CategoryListBean.GoodsBean> mGoodsBeanList=null;
     private CategoryGoodsPresenter mPresenter=null;
 
 
@@ -138,19 +138,18 @@ public class GoldsFragment extends BaseFragment {
 
         @Override
         public void onSuccess(CategoryListBean result) {
-            if (result.getResult() != null && result.getResult().getGoods() != null && result.getResult().getGoods().size() > 0) {
+            if (result != null && result.getGoods() != null && result.getGoods().size() > 0) {
                 if (mGoodsBeanList != null) {
                     mGoodsBeanList.clear();
                 }
-                mGoodsBeanList.addAll(result.getResult().getGoods());
+                mGoodsBeanList.addAll(result.getGoods());
                 mGoldsAdapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Log.i(TAG, "onFailed: "+error.getToast());
+            if (error != null  && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

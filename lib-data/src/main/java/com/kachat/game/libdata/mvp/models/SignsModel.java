@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.FeedBacksBean;
 import com.kachat.game.libdata.model.SingsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -21,8 +22,9 @@ public class SignsModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void requestSigns(@NonNull String deviceId, final OnPresenterListeners.OnModelListener<SingsBean> listener){
-        mSubscription= UserApi.requestSigns(deviceId, new Observer<SingsBean>() {
+    public void requestSigns(@NonNull String deviceId,
+                             final OnPresenterListeners.OnModelListener<BaseBean<SingsBean>> listener){
+        mSubscription= UserApi.requestSigns(deviceId, new Observer<BaseBean<SingsBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -32,7 +34,7 @@ public class SignsModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final SingsBean result) {
+            public void onNext(final BaseBean<SingsBean> result) {
                 if (listener != null) { listener.onSuccess(result); }
             }
         });

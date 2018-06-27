@@ -64,6 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public SimpleDraweeView getToolBarBack(){ return findViewById(R.id.sdv_ToolBar_Base_Back); }
     public AppCompatTextView getToolBarTitle(){ return findViewById(R.id.atv_ToolBar_Base_Title); }
     public SimpleDraweeView getToolbarMenu(){ return findViewById(R.id.sdv_ToolBar_BaseMenu); }
+    public SimpleDraweeView getToolbarMenu2(){ return findViewById(R.id.sdv_ToolBar_BaseMenu2); }
 
 
 //    private View mLoadView=LayoutInflater.from(this).inflate(R.layout.base_loading,null);

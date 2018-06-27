@@ -8,19 +8,8 @@ import java.util.List;
 /**
  *
  */
-public class RankingListBean extends BaseBeans {
+public class RankingListBean implements Serializable {
 
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable{
 
         private int count;
         private List<RanksBean> ranks;
@@ -282,10 +271,4 @@ public class RankingListBean extends BaseBeans {
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

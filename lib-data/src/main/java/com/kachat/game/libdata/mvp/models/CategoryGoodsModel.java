@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -18,8 +19,8 @@ public class CategoryGoodsModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getGoods(int index, final OnPresenterListeners.OnModelListener<CategoryListBean> listener){
-        mSubscription= GameApi.getGoods(index,new Observer<CategoryListBean>() {
+    public void getGoods(int index, final OnPresenterListeners.OnModelListener<BaseBean<CategoryListBean>> listener){
+        mSubscription= GameApi.getGoods(index,new Observer<BaseBean<CategoryListBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -29,7 +30,7 @@ public class CategoryGoodsModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final CategoryListBean bean) {
+            public void onNext(final BaseBean<CategoryListBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

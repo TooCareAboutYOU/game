@@ -45,7 +45,7 @@ public class FiguresMaskFragment extends BaseFragment {
     private GoldsAdapter mGoldsAdapter;
     private LinearLayoutManager manager;
 
-    private List<CategoryListBean.ResultBean.GoodsBean> mGoodsBeanList;
+    private List<CategoryListBean.GoodsBean> mGoodsBeanList;
     private CategoryGoodsPresenter mPresenter;
 
     public static FiguresMaskFragment newInstance(int index) {
@@ -134,18 +134,18 @@ public class FiguresMaskFragment extends BaseFragment {
         @Override
         public void onSuccess(CategoryListBean result) {
             Log.i(TAG, "onSuccess: " + result.toString());
-            if (result.getResult() != null && result.getResult().getGoods() != null && result.getResult().getGoods().size() > 0) {
+            if (result != null && result.getGoods() != null && result.getGoods().size() > 0) {
                 if (mGoodsBeanList != null) {
                     mGoodsBeanList.clear();
                 }
-                mGoodsBeanList.addAll(result.getResult().getGoods());
+                mGoodsBeanList.addAll(result.getGoods());
                 mGoldsAdapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

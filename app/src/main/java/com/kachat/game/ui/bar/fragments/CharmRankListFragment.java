@@ -64,7 +64,7 @@ public class CharmRankListFragment extends BaseDialogFragment{
     @BindView(R.id.sdv_Charm)
     SimpleDraweeView mSdvCharm;
     
-    private static List<RankingListBean.ResultBean.RanksBean> mRankList = null;
+    private static List<RankingListBean.RanksBean> mRankList = null;
     private CharmRankPresenter mCharmRankPresenter=null;
     private CharmListAdapter mCharmListAdapter=null;
     
@@ -83,9 +83,10 @@ public class CharmRankListFragment extends BaseDialogFragment{
     @Override
     protected void initView(View view) {
         mAcTVHintBg.setText("魅力");
+        mAcIVClose.setOnClickListener(v -> dismiss());
+
         mAcTvSure.setVisibility(View.GONE);
         mRelativeLayout.setVisibility(View.VISIBLE);
-        mAcIVClose.setOnClickListener(v -> dismiss());
         mSdvUserIndex.setVisibility(View.INVISIBLE);
         mSdvCharm.setVisibility(View.VISIBLE);
         
@@ -106,10 +107,10 @@ public class CharmRankListFragment extends BaseDialogFragment{
             }
         });
         
-        ViewGroup.LayoutParams params=mCharmRecyclerView.getLayoutParams();
-        params.height=1044;
-        mCharmRecyclerView.setLayoutParams(params);
-        mCharmRecyclerView.addItemDecoration(new SpaceItemDecoration(0, 10, 0, 0));
+//        ViewGroup.LayoutParams params=mCharmRecyclerView.getLayoutParams();
+//        params.height=1044;
+//        mCharmRecyclerView.setLayoutParams(params);
+        mCharmRecyclerView.addItemDecoration(new SpaceItemDecoration(0, 5, 0, 0));
         mCharmRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mCharmRecyclerView.setAdapter(mCharmListAdapter);
         mFlContainer.addView(listView);
@@ -120,28 +121,25 @@ public class CharmRankListFragment extends BaseDialogFragment{
         @SuppressLint("SetTextI18n")
         @Override
         public void onSuccess(RankingListBean result) {
-            if (result.getResult() != null) {
-                if (result.getResult().getCount() > 0 && result.getResult().getRanks() != null && result.getResult().getRanks().size() >0) {
-                    Log.i(TAG, "onSuccess: 1"+result.toString());
+            if (result != null) {
+                if (result.getCount() > 0 && result.getRanks() != null && result.getRanks().size() >0) {
                     if (mRankList != null) {
                         mRankList.clear();
                     }
-
-                    mRankList.addAll(result.getResult().getRanks());
+                    mRankList.addAll(result.getRanks());
                     mCharmListAdapter.notifyDataSetChanged();
                 }
-                if (result.getResult().getRank() != null){
-                    Log.i(TAG, "onSuccess: "+result.getResult().getRank());
-                    mAcTvMyIndex.setText(result.getResult().getRank().getIndex()+"");
-                    if (!TextUtils.isEmpty(result.getResult().getRank().getUsername())) {
-                        mAcTvMyName.setText(result.getResult().getRank().getUsername());
+                if (result.getRank() != null){
+                    mAcTvMyIndex.setText(result.getRank().getIndex()+"");
+                    if (!TextUtils.isEmpty(result.getRank().getUsername())) {
+                        mAcTvMyName.setText(result.getRank().getUsername());
                     }
 
-                    if (result.getResult().getRank().getGender().equals("male")) {
+                    if (result.getRank().getGender().equals("male")) {
                         mSdvMySex.setBackgroundResource(R.drawable.icon_item_exprank_male);
                     }
-                    if (result.getResult().getRank().getUser_detail() != null) {
-                        mAcTvMyLevel.setText("LV"+result.getResult().getRank().getUser_detail().getLevel());
+                    if (result.getRank().getUser_detail() != null) {
+                        mAcTvMyLevel.setText("LV"+result.getRank().getUser_detail().getLevel());
                     }
                 }
             }
@@ -149,7 +147,7 @@ public class CharmRankListFragment extends BaseDialogFragment{
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
+            if (error != null  && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

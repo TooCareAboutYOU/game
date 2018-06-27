@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.user.NewGuidesLineActivity">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_GuideThree"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/img_splash_three"/>
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_GuideTwo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/img_splash_two"/>
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_GuideOne"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/img_splash_one"/>
+
+    <include layout="@layout/base_toolbar"/>
+
+</android.support.constraint.ConstraintLayout>

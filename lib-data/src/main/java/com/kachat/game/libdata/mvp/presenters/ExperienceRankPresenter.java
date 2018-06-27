@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.RankingListBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.ExperienceRankModel;
@@ -19,12 +20,12 @@ public class ExperienceRankPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.getExperience(new OnPresenterListeners.OnModelListener<RankingListBean>() {
+        this.mModel.getExperience(new OnPresenterListeners.OnModelListener<BaseBean<RankingListBean>>() {
             @Override
-            public void onSuccess(RankingListBean result) {
+            public void onSuccess(BaseBean<RankingListBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        ExperienceRankPresenter.this.mView.onSuccess(result);
+                        ExperienceRankPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         ExperienceRankPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

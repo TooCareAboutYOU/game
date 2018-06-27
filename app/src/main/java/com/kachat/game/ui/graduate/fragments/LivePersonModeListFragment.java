@@ -41,7 +41,7 @@ public class LivePersonModeListFragment extends BaseFragment {
     RecyclerView mRvSwitchBg;
 
     private List<Live2DModel> mListLocal;
-    private List<LivesBean.ResultBean.ChildLivesBean> mListOnline = null;
+    private List<LivesBean.ChildLivesBean> mListOnline = null;
     private Live2DBgAdapter mAdapter = null;
 
     private LivesPresenter mLivesPresenter = null;
@@ -71,18 +71,19 @@ public class LivePersonModeListFragment extends BaseFragment {
         mLivesPresenter = new LivesPresenter(new MaskCallBack());
         mLivesPresenter.attachPresenter();
 
-        mListLocal.add(new Live2DModel("aLaiKeSi", R.drawable.icon_person_alaikesi_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("haru", R.drawable.icon_person_haru_greete_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("kaPa", R.drawable.icon_person_kapa_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("lanTiYa", R.drawable.icon_person_landiya_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("murahana", R.drawable.icon_person_jianniang_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("neiLin", R.drawable.icon_person_zhishii_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("natori", R.drawable.icon_person_natori_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("tiYaNa", R.drawable.icon_person_tiyana_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("weiKeTa", R.drawable.icon_person_weikeya_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("xingChen", R.drawable.icon_person_xingchen_default, false, true, 0, 0));
-        mListLocal.add(new Live2DModel("yuLu", R.drawable.icon_person_yulu_default, false, true, 0, 0));
         mListLocal.add(new Live2DModel("yangYan", R.drawable.icon_person_yangyan_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("lanTiYa", R.drawable.icon_person_landiya_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("weiKeTa", R.drawable.icon_person_weikeya_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("tiYaNa", R.drawable.icon_person_tiyana_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("aLaiKeSi", R.drawable.icon_person_alaikesi_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("neiLin", R.drawable.icon_person_zhishii_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("kaPa", R.drawable.icon_person_kapa_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("yuLu", R.drawable.icon_person_yulu_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("natori", R.drawable.icon_person_natori_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("haru", R.drawable.icon_person_haru_greete_default, false, true, 0, 0));
+        mListLocal.add(new Live2DModel("murahana", R.drawable.icon_person_jianniang_default, false, true, 0, 0));
+
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         mRvSwitchBg.setLayoutManager(manager);
@@ -195,8 +196,8 @@ public class LivePersonModeListFragment extends BaseFragment {
     private class MaskCallBack implements OnPresenterListeners.OnViewListener<LivesBean> {
         @Override
         public void onSuccess(LivesBean result) {
-            if (result.getResult() != null && result.getResult().getLives() != null && result.getResult().getLives().size() > 0) {
-                mListOnline.addAll(result.getResult().getLives());
+            if (result != null && result.getLives() != null && result.getLives().size() > 0) {
+                mListOnline.addAll(result.getLives());
 
                 int localSize = mListLocal.size();
                 int onlineSize = mListOnline.size();
@@ -222,8 +223,7 @@ public class LivePersonModeListFragment extends BaseFragment {
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            if (error != null) {
-                Logger(error.getToast());
+            if (error != null && !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }

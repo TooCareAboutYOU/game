@@ -4,6 +4,7 @@ package com.kachat.game.libdata.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -23,12 +24,12 @@ public class CategoryGoodsPresenter {
     }
 
     public void attachPresenter(int index){
-        this.mModel.getGoods(index,new OnPresenterListeners.OnModelListener<CategoryListBean>() {
+        this.mModel.getGoods(index,new OnPresenterListeners.OnModelListener<BaseBean<CategoryListBean>>() {
             @Override
-            public void onSuccess(CategoryListBean result) {
+            public void onSuccess(BaseBean<CategoryListBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        CategoryGoodsPresenter.this.mView.onSuccess(result);
+                        CategoryGoodsPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         CategoryGoodsPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

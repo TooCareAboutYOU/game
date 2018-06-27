@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.controls.DaoUpdate;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.UpdateUserData;
 import com.kachat.game.libdata.model.UserBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -22,8 +23,8 @@ public class UpdateUserModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void updateUserData(final OnPresenterListeners.OnModelListener<UpdateUserData> listener){
-        mSubscription= UserApi.updateUserData(new Observer<UpdateUserData>() {
+    public void updateUserData(final OnPresenterListeners.OnModelListener<BaseBean<UpdateUserData>> listener){
+        mSubscription= UserApi.updateUserData(new Observer<BaseBean<UpdateUserData>>() {
             @Override
             public void onCompleted() { }
 
@@ -33,7 +34,7 @@ public class UpdateUserModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final UpdateUserData result) {
+            public void onNext(final BaseBean<UpdateUserData> result) {
                 Log.i(TAG, "onNext: "+result.getResult().toString());
                     if (listener != null) {
                         listener.onSuccess(result);

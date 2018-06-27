@@ -23,20 +23,20 @@ import java.util.List;
 
 import cn.lemon.view.SpaceItemDecoration;
 
-public class LiveVoiceModeListFragment extends BaseFragment {
+public class LiveAudioModeListFragment extends BaseFragment {
 
 
     private List<Live2DModel> mList;
 
-    public LiveVoiceModeListFragment() { }
+    public LiveAudioModeListFragment() { }
 
-    public static LiveVoiceModeListFragment getInstance() {
+    public static LiveAudioModeListFragment getInstance() {
         return Live2DModeListFragmentHolder.instance;
     }
 
     private static class Live2DModeListFragmentHolder {
         @SuppressLint("StaticFieldLeak")
-        private static final LiveVoiceModeListFragment instance = new LiveVoiceModeListFragment();
+        private static final LiveAudioModeListFragment instance = new LiveAudioModeListFragment();
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RadioGroup;
 
@@ -121,8 +122,8 @@ public class ShopActivity extends BaseActivity {
     private class CategoriesCallBack implements OnPresenterListeners.OnViewListener<CategoryTypeBean> {
         @Override
         public void onSuccess(CategoryTypeBean result) {
-            if (result.getResult() != null && result.getResult().getCategories() != null && result.getResult().getCategories().size() > 0) {
-                for (CategoryTypeBean.ResultBean.CategoriesBean categoriesBean : result.getResult().getCategories()) {
+            if (result.getCategories() != null && result.getCategories().size() > 0) {
+                for (CategoryTypeBean.CategoriesBean categoriesBean : result.getCategories()) {
                     switch (categoriesBean.getIndex()) {
                         case 1:
                             mAcRbtnGolds.setText(categoriesBean.getName());
@@ -142,7 +143,11 @@ public class ShopActivity extends BaseActivity {
             }
         }
         @Override
-        public void onFailed(int errorCode, ErrorBean error) { if (error != null) { Toast(error.getToast()); } }
+        public void onFailed(int errorCode, ErrorBean error) {
+            if (!TextUtils.isEmpty(error.getToast())) {
+                Toast(error.getToast());
+            }
+        }
         @Override
         public void onError(Throwable e) { if (e != null) { Toast(e.getMessage()); } }
     }
@@ -200,7 +205,7 @@ public class ShopActivity extends BaseActivity {
         userPresenter = new UpdateUserPresenter(new OnPresenterListeners.OnViewListener<UpdateUserData>() {
             @Override
             public void onSuccess(UpdateUserData result) {
-                Log.i(TAG, "onSuccess: " + result.getResult().toString());
+                Log.i(TAG, "onSuccess: " + result.toString());
             }
 
             @Override
@@ -249,7 +254,7 @@ public class ShopActivity extends BaseActivity {
         }
     }
 
-    private void loadBuyGoods(CategoryListBean.ResultBean.GoodsBean data){
+    private void loadBuyGoods(CategoryListBean.GoodsBean data){
 
         AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(Objects.requireNonNull(this),
                 new DialogTextView(ShopActivity.this,"确定要购买？"));
@@ -265,23 +270,19 @@ public class ShopActivity extends BaseActivity {
 
         @Override
         public void onSuccess(MessageBean result) {
-            if (result.getResult() != null) {
-                AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(ShopActivity.this,
-                        new DialogTextView(ShopActivity.this,"恭喜,购买成功！"));
-                dialogBuilder.getRootSure().setOnClickListener(v1 -> {
-                    dialogBuilder.dismiss();
-                });
-            }
+            AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(ShopActivity.this,
+                    new DialogTextView(ShopActivity.this,"恭喜,购买成功！"));
+            dialogBuilder.getRootSure().setOnClickListener(v1 -> {
+                dialogBuilder.dismiss();
+            });
+            
         }
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
-            Log.i(TAG, "onFailed: "+ error.getToast());
-
-            if (errorCode == CodeType.CODE_RESPONSE_WALLET) {
-
+            if (!TextUtils.isEmpty(error.getToast())) {
+                Toast(error.getToast());
             }
-            Toast(error.getToast());
         }
 
         @Override

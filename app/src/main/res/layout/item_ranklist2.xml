@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_10dp"
+    android:paddingBottom="@dimen/padding_10dp"
+    android:orientation="horizontal">
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/acTv_userNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="@dimen/margin_10dp"
+        android:layout_centerVertical="true"
+        android:textSize="22sp" />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/acTv_UserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textColor="@android:color/white"
+        android:layout_toEndOf="@+id/acTv_userNumber"
+        android:layout_centerVertical="true"
+        android:textSize="14sp" />
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_UserSex"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/margin_10dp"
+        android:layout_toEndOf="@+id/acTv_UserName"
+        android:background="@drawable/icon_ranklist_female"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/acTv_UserScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:layout_marginEnd="@dimen/margin_10dp"
+        android:layout_alignParentEnd="true"
+        android:textSize="14sp" />
+
+</RelativeLayout>

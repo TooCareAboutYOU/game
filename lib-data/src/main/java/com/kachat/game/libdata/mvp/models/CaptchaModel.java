@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.orhanobut.logger.Logger;
@@ -19,8 +20,8 @@ public class CaptchaModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<GetCaptchaBean> listener){
-        mSubscription= UserApi.requestCaptcha(mobile,new Observer<GetCaptchaBean>() {
+    public void getCaptcha(@NonNull String mobile, final OnPresenterListeners.OnModelListener<BaseBean<GetCaptchaBean>> listener){
+        mSubscription= UserApi.requestCaptcha(mobile,new Observer<BaseBean<GetCaptchaBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -30,7 +31,7 @@ public class CaptchaModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final GetCaptchaBean bean) {
+            public void onNext(final BaseBean<GetCaptchaBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

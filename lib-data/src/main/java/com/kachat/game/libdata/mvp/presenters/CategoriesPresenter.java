@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.CategoryTypeBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.CategoriesModel;
@@ -19,12 +20,12 @@ public class CategoriesPresenter {
     }
 
     public void attachPresenter(){
-        this.mModel.getCategories(new OnPresenterListeners.OnModelListener<CategoryTypeBean>() {
+        this.mModel.getCategories(new OnPresenterListeners.OnModelListener<BaseBean<CategoryTypeBean>>() {
             @Override
-            public void onSuccess(CategoryTypeBean result) {
+            public void onSuccess(BaseBean<CategoryTypeBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        CategoriesPresenter.this.mView.onSuccess(result);
+                        CategoriesPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         CategoriesPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

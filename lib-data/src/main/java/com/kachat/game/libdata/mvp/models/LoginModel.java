@@ -8,6 +8,7 @@ import com.kachat.game.libdata.controls.DaoInsert;
 import com.kachat.game.libdata.controls.DaoUpdate;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.UserBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -19,12 +20,12 @@ import rx.Subscription;
  */
 public class LoginModel extends BaseModel {
 
-    private static final String TAG = "LoginModel";
+    private static final String TAG = "MyLogin";
 
     private Subscription mSubscription;
 
-    public void login(@NonNull String mobile,@NonNull String pwd, final OnPresenterListeners.OnModelListener<UserBean> listener){
-        mSubscription= UserApi.requestLogin(mobile, pwd, new Observer<UserBean>() {
+    public void login(@NonNull String mobile,@NonNull String pwd, final OnPresenterListeners.OnModelListener<BaseBean<UserBean>> listener){
+        mSubscription= UserApi.requestLogin(mobile, pwd, new Observer<BaseBean<UserBean>>() {
             @Override
             public void onCompleted() {
             }
@@ -35,7 +36,7 @@ public class LoginModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final UserBean result) {
+            public void onNext(final BaseBean<UserBean> result) {
                 Log.i(TAG, "onNext: "+result.getResult().toString());
                     if (listener != null) {
                         listener.onSuccess(result);

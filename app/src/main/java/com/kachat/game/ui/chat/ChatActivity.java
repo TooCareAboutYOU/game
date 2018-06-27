@@ -6,29 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.AppCompatButton;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
-
 import com.RtcVideoProcess.FaceRigItf;
 import com.RtcVideoProcess.VideoProcessItf;
 import com.dnion.RenderProxy;
-import com.dnion.SharedRTCEnv;
-import com.dnion.VAChatAPI;
-import com.kachat.game.Constant;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.libdata.controls.DaoQuery;
-import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.ui.graduate.fragments.LivePersonModeListFragment;
-
-import java.util.HashMap;
-import java.util.Objects;
-
 import butterknife.BindView;
 
 public class ChatActivity extends BaseActivity{

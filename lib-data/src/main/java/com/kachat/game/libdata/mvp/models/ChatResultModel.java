@@ -4,6 +4,7 @@ import android.support.annotation.IntegerRes;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 
@@ -15,8 +16,9 @@ public class ChatResultModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void postChatResult(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int time, final OnPresenterListeners.OnModelListener<MessageBean> listener){
-        mSubscription= UserApi.postChatResult(userFromId,userToId,time,new Observer<MessageBean>() {
+    public void postChatResult(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int time,
+                               final OnPresenterListeners.OnModelListener<BaseBean<MessageBean>> listener){
+        mSubscription= UserApi.postChatResult(userFromId,userToId,time,new Observer<BaseBean<MessageBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -26,7 +28,7 @@ public class ChatResultModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final MessageBean bean) {
+            public void onNext(final BaseBean<MessageBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

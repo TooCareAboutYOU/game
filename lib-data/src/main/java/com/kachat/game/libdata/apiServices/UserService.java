@@ -1,5 +1,6 @@
 package com.kachat.game.libdata.apiServices;
 
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.FeedBacksBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.model.LivesBean;
@@ -26,85 +27,86 @@ import rx.Observable;
 public interface UserService {
 
 
-    //手机号注册获取验证码
+    //注册获取验证码
     @FormUrlEncoded
     @POST("/captcha/register")
-    Observable<GetCaptchaBean> postPhoneCaptchaImpl(@Field("mobile") String mobile);
+    Observable<BaseBean<GetCaptchaBean>> postPhoneCaptchaImpl(@Field("mobile") String mobile);
 
     //注册
     @FormUrlEncoded
     @POST("/users")
-    Observable<UserBean> postRegister(@Field("mobile") String mobile, @Field("password") String password,
+    Observable<BaseBean<UserBean>> postRegister(@Field("mobile") String mobile, @Field("password") String password,
                                               @Field("gender") String gender, @Field("age") String age,
                                               @Field("username") String username, @Field("system") int system);
 
     // 重置密码请求验证码
     @FormUrlEncoded
     @POST("/captcha/reset")
-    Observable<GetCaptchaBean> postPhoneCaptchaResetImpl(@Field("mobile") String mobile);
+    Observable<BaseBean<GetCaptchaBean>> postPhoneCaptchaResetImpl(@Field("mobile") String mobile);
 
     //校验验证码
     @FormUrlEncoded
     @POST("/captcha/verify")
-    Observable<MessageBean> postVerifyCaptcha(@Field("mobile") String mobile, @Field("captcha") String captcha);
+    Observable<BaseBean<MessageBean>> postVerifyCaptcha(@Field("mobile") String mobile, @Field("captcha") String captcha);
 
     //重置密码
     @FormUrlEncoded
     @POST("/password/reset")
-    Observable<MessageBean> postResetPwd(@Field("mobile") String mobile, @Field("captcha") String captcha,
-                                         @Field("password") String password);
+    Observable<BaseBean<MessageBean>> postResetPwd(@Field("mobile") String mobile,
+                                                   @Field("captcha") String captcha,
+                                                   @Field("password") String password);
 
 
     //登录
     @FormUrlEncoded
     @POST("/login")
-    Observable<UserBean> postLoginImpl(@Field("mobile") String mobile, @Field("password") String password);
+    Observable<BaseBean<UserBean>> postLoginImpl(@Field("mobile") String mobile, @Field("password") String password);
 
     //更新用户信息
     @PUT("/users/{uid}")
-    Observable<UpdateUserData> putUserData(@Header("Authorization") String token, @Path("uid") int uid);
+    Observable<BaseBean<UpdateUserData>> putUserData(@Header("Authorization") String token, @Path("uid") int uid);
 
     //用户反馈
     @FormUrlEncoded
     @POST("/feedbacks")
-    Observable<FeedBacksBean> postFeedBacks(@Header("Authorization") String token, @Field("content") String content);
+    Observable<BaseBean<FeedBacksBean>> postFeedBacks(@Header("Authorization") String token,@Field("type") int type, @Field("content") String content);
 
 
     //用户券数
     @GET("/users/{uid}/tickets")
-    Observable<MessageBean> getUserTickets(@Path("uid") int uid);
+    Observable<BaseBean<MessageBean>> getUserTickets(@Path("uid") int uid);
 
     //用户拥有场景
     @GET("/users/{uid}/scenes")
-    Observable<ScenesBean> getUserScenes(@Path("uid") int uid);
+    Observable<BaseBean<ScenesBean>> getUserScenes(@Path("uid") int uid);
 
     // http://api.e3webrtc.com:8004/users/{uid}/props
     //用户拥有道具
     @GET("/users/{uid}/props")
-    Observable<PropsBean> getUserProps(@Header("Authorization") String token, @Path("uid") int uid);
+    Observable<BaseBean<PropsBean>> getUserProps(@Header("Authorization") String token, @Path("uid") int uid);
 
     //  http://api.e3webrtc.com:8004/signs?uid=19
     //检查用户是否签到
     @GET("/signs")
-    Observable<MessageBean> getUserSignsStatus(@Query("uid") int uid);
+    Observable<BaseBean<MessageBean>> getUserSignsStatus(@Query("uid") int uid);
 
     // http://api.e3webrtc.com:8004/signs?uid=19
     //用户签到
     @FormUrlEncoded
     @POST("/signs")
-    Observable<SingsBean> postSigns(@Field("user") int uid, @Field("device") String deviceId);
+    Observable<BaseBean<SingsBean>> postSigns(@Field("user") int uid, @Field("device") String deviceId);
 
     // http://api.e3webrtc.com:8004/chats/gifts?user_from=1&user_to=1&prop=1
     //聊天赠送礼物
     @FormUrlEncoded
     @POST("/chats/gifts")
-    Observable<MessageBean> postChatGifts(@Field("user_from") int userFromId, @Field("user_to") int userToId, @Field("prop") int prop);
+    Observable<BaseBean<MessageBean>> postChatGifts(@Field("user_from") int userFromId, @Field("user_to") int userToId, @Field("prop") int prop);
 
 
     //聊天结束统计
     @FormUrlEncoded
     @POST("/chats/results")
-    Observable<MessageBean> postChatResult(@Field("user_from") int userFromId, @Field("user_to") int userToId, @Field("time") int time);
+    Observable<BaseBean<MessageBean>> postChatResult(@Field("user_from") int userFromId, @Field("user_to") int userToId, @Field("time") int time);
 
 
 }

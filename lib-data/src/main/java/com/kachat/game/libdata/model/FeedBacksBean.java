@@ -7,26 +7,12 @@ import java.io.Serializable;
 /**
  *
  */
-public class FeedBacksBean extends BaseBeans {
+public class FeedBacksBean implements Serializable {
 
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable {
         private int feedback_id;
         private String create_time;
         private String content;
-
-        public ResultBean() {
-        }
-
+        private int category;
         public int getFeedback_id() {
             return feedback_id;
         }
@@ -51,14 +37,16 @@ public class FeedBacksBean extends BaseBeans {
             this.content = content;
         }
 
+        public int getCategory() {
+            return category;
+        }
+
+        public void setCategory(int category) {
+            this.category = category;
+        }
+
         @Override
         public String toString() {
             return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

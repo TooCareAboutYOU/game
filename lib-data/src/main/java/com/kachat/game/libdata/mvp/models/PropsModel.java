@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.apiServices.UserApi;
 import com.kachat.game.libdata.http.BaseModel;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -16,8 +17,8 @@ public class PropsModel extends BaseModel {
 
     private Subscription mSubscription;
 
-    public void getUserTicket(final OnPresenterListeners.OnModelListener<PropsBean> listener){
-        mSubscription= UserApi.getUserProps(new Observer<PropsBean>() {
+    public void getUserTicket(final OnPresenterListeners.OnModelListener<BaseBean<PropsBean>> listener){
+        mSubscription= UserApi.getUserProps(new Observer<BaseBean<PropsBean>>() {
             @Override
             public void onCompleted() { }
 
@@ -27,7 +28,7 @@ public class PropsModel extends BaseModel {
             }
 
             @Override
-            public void onNext(final PropsBean bean) {
+            public void onNext(final BaseBean<PropsBean> bean) {
                 if (listener != null) { listener.onSuccess(bean); }
             }
         });

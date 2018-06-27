@@ -1,24 +1,14 @@
 package com.kachat.game.libdata.model;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  */
-public class GetCaptchaBean extends BaseBeans {
-
-    private ResultBean result;
-
-    public ResultBean getResult() {
-        return result;
-    }
-
-    public void setResult(ResultBean result) {
-        this.result = result;
-    }
-
-    public static class ResultBean implements Serializable {
+public class GetCaptchaBean implements Serializable {
 
         private String mobile;
         private int expire;
@@ -50,28 +40,6 @@ public class GetCaptchaBean extends BaseBeans {
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("{");
-            sb.append("\"mobile\":\"")
-                    .append(mobile).append('\"');
-            sb.append(",\"expire\":")
-                    .append(expire);
-            sb.append(",\"captcha\":\"")
-                    .append(captcha).append('\"');
-            sb.append('}');
-            return sb.toString();
+            return JSON.toJSONString(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"result\":")
-                .append(result);
-        sb.append("\"code\":")
-                .append(getCode());
-        sb.append(",\"error\":")
-                .append(getError());
-        sb.append('}');
-        return sb.toString();
-    }
 }

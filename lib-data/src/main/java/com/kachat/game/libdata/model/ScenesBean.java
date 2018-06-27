@@ -8,15 +8,8 @@ import java.util.List;
 /**
  *
  */
-public class ScenesBean extends BaseBeans {
+public class ScenesBean implements Serializable {
 
-    private ResultBean result;
-
-    public ResultBean getResult() { return result; }
-
-    public void setResult(ResultBean result) { this.result = result; }
-
-    public static class ResultBean implements Serializable{
         private List<LivesBean> lives;
 
         public List<LivesBean> getLives() { return lives; }
@@ -65,10 +58,4 @@ public class ScenesBean extends BaseBeans {
         @Override
         public String toString() { return JSON.toJSONString(this); }
 
-    }
-
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
 }

@@ -5,6 +5,7 @@ import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 
 import com.kachat.game.libdata.CodeType;
+import com.kachat.game.libdata.model.BaseBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.models.ChatGiftsModel;
@@ -21,12 +22,12 @@ public class ChatGiftPresenter {
     }
 
     public void attachPresenter(@IntegerRes int userFromId, @IntegerRes int userToId, @IntegerRes int prop){
-        this.mModel.postChatGifts(userFromId,userToId,prop, new OnPresenterListeners.OnModelListener<MessageBean>() {
+        this.mModel.postChatGifts(userFromId,userToId,prop, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
-            public void onSuccess(MessageBean result) {
+            public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
-                        ChatGiftPresenter.this.mView.onSuccess(result);
+                        ChatGiftPresenter.this.mView.onSuccess(result.getResult());
                     }else {
                         ChatGiftPresenter.this.mView.onFailed(result.getCode(),result.getError());
                     }

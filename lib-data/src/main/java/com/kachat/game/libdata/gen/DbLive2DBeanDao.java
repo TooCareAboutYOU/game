@@ -33,6 +33,7 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
         public final static Property BgFileName = new Property(4, String.class, "bgFileName", false, "BG_FILE_NAME");
         public final static Property ChatMask = new Property(5, String.class, "chatMask", false, "CHAT_MASK");
         public final static Property GameMask = new Property(6, String.class, "gameMask", false, "GAME_MASK");
+        public final static Property PitchLevel = new Property(7, int.class, "pitchLevel", false, "PITCH_LEVEL");
     }
 
     private final FloatConverter chatMaskConverter = new FloatConverter();
@@ -56,7 +57,8 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
                 "\"BG_FILE_PATH\" TEXT," + // 3: bgFilePath
                 "\"BG_FILE_NAME\" TEXT NOT NULL ," + // 4: bgFileName
                 "\"CHAT_MASK\" TEXT," + // 5: chatMask
-                "\"GAME_MASK\" TEXT);"); // 6: gameMask
+                "\"GAME_MASK\" TEXT," + // 6: gameMask
+                "\"PITCH_LEVEL\" INTEGER NOT NULL );"); // 7: pitchLevel
     }
 
     /** Drops the underlying database table. */
@@ -95,6 +97,7 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
         if (gameMask != null) {
             stmt.bindString(7, gameMaskConverter.convertToDatabaseValue(gameMask));
         }
+        stmt.bindLong(8, entity.getPitchLevel());
     }
 
     @Override
@@ -127,6 +130,7 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
         if (gameMask != null) {
             stmt.bindString(7, gameMaskConverter.convertToDatabaseValue(gameMask));
         }
+        stmt.bindLong(8, entity.getPitchLevel());
     }
 
     @Override
@@ -143,7 +147,8 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // bgFilePath
             cursor.getString(offset + 4), // bgFileName
             cursor.isNull(offset + 5) ? null : chatMaskConverter.convertToEntityProperty(cursor.getString(offset + 5)), // chatMask
-            cursor.isNull(offset + 6) ? null : gameMaskConverter.convertToEntityProperty(cursor.getString(offset + 6)) // gameMask
+            cursor.isNull(offset + 6) ? null : gameMaskConverter.convertToEntityProperty(cursor.getString(offset + 6)), // gameMask
+            cursor.getInt(offset + 7) // pitchLevel
         );
         return entity;
     }
@@ -157,6 +162,7 @@ public class DbLive2DBeanDao extends AbstractDao<DbLive2DBean, Long> {
         entity.setBgFileName(cursor.getString(offset + 4));
         entity.setChatMask(cursor.isNull(offset + 5) ? null : chatMaskConverter.convertToEntityProperty(cursor.getString(offset + 5)));
         entity.setGameMask(cursor.isNull(offset + 6) ? null : gameMaskConverter.convertToEntityProperty(cursor.getString(offset + 6)));
+        entity.setPitchLevel(cursor.getInt(offset + 7));
      }
     
     @Override
