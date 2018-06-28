@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 
@@ -80,28 +81,32 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
 
     public View getRootView(){
         if (rootView == null) {
-            throw new NullPointerException("the ivClose is null");
+            ToastUtils.showShort("the ivClose is null");
+            return null;
         }
         return rootView;
     }
 
     public SimpleDraweeView getRootClose(){
         if (ivClose == null) {
-            throw new NullPointerException("the ivClose is null");
+            ToastUtils.showShort("the ivClose is null");
+            return null;
         }
         return ivClose;
     }
 
     public AppCompatTextView getRootSure() {
         if (mAcTvSure == null) {
-            throw new NullPointerException("the mAcTvSure is null");
+            ToastUtils.showShort("the mAcTvSure is null");
+            return null;
         }
         return mAcTvSure;
     }
 
     public AlterDialogBuilder hideClose(){
         if (ivClose == null) {
-            throw new NullPointerException("the ivClose is null");
+            ToastUtils.showShort("the ivClose is null");
+            return null;
         }
         ivClose.setVisibility(View.GONE);
         return this;
@@ -109,7 +114,8 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
 
     public AlterDialogBuilder hideRootSure() {
         if (mAcTvSure == null) {
-            throw new NullPointerException("the mAcTvSure is null");
+            ToastUtils.showShort("the mAcTvSure is null");
+            return null;
         }
         mAcTvSure.setVisibility(View.GONE);
         return this;
@@ -117,7 +123,8 @@ public class AlterDialogBuilder extends AlertDialog.Builder{
 
     public AlterDialogBuilder dismiss(){
         if (dialog == null) {
-            throw new NullPointerException("the dialog is null");
+            ToastUtils.showShort("the dialog is null");
+            return null;
         }
         dialog.dismiss();
         return this;

@@ -25,6 +25,7 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.BuyGoodsPresenter;
 import com.kachat.game.libdata.mvp.presenters.CategoriesPresenter;
 import com.kachat.game.libdata.mvp.presenters.UpdateUserPresenter;
+import com.kachat.game.ui.UpdateUserDB;
 import com.kachat.game.ui.shop.fragments.AccessoryExpressionFragment;
 import com.kachat.game.ui.shop.fragments.ConsumePropsFragment;
 import com.kachat.game.ui.shop.fragments.FiguresMaskFragment;
@@ -196,31 +197,7 @@ public class ShopActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause: ");
-        update();
     }
-
-    private UpdateUserPresenter userPresenter = null;
-
-    public void update() {
-        userPresenter = new UpdateUserPresenter(new OnPresenterListeners.OnViewListener<UpdateUserData>() {
-            @Override
-            public void onSuccess(UpdateUserData result) {
-                Log.i(TAG, "onSuccess: " + result.toString());
-            }
-
-            @Override
-            public void onFailed(int errorCode, ErrorBean error) {
-                Log.i(TAG, "onFailed: " + error.toString());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.i(TAG, "onError: " + e.getMessage());
-            }
-        });
-        userPresenter.attachPresenter();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -229,13 +206,9 @@ public class ShopActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        UpdateUserDB.unload();
         if (mPresenter != null) {
             mPresenter.detachPresenter();
-        }
-
-        if (userPresenter != null) {
-            userPresenter.detachPresenter();
-            userPresenter = null;
         }
 
         if (mBuyGoodsPresenter != null) {
@@ -255,21 +228,20 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void loadBuyGoods(CategoryListBean.GoodsBean data){
-
         AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(Objects.requireNonNull(this),
                 new DialogTextView(ShopActivity.this,"确定要购买？"));
         dialogBuilder.getRootSure().setOnClickListener(v1 -> {
             mBuyGoodsPresenter.attachPresenter(data.getGood_id(),1);
             dialogBuilder.dismiss();
         });
-
-
     }
 
     private class BuyCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
 
         @Override
         public void onSuccess(MessageBean result) {
+            Log.i(TAG, "onSuccess: "+result.toString());
+            UpdateUserDB.update();
             AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(ShopActivity.this,
                     new DialogTextView(ShopActivity.this,"恭喜,购买成功！"));
             dialogBuilder.getRootSure().setOnClickListener(v1 -> {
@@ -280,6 +252,7 @@ public class ShopActivity extends BaseActivity {
 
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
+            Log.i(TAG, "onFailed: "+error.getToast());
             if (!TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
@@ -287,6 +260,7 @@ public class ShopActivity extends BaseActivity {
 
         @Override
         public void onError(Throwable e) {
+            Log.i(TAG, "onError: "+e.getMessage());
             if (e != null) {
                 Toast(e.getMessage());
             }

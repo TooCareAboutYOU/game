@@ -25,209 +25,181 @@ import java.util.List;
  */
 public class LivesBean implements Serializable {
 
-        private List<ChildLivesBean> lives;
+    private List<ChildLivesBean> lives;
 
-        public List<ChildLivesBean> getLives() {
-            return lives;
+    public List<ChildLivesBean> getLives() {
+        return lives;
+    }
+
+    public void setLives(List<ChildLivesBean> lives) {
+        this.lives = lives;
+    }
+
+    public static class ChildLivesBean implements Serializable{
+        private boolean flag;
+        private int user_live_id;
+        private LiveBean live;
+        private int live_chip_number;
+        private int live_number;
+        private boolean isFlag;  //选中效果
+
+        public boolean getflag() {
+            return flag;
+        }
+        public void setFlag(boolean flag) {
+            flag = flag;
         }
 
-        public void setLives(List<ChildLivesBean> lives) {
-            this.lives = lives;
+        public int getUser_live_id() {
+            return user_live_id;
         }
 
-        public static class ChildLivesBean implements Serializable{
-            /**
-             * user_live_id : 381
-             * live : {"name":"tiYaNa","index":704,"image_url":"http://api.e3webrtc.com:8004/media/lives/0704_tiyana_ih9wuib.png","unlock_chip":120,"costumes":[{"costume":{"name":"缇亚娜的项链","index":1104,"image_url":"http://api.e3webrtc.com:8004/media/costumes/1104_tiyana_xiangliang.png","unlock_chip":120},"costume_chip_number":0,"costume_number":2},{"costume":{"name":"缇亚娜的枪","index":1105,"image_url":"http://api.e3webrtc.com:8004/media/costumes/1105_tiyana_qiang.png","unlock_chip":120},"costume_chip_number":0,"costume_number":2}]}
-             * live_chip_number : 9
-             * live_number : 1
-             */
+        public void setUser_live_id(int user_live_id) {
+            this.user_live_id = user_live_id;
+        }
 
-            private int user_live_id;
-            private LiveBean live;
-            private int live_chip_number;
-            private int live_number;
-            private boolean isFlag;
+        public LiveBean getLive() {
+            return live;
+        }
 
-            public int getUser_live_id() {
-                return user_live_id;
+        public void setLive(LiveBean live) {
+            this.live = live;
+        }
+
+        public int getLive_chip_number() {
+            return live_chip_number;
+        }
+
+        public void setLive_chip_number(int live_chip_number) { this.live_chip_number = live_chip_number; }
+
+        public int getLive_number() {
+            return live_number;
+        }
+
+        public void setLive_number(int live_number) {
+            this.live_number = live_number;
+        }
+
+        public boolean getIsFlag() {
+            return isFlag;
+        }
+
+        public void setIsFlag(boolean flag) {
+            isFlag = flag;
+        }
+
+        public static class LiveBean implements Serializable{
+            private String name;
+            private int index;
+            private String image_url;
+            private int unlock_chip;
+            private List<CostumesBean> costumes;
+
+            public String getName() {
+                return name;
             }
 
-            public void setUser_live_id(int user_live_id) {
-                this.user_live_id = user_live_id;
+            public void setName(String name) {
+                this.name = name;
             }
 
-            public LiveBean getLive() {
-                return live;
+            public int getIndex() {
+                return index;
             }
 
-            public void setLive(LiveBean live) {
-                this.live = live;
+            public void setIndex(int index) {
+                this.index = index;
             }
 
-            public int getLive_chip_number() {
-                return live_chip_number;
+            public String getImage_url() {
+                return image_url;
             }
 
-            public void setLive_chip_number(int live_chip_number) {
-                this.live_chip_number = live_chip_number;
+            public void setImage_url(String image_url) {
+                this.image_url = image_url;
             }
 
-            public int getLive_number() {
-                return live_number;
+            public int getUnlock_chip() {
+                return unlock_chip;
             }
 
-            public void setLive_number(int live_number) {
-                this.live_number = live_number;
+            public void setUnlock_chip(int unlock_chip) {
+                this.unlock_chip = unlock_chip;
             }
 
-            public boolean isFlag() {
-                return isFlag;
+            public List<CostumesBean> getCostumes() {
+                return costumes;
             }
 
-            public void setFlag(boolean flag) {
-                isFlag = flag;
+            public void setCostumes(List<CostumesBean> costumes) {
+                this.costumes = costumes;
             }
 
-            public static class LiveBean implements Serializable{
-                /**
-                 * name : tiYaNa
-                 * index : 704
-                 * image_url : http://api.e3webrtc.com:8004/media/lives/0704_tiyana_ih9wuib.png
-                 * unlock_chip : 120
-                 * costumes : [{"costume":{"name":"缇亚娜的项链","index":1104,"image_url":"http://api.e3webrtc.com:8004/media/costumes/1104_tiyana_xiangliang.png","unlock_chip":120},"costume_chip_number":0,"costume_number":2},{"costume":{"name":"缇亚娜的枪","index":1105,"image_url":"http://api.e3webrtc.com:8004/media/costumes/1105_tiyana_qiang.png","unlock_chip":120},"costume_chip_number":0,"costume_number":2}]
-                 */
+            public static class CostumesBean implements Serializable{
+                private CostumeBean costume;
+                private int costume_chip_number;
+                private int costume_number;
 
-                private String name;
-                private int index;
-                private String image_url;
-                private int unlock_chip;
-                private List<CostumesBean> costumes;
-
-                public String getName() {
-                    return name;
+                public CostumeBean getCostume() {
+                    return costume;
                 }
 
-                public void setName(String name) {
-                    this.name = name;
+                public void setCostume(CostumeBean costume) {
+                    this.costume = costume;
                 }
 
-                public int getIndex() {
-                    return index;
+                public int getCostume_chip_number() {
+                    return costume_chip_number;
                 }
 
-                public void setIndex(int index) {
-                    this.index = index;
+                public void setCostume_chip_number(int costume_chip_number) {
+                    this.costume_chip_number = costume_chip_number;
                 }
 
-                public String getImage_url() {
-                    return image_url;
+                public int getCostume_number() {
+                    return costume_number;
                 }
 
-                public void setImage_url(String image_url) {
-                    this.image_url = image_url;
+                public void setCostume_number(int costume_number) {
+                    this.costume_number = costume_number;
                 }
 
-                public int getUnlock_chip() {
-                    return unlock_chip;
-                }
+                public static class CostumeBean implements Serializable{
+                    private String name;
+                    private int index;
+                    private String image_url;
+                    private int unlock_chip;
 
-                public void setUnlock_chip(int unlock_chip) {
-                    this.unlock_chip = unlock_chip;
-                }
-
-                public List<CostumesBean> getCostumes() {
-                    return costumes;
-                }
-
-                public void setCostumes(List<CostumesBean> costumes) {
-                    this.costumes = costumes;
-                }
-
-                public static class CostumesBean implements Serializable{
-                    /**
-                     * costume : {"name":"缇亚娜的项链","index":1104,"image_url":"http://api.e3webrtc.com:8004/media/costumes/1104_tiyana_xiangliang.png","unlock_chip":120}
-                     * costume_chip_number : 0
-                     * costume_number : 2
-                     */
-
-                    private CostumeBean costume;
-                    private int costume_chip_number;
-                    private int costume_number;
-
-                    public CostumeBean getCostume() {
-                        return costume;
+                    public String getName() {
+                        return name;
                     }
 
-                    public void setCostume(CostumeBean costume) {
-                        this.costume = costume;
+                    public void setName(String name) {
+                        this.name = name;
                     }
 
-                    public int getCostume_chip_number() {
-                        return costume_chip_number;
+                    public int getIndex() {
+                        return index;
                     }
 
-                    public void setCostume_chip_number(int costume_chip_number) {
-                        this.costume_chip_number = costume_chip_number;
+                    public void setIndex(int index) {
+                        this.index = index;
                     }
 
-                    public int getCostume_number() {
-                        return costume_number;
+                    public String getImage_url() {
+                        return image_url;
                     }
 
-                    public void setCostume_number(int costume_number) {
-                        this.costume_number = costume_number;
+                    public void setImage_url(String image_url) {
+                        this.image_url = image_url;
                     }
 
-                    public static class CostumeBean implements Serializable{
-                        /**
-                         * name : 缇亚娜的项链
-                         * index : 1104
-                         * image_url : http://api.e3webrtc.com:8004/media/costumes/1104_tiyana_xiangliang.png
-                         * unlock_chip : 120
-                         */
+                    public int getUnlock_chip() {
+                        return unlock_chip;
+                    }
 
-                        private String name;
-                        private int index;
-                        private String image_url;
-                        private int unlock_chip;
-
-                        public String getName() {
-                            return name;
-                        }
-
-                        public void setName(String name) {
-                            this.name = name;
-                        }
-
-                        public int getIndex() {
-                            return index;
-                        }
-
-                        public void setIndex(int index) {
-                            this.index = index;
-                        }
-
-                        public String getImage_url() {
-                            return image_url;
-                        }
-
-                        public void setImage_url(String image_url) {
-                            this.image_url = image_url;
-                        }
-
-                        public int getUnlock_chip() {
-                            return unlock_chip;
-                        }
-
-                        public void setUnlock_chip(int unlock_chip) {
-                            this.unlock_chip = unlock_chip;
-                        }
-
-                        @Override
-                        public String toString() {
-                            return JSON.toJSONString(this);
-                        }
+                    public void setUnlock_chip(int unlock_chip) {
+                        this.unlock_chip = unlock_chip;
                     }
 
                     @Override
@@ -252,5 +224,11 @@ public class LivesBean implements Serializable {
         public String toString() {
             return JSON.toJSONString(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 
 }

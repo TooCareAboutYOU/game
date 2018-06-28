@@ -82,6 +82,7 @@
             android:padding="5dp"
             android:maxLength="1"
             android:singleLine="true"
+            android:lines="1"
             android:gravity="center"
             android:textColor="#12B5FF"
             android:background="@drawable/radius_10_stroke_gray"

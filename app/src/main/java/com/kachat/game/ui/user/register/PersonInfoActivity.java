@@ -100,19 +100,14 @@ public class PersonInfoActivity extends BaseActivity {
     @Override
     protected void onInitView() {
         mToolbarBase.setBackgroundResource(R.color.colorNormal);
-        getToolBarBack().setOnClickListener(v -> finish());
+        getToolBarBack().setOnClickListener(v -> {
+            startActivity(new Intent(PersonInfoActivity.this, LoginActivity.class));
+            finish();
+        });
 
         mRegisterPresenter = new RegisterPresenter(new RegisterCallBack());
 
         mPresenter = new LoginPresenter(new LoginCallBack());
-
-        findViewById(R.id.sdv_ToolBar_Base_Back).setOnClickListener(new OnMultiClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                LoginActivity.newInstance(PersonInfoActivity.this);
-                finish();
-            }
-        });
 
         mDatePicker.setOnClickListener(v -> showWheelView());
 
@@ -163,7 +158,8 @@ public class PersonInfoActivity extends BaseActivity {
             Log.i(TAG, "onSuccess: " + result.toString());
             if (result!= null) {
                 if (result.getUser().getDetail() != null) {
-                    SuccessDialog();
+//                    SuccessDialog();
+                    AutoLogin();
                 }
             }
         }
@@ -180,15 +176,6 @@ public class PersonInfoActivity extends BaseActivity {
         public void onError(Throwable e) { Log.i(TAG, "onFailed: " + e.getMessage()); if (e != null) { Toast(e.getMessage()); } }
     }
 
-    private void SuccessDialog() {
-        AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(PersonInfoActivity.this,
-                new DialogTextView(PersonInfoActivity.this,"恭喜你注册成功!")).hideClose();
-        dialogBuilder.getRootSure().setOnClickListener(v1 ->{
-            AutoLogin();
-            dialogBuilder.dismiss();
-        });
-    }
-
     // TODO: 2018/6/11 自动跳转登录
     private void AutoLogin() {
         String mobile = Config.getMobile();
@@ -196,7 +183,6 @@ public class PersonInfoActivity extends BaseActivity {
     }
 
     private class LoginCallBack implements OnPresenterListeners.OnViewListener<UserBean> {
-
         @Override
         public void onSuccess(UserBean result) {
             if (result != null) {
@@ -222,8 +208,8 @@ public class PersonInfoActivity extends BaseActivity {
         }
     }
 
-    BottomDialog mBottomDialog;
-    View mView;
+    private BottomDialog mBottomDialog;
+    private View mView;
 
     @SuppressLint({"SetTextI18n", "CutPasteId", "InflateParams"})
     public void showWheelView() {
@@ -273,6 +259,10 @@ public class PersonInfoActivity extends BaseActivity {
         if (mRegisterPresenter != null) {
             mRegisterPresenter.detachPresenter();
             mRegisterPresenter = null;
+        }
+        if (mPresenter != null) {
+            mPresenter.detachPresenter();
+            mPresenter=null;
         }
         super.onDestroy();
     }

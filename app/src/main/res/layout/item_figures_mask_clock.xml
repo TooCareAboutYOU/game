@@ -6,18 +6,17 @@
     android:gravity="center"
     android:layout_gravity="center">
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="66dp"
+        android:layout_height="66dp">
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_live2d"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="1dp"/>
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="2dp"/>
         <RelativeLayout
             android:id="@+id/rl_MaskClock"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="1dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:background="@drawable/radius_5_half_transparent">
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/acTv_numbers"
@@ -40,5 +39,6 @@
             android:id="@+id/ll_Item_Container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </FrameLayout>
 </android.support.v7.widget.LinearLayoutCompat>

@@ -104,18 +104,15 @@ public class GraduateSchoolActivity extends BaseActivity  {
 
     @Override
     protected void onInitView() {
-        getToolBarBack().setOnClickListener(v -> {
-            Log.i(TAG, "onInitView: ");
-            this.finish();
-        });
+        getToolBarBack().setOnClickListener(v -> finish());
         getToolbarMenu().setImageResource(R.drawable.icon_graduate_school);
         getToolbarMenu().setOnClickListener(v -> {
             boolean isSave=SdkApi.getInstance().save();
             if (isSave) {
                 Config.setIsFiguresMask(isSave);
-                new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存成功!")).hideRootSure();
+                new AlterDialogBuilder(this,new DialogTextView(this,"保存成功!")).hideRootSure();
             }else {
-                new AlterDialogBuilder(this,new DialogTextView(this,"人物形象保存失败!")).hideRootSure();
+                new AlterDialogBuilder(this,new DialogTextView(this,"保存失败!")).hideRootSure();
             }
         });
         int size= DaoQuery.queryListModelListSize();
@@ -140,26 +137,34 @@ public class GraduateSchoolActivity extends BaseActivity  {
         SdkApi.getInstance().create(this);
         SdkApi.getInstance().loadLocalView(this, mFlContainer);
         SdkApi.getInstance().enableVideoView();
-        SdkApi.getInstance().loadFaceRigItf(personPath + model, model, bgPath, bgImg,5,3);
+        SdkApi.getInstance().loadFaceRigItf(personPath + model, model, bgPath, bgImg,3);
     }
 
     private class MaskCallBack implements OnPresenterListeners.OnViewListener<LivesBean> {
         @Override
         public void onSuccess(LivesBean result) {
-            if (result != null && result.getLives() != null && result.getLives().size() > 0) {
-                if (!TextUtils.isEmpty(result.getLives().get(0).getLive().getName())) {
-                    initVideo(result.getLives().get(0).getLive().getName(), "bg_1.png");
+            Log.i(LivePersonModeListFragment.TAG, "onSuccess 1: "+result.toString());
+            if (result.getLives() != null) {
+                if (result.getLives().size() > 0 && !TextUtils.isEmpty(result.getLives().get(0).getLive().getName())) {
+                    int size=result.getLives().size();
+                    for (int i = 0; i < size; i++) {
+                        if (result.getLives().get(i).getLive_number() != 0){
+                            Log.i(LivePersonModeListFragment.TAG, "onSuccess 2: "+result.getLives().get(i).getLive().getName());
+                            initVideo(result.getLives().get(i).getLive().getName(), "bg_1.png");
+                            break;
+                        }
+                    }
                 }
+            }else {
+                Toast("服务器异常！");
             }
         }
-
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
             if (error != null &&  !TextUtils.isEmpty(error.getToast())) {
                 Toast(error.getToast());
             }
         }
-
         @Override
         public void onError(Throwable e) {
             if (e != null) {
@@ -302,11 +307,6 @@ public class GraduateSchoolActivity extends BaseActivity  {
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "onDestroy: ");
-        if (mLivesPresenter != null) {
-            mLivesPresenter.detachPresenter();
-            mLivesPresenter=null;
-        }
 
         SdkApi.getInstance().destroy(true);
 
@@ -315,6 +315,12 @@ public class GraduateSchoolActivity extends BaseActivity  {
         }
         if (sFragmentHashMap != null) {
             sFragmentHashMap.clear();
+        }
+
+        Log.i(TAG, "onDestroy: ");
+        if (mLivesPresenter != null) {
+            mLivesPresenter.detachPresenter();
+            mLivesPresenter=null;
         }
 
         super.onDestroy();

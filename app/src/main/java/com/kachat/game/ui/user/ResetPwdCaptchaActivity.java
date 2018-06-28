@@ -1,4 +1,4 @@
-package com.kachat.game.ui.user.register;
+package com.kachat.game.ui.user;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,33 +20,30 @@ import android.view.View;
 import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
-import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.model.GetCaptchaBean;
 import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.CaptchaPresenter;
+import com.kachat.game.libdata.mvp.presenters.ResetCaptchaPresenter;
+import com.kachat.game.libdata.mvp.presenters.ResetPwdPresenter;
 import com.kachat.game.libdata.mvp.presenters.VerifyCaptchaPresenter;
 import com.kachat.game.ui.user.login.LoginActivity;
-
-import java.util.Objects;
-import java.util.PrimitiveIterator;
+import com.kachat.game.ui.user.register.PersonInfoActivity;
+import com.kachat.game.ui.user.register.RegisterActivity;
+import com.kachat.game.utils.OnCheckNetClickListener;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import okhttp3.Route;
 
 
-public class RegisterActivity extends BaseActivity {
+public class ResetPwdCaptchaActivity extends BaseActivity {
 
-    private static final String TAG = "RegisterActivity";
-
-    public static void newInstance(Context context) {
-        Intent intent = new Intent(context, RegisterActivity.class);
-        context.startActivity(intent);
-    }
+    private static final String TAG = "ResetPwdActivity";
 
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
+
     @BindView(R.id.ll_)
     LinearLayoutCompat mLl;
 
@@ -63,9 +60,6 @@ public class RegisterActivity extends BaseActivity {
 
     @BindView(R.id.acTv_Timer)
     AppCompatTextView mAcTvTimer;
-
-    private String mobile = Config.getMobile();
-
     private CountDownTimer mTimer = null;
     private void timer(){
         mTimer = new CountDownTimer(60 * 1000, 1000) {
@@ -84,11 +78,18 @@ public class RegisterActivity extends BaseActivity {
                 mTimer=null;
 
             }
-        };
+        }.start();
     }
 
-    private VerifyCaptchaPresenter mPresenter=null;
-    private CaptchaPresenter mCaptchaPresenter=null;
+    private String mobile = Config.getMobile();
+
+    private VerifyCaptchaPresenter mVerifyCaptchaPresenter=null;
+    private ResetCaptchaPresenter mResetCaptchaPresenter=null;
+
+    public static void newInstance(Context context){
+        Intent intent =new Intent(context,ResetPwdCaptchaActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected int onSetResourceLayout() {
@@ -108,27 +109,21 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void onInitView() {
-        mToolbarBase.setBackgroundResource(R.color.colorNormal);
         getToolBarBack().setOnClickListener(v -> {
             LoginActivity.newInstance(this);
             finish();
         });
+        mToolbarBase.setBackgroundResource(R.color.colorNormal);
+        mVerifyCaptchaPresenter = new VerifyCaptchaPresenter(new VerifyCaptchaCallBack());
+        mResetCaptchaPresenter = new ResetCaptchaPresenter(new GetCaptcha());
 
-//        ((AppCompatTextView) findViewById(R.id.atv_ToolBar_Base_Title)).setText("注 册");
-
-        mPresenter = new VerifyCaptchaPresenter(new VerifyCaptchaCallBack());
-        mCaptchaPresenter =new CaptchaPresenter(new RegisterCaptchaCallBack());
-
+        Log.i(TAG, "onInitView: 重置密码获取验证码");
         mAcTvMobile.setText("短信已发送至:" + mobile);
 
         getCaptcha();
-        mAcTvTimer.setOnClickListener(v -> {
-            mCaptchaPresenter.attachPresenter(mobile);
-            getCaptcha();
-        });
+        mAcTvTimer.setOnClickListener(v ->getCaptcha());
 
         mAcEtCaptcha1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -154,9 +149,6 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count == 1 && !TextUtils.isEmpty(s)) {
-//                    mAcEtCaptcha3.setFocusable(true);
-//                    mAcEtCaptcha3.setFocusableInTouchMode(true);
-//                    mAcEtCaptcha3.findFocus();
                     mAcEtCaptcha3.requestFocus();
                 }
             }
@@ -171,9 +163,6 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count == 1 && !TextUtils.isEmpty(s)) {
-//                    mAcEtCaptcha4.setFocusable(true);
-//                    mAcEtCaptcha4.setFocusableInTouchMode(true);
-//                    mAcEtCaptcha4.findFocus();
                     mAcEtCaptcha4.requestFocus();
                 }
             }
@@ -191,21 +180,36 @@ public class RegisterActivity extends BaseActivity {
                     check();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) { }
         });
     }
 
     private void getCaptcha(){
+        mResetCaptchaPresenter.attachPresenter(mobile);
         mAcTvTimer.setEnabled(false);
-        timer();
-        mTimer.start();
         mAcTvTimer.setTextColor(Color.GRAY);
+        timer();
     }
 
+    private class GetCaptcha implements OnPresenterListeners.OnViewListener<GetCaptchaBean>{
 
-    //去完善信息
+        @Override
+        public void onSuccess(GetCaptchaBean result) {
+            Toast(result.getCaptcha());
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            Toast(error.getToast());
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Toast(e.getMessage());
+        }
+    }
+
     private void check() {
         String VCode = "";
         if (mAcEtCaptcha1.getText().toString().trim().isEmpty() || mAcEtCaptcha2.getText().toString().trim().isEmpty()
@@ -218,9 +222,6 @@ public class RegisterActivity extends BaseActivity {
             mAcEtCaptcha3.setText("");
             mAcEtCaptcha4.setText("");
 
-//            mAcEtCaptcha1.setFocusable(true);
-//            mAcEtCaptcha1.setFocusableInTouchMode(true);
-//            mAcEtCaptcha1.findFocus();
             mAcEtCaptcha1.requestFocus();
             return;
         }
@@ -230,34 +231,17 @@ public class RegisterActivity extends BaseActivity {
                 mAcEtCaptcha3.getText().toString().trim() +
                 mAcEtCaptcha4.getText().toString().trim();
 
-        mPresenter.attachPresenter(mobile, VCode);
-    }
-
-    private class RegisterCaptchaCallBack implements OnPresenterListeners.OnViewListener<GetCaptchaBean>{
-        @Override
-        public void onSuccess(GetCaptchaBean result) {
-            Log.i(TAG, "onSuccess: "+result.getCaptcha());
-            Toast(result.getCaptcha());
-        }
-
-        @Override
-        public void onFailed(int errorCode, ErrorBean error) {
-            Toast(error.getToast());
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            if (e != null) {
-                Toast(e.getMessage());
-            }
-        }
+        mVerifyCaptchaPresenter.attachPresenter(mobile, VCode);
     }
 
     private class VerifyCaptchaCallBack implements OnPresenterListeners.OnViewListener<MessageBean> {
         @Override
         public void onSuccess(MessageBean result) {
             mTimer.cancel();
-            PersonInfoActivity.newInstance(RegisterActivity.this);
+            String captcha=mAcEtCaptcha1.getText().toString()+mAcEtCaptcha2.getText().toString()+mAcEtCaptcha3.getText().toString()+mAcEtCaptcha4.getText().toString();
+            Bundle bundle=new Bundle();
+            bundle.putString(ResetPwdCaptchaActivity.TAG,captcha);
+            ResetPwdActivity.newInstance(ResetPwdCaptchaActivity.this,bundle);
             finish();
         }
 
@@ -301,16 +285,15 @@ public class RegisterActivity extends BaseActivity {
             mTimer=null;
         }
 
-        if (mCaptchaPresenter != null) {
-            mCaptchaPresenter.detachPresenter();
-            mCaptchaPresenter = null;
+        if (mVerifyCaptchaPresenter != null) {
+            mVerifyCaptchaPresenter.detachPresenter();
+            mVerifyCaptchaPresenter = null;
         }
 
-        if (mPresenter != null) {
-            mPresenter.detachPresenter();
-            mPresenter = null;
+        if (mResetCaptchaPresenter != null) {
+            mResetCaptchaPresenter.detachPresenter();
+            mResetCaptchaPresenter = null;
         }
         super.onDestroy();
     }
-
 }

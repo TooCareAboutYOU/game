@@ -107,21 +107,18 @@ public class ApplicationHelper {
             public void onJoinGameRoomSuccess() {
                 Log.i(TAG, "onJoinGameRoomSuccess: ");
                 EventBus.getDefault().post(new DNGameEventMessage(DNGameEventMessage.DNGameEvent.JOIN_SUCCESS));
-
             }
 
             @Override
             public void onJoinGameRoomFailed(String s) {
                 Log.i(TAG, "onJoinGameRoomFailed: "+s);
                 EventBus.getDefault().post(new DNGameEventMessage(s,DNGameEventMessage.DNGameEvent.JOIN_FAILED));
-
             }
 
             @Override
             public void onMatchGameSuccess() {
                 Log.i(TAG, "onMatchGameSuccess: ");
                 EventBus.getDefault().post(new DNGameEventMessage(DNGameEventMessage.DNGameEvent.MATCH_SUCCESS));
-
             }
 
             @Override
@@ -135,28 +132,24 @@ public class ApplicationHelper {
             public void onGameStat(VAGameStat vaGameStat, String s) {
                 Log.i(TAG, "onGameStat: "+s);
                 EventBus.getDefault().post(new DNGameEventMessage(s,vaGameStat,DNGameEventMessage.DNGameEvent.GAME_STAT));
-
             }
 
             @Override
             public void onVideoChatStart(long l) {
                 Log.i(TAG, "onVideoChatStart: "+l);
                 EventBus.getDefault().post(new DNGameEventMessage(l,DNGameEventMessage.DNGameEvent.VIDEO_CHAT_START));
-
             }
 
             @Override
             public void onVideoChatFinish(int i) {
                 Log.i(TAG, "onVideoChatFinish: "+i);
                 EventBus.getDefault().post(new DNGameEventMessage(i,DNGameEventMessage.DNGameEvent.VIDEO_CHAT_FINISH));
-
             }
 
             @Override
             public void onVideoChatTerminate(int i) {
                 Log.i(TAG, "onVideoChatTerminate: "+i);
                 EventBus.getDefault().post(new DNGameEventMessage(i,DNGameEventMessage.DNGameEvent.VIDEO_CHAT_TERMINATE));
-
             }
 
             @Override

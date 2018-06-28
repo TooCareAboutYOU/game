@@ -25,18 +25,6 @@
             android:textSize="14sp"
             android:hint="请输入新密码"/>
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/acEt_Captcha"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_marginTop="@dimen/margin_10dp"
-            android:background="@drawable/radius_10_stroke_gray"
-            android:gravity="center_vertical"
-            android:paddingStart="5dp"
-            android:paddingEnd="0dp"
-            android:textSize="14sp"
-            android:hint="请输入验证码"/>
-
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/acTv_Finish"
             android:layout_width="match_parent"

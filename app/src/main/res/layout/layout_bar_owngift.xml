@@ -7,13 +7,13 @@
     android:weightSum="3">
 
     <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/ll_GiftOne"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_weight="1">
         <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ll_GiftOne"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginEnd="@dimen/margin_5dp"
@@ -28,13 +28,13 @@
     </android.support.v7.widget.LinearLayoutCompat>
 
     <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/ll_GiftTwo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_weight="1">
         <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ll_GiftTwo"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginEnd="@dimen/margin_5dp"
@@ -49,13 +49,13 @@
     </android.support.v7.widget.LinearLayoutCompat>
 
     <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/ll_GiftThree"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_weight="1">
         <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ll_GiftThree"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginEnd="@dimen/margin_5dp"

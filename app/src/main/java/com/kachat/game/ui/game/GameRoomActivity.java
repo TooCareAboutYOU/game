@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.dnion.VAGameAPI;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.ui.bar.MurphyBarActivity;
 import com.kachat.game.utils.OnCheckNetClickListener;
@@ -104,24 +105,23 @@ public class GameRoomActivity extends BaseActivity {
         }
     }
 
-    private boolean isLoopBack=true;
     @Override
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> finish());
-        getToolbarMenu2().setBackgroundResource(R.drawable.icon_report);
-        getToolbarMenu2().setOnClickListener(new OnCheckNetClickListener() {
+        getToolbarMenu().setBackgroundResource(R.drawable.icon_report);
+        getToolbarMenu().setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
                 new AlterDialogBuilder(GameRoomActivity.this,new DialogTextView(GameRoomActivity.this,"举报成功!")).hideRootSure();
             }
         });
-        getToolbarMenu().setBackgroundResource(R.drawable.icon_audio_open);
-        getToolbarMenu().setOnClickListener(new OnCheckNetClickListener() {
+        getToolbarMenu2().setBackgroundResource(R.drawable.icon_audio_open);
+        getToolbarMenu2().setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
-                isLoopBack=!isLoopBack;
-                SdkApi.getInstance().setAudioLoopBack(isLoopBack);
-                getToolbarMenu().setBackgroundResource(isLoopBack ? R.drawable.icon_audio_open : R.drawable.icon_audio_close);
+//                boolean is=VAGameAPI.getInstance().isAudioEnable();
+//                VAGameAPI.getInstance().switchAudio(!is);
+//               getToolbarMenu().setBackgroundResource( !is ? R.drawable.icon_audio_close : R.drawable.icon_audio_close);
             }
         });
         mLoadLayout.setVisibility(View.VISIBLE);
@@ -133,7 +133,6 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().getBridgeWebView().setDefaultHandler(new DefaultHandler());
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
-
 
         //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
         SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
@@ -162,7 +161,7 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().loadRemoteView(this, flRemoteView);
         SdkApi.getInstance().enableVideoView();
         DbLive2DBean dbLive2DBean= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
-        SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),dbLive2DBean.getPitchLevel(),type);//
+        SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),type);//
         SdkApi.getInstance().startGameMatch(type);
     }
 
@@ -257,11 +256,11 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_TERMINATE:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
-                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
-                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！"),"退出游戏");
                 if (flRemoteView.getChildCount() > 0) {
                     flRemoteView.removeAllViews();
                 }
+                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
+                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！"),"退出游戏");
                 dialogBuilder1.getRootSure().setOnClickListener(v -> {
                     dialogBuilder1.dismiss();
                     finish();
@@ -269,6 +268,7 @@ public class GameRoomActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
+
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");

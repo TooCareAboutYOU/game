@@ -2,8 +2,10 @@ package com.kachat.game.ui.bar;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
@@ -15,8 +17,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
+
+import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.Config;
 import com.kachat.game.Constant;
@@ -27,7 +35,11 @@ import com.kachat.game.events.DNGameEventMessage;
 import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
+import com.kachat.game.libdata.model.ErrorBean;
+import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.model.SingsBean;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
+import com.kachat.game.libdata.mvp.presenters.PropsPresenter;
 import com.kachat.game.ui.bar.fragments.CharmRankListFragment;
 import com.kachat.game.utils.OnCheckNetClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
@@ -63,6 +75,7 @@ public class MurphyBarActivity extends BaseActivity {
     private View containerView=null;
     private PopupWindow popupWindow=null;
     private AppCompatTextView acTvGiftOneNum,acTvGiftTwoNum,acTvGiftThreeNum;
+    private SimpleDraweeView sdvGiftOneNum,sdvGiftTwoNum,sdvGiftThreeNum;
 
     private int register=0;
     private boolean isStartChat=false,timerRunning=false;
@@ -83,11 +96,12 @@ public class MurphyBarActivity extends BaseActivity {
             public void onFinish() {
                 timerRunning=false;
                 mAcTvTimer.setVisibility(View.GONE);
-                mBoxView.setBackgroundResource(R.drawable.icon_bar_box_opened);
+//                mBoxView.setBackgroundResource(R.drawable.icon_bar_box_opened);
             }
         };
     }
-
+    private PropsPresenter mGetMyPropPresenter = null;
+    
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, MurphyBarActivity.class);
         context.startActivity(intent);
@@ -130,16 +144,6 @@ public class MurphyBarActivity extends BaseActivity {
             }
         });
 
-        mAcTvTimer =findViewById(R.id.acTv_Timer);
-        mBoxView.setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                if (mAcTvTimer.getVisibility() == View.GONE) {
-                    getBoxView(new SingsBean(1,1,1,1));
-                }
-            }
-        });
-
         //开启聊天
         findViewById(R.id.sdv1).setOnClickListener(new OnCheckNetClickListener() {
             @Override
@@ -149,12 +153,13 @@ public class MurphyBarActivity extends BaseActivity {
                     mFlLoading.setVisibility(View.VISIBLE);
                     SdkApi.getInstance().create(MurphyBarActivity.this);
                     SdkApi.getInstance().loadLocalView(MurphyBarActivity.this, mLocalView);
-                    SdkApi.getInstance().getLocalView().setZOrderOnTop(true);
+                    if (SdkApi.getInstance().getLocalView() != null) {
+                        SdkApi.getInstance().getLocalView().setZOrderOnTop(true);
+                    }
                     SdkApi.getInstance().loadRemoteView(MurphyBarActivity.this, mRemoteView);
                     SdkApi.getInstance().enableVideoView();
                     DbLive2DBean dbLive2DBean = Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
-                    Log.i("SdkApi", "onMultiClick: "+dbLive2DBean.getLiveFilePath()+"\t\t"+dbLive2DBean.getLiveFileName()+"\t\t"+dbLive2DBean.getBgFilePath()+"\t\t"+dbLive2DBean.getBgFileName()+"\t\t"+dbLive2DBean.getPitchLevel());
-                    SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),dbLive2DBean.getPitchLevel(), Constant.MATCH_TYPE_CHAT);
+                    SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(), Constant.MATCH_TYPE_CHAT);
                     SdkApi.getInstance().startGameMatch(Constant.MATCH_TYPE_CHAT);
                     isStartChat=true;
                     timerView();
@@ -172,6 +177,18 @@ public class MurphyBarActivity extends BaseActivity {
             }
         });
 
+        //开宝箱
+        mAcTvTimer =findViewById(R.id.acTv_Timer);
+        mBoxView.setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+                if (mAcTvTimer.getVisibility() == View.GONE) {
+                    getBoxView(new SingsBean(1,1,1,1));
+                }
+            }
+        });
+
+
         //举报
         findViewById(R.id.sdv_Report).setOnClickListener(new OnCheckNetClickListener() {
             @Override
@@ -180,10 +197,28 @@ public class MurphyBarActivity extends BaseActivity {
             }
         });
 
+        mGetMyPropPresenter = new PropsPresenter(new PropCallBack());
+
         //赠送礼物
         findViewById(R.id.sdv_ChoiceGift).setOnClickListener(v -> {
+            Toast("触发");
+//            createOwnGiftView();
+//            SendGift();
             createOwnGiftView();
         });
+    }
+
+    @SuppressLint("InflateParams")
+    private void SendGift(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setView(LayoutInflater.from(this).inflate(R.layout.layout_bar_owngift,null));
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        Window window=dialog.getWindow();
+        Objects.requireNonNull(window).setAttributes(new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        Objects.requireNonNull(window).setDimAmount(0);
+        Objects.requireNonNull(window).setGravity(Gravity.BOTTOM);
+        builder.show();
     }
 
     @SuppressLint({"ClickableViewAccessibility", "InflateParams"})
@@ -197,67 +232,87 @@ public class MurphyBarActivity extends BaseActivity {
                 return false;
             });
             popupWindow.setOnDismissListener(() -> containerView=null);
+            popupWindow.update();
+            popupWindow.setBackgroundDrawable(null);
             popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
 //            showAsDropDown(popupWindow,mLayout, 0,0);
+//            showAsDropDown(popupWindow,mLayout, 0,0);
             popupWindow.showAsDropDown(mLayout, 0,0,Gravity.BOTTOM);
+
             acTvGiftOneNum=containerView.findViewById(R.id.acTv_OneNum);
             acTvGiftTwoNum=containerView.findViewById(R.id.acTv_TwoNum);
             acTvGiftThreeNum=containerView.findViewById(R.id.acTv_OneThree);
 
-            containerView.findViewById(R.id.ll_GiftOne).setOnClickListener(new OnCheckNetClickListener() {
+            sdvGiftOneNum=containerView.findViewById(R.id.ll_GiftOne);
+            sdvGiftTwoNum=containerView.findViewById(R.id.ll_GiftTwo);
+            sdvGiftThreeNum=containerView.findViewById(R.id.ll_GiftThree);
+
+            mGetMyPropPresenter.attachPresenter();
+
+            sdvGiftOneNum.setOnClickListener(new OnCheckNetClickListener() {
                 @Override
-                public void onMultiClick(View v) {
+                public void onMultiClick(View v) {  //送屎
                     if (!TextUtils.isEmpty(acTvGiftOneNum.getText()) && !acTvGiftOneNum.getText().equals("0")) {
-                        SdkApi.getInstance().sendGift(0);
+                        SdkApi.getInstance().sendGift(300);
+                        Toast("向对方扔了一个粑粑x1");
+                        mGetMyPropPresenter.attachPresenter();
                     }
                 }
             });
-            containerView.findViewById(R.id.ll_GiftTwo).setOnClickListener(new OnCheckNetClickListener() {
+            sdvGiftTwoNum.setOnClickListener(new OnCheckNetClickListener() {
                 @Override
-                public void onMultiClick(View v) {
+                public void onMultiClick(View v) { //送LOVE
                     if (!TextUtils.isEmpty(acTvGiftTwoNum.getText()) && !acTvGiftTwoNum.getText().equals("0")) {
-                        SdkApi.getInstance().sendGift(0);
+                        SdkApi.getInstance().sendGift(301);
+                        Toast("向对方赠送了一个爱心x1");
+                        mGetMyPropPresenter.attachPresenter();
                     }
                 }
             });
-            containerView.findViewById(R.id.ll_GiftThree).setOnClickListener(new OnCheckNetClickListener() {
+            sdvGiftThreeNum.setOnClickListener(new OnCheckNetClickListener() {
                 @Override
-                public void onMultiClick(View v) {
+                public void onMultiClick(View v) { //送草泥马
                     if (!TextUtils.isEmpty(acTvGiftThreeNum.getText()) && !acTvGiftThreeNum.getText().equals("0")) {
-                        SdkApi.getInstance().sendGift(0);
+                        SdkApi.getInstance().sendGift(302);
+                        Toast("向对方赠送了一个草尼玛x1");
+                        mGetMyPropPresenter.attachPresenter();
                     }
                 }
             });
         }
     }
 
-    public void showAsDropDown(PopupWindow pw, View anchor, int xoff, int yoff) {
+    /**
+     *
+     * @param pw     popupWindow
+     * @param anchor v
+     * @param xoff   x轴偏移
+     * @param yoff   y轴偏移
+     */
+    public static void showAsDropDown(final PopupWindow pw, final View anchor, final int xoff, final int yoff) {
         if (Build.VERSION.SDK_INT >= 24) {
             Rect visibleFrame = new Rect();
             anchor.getGlobalVisibleRect(visibleFrame);
             int height = anchor.getResources().getDisplayMetrics().heightPixels - visibleFrame.bottom;
             pw.setHeight(height);
-            pw.showAsDropDown(anchor, xoff, yoff,Gravity.BOTTOM);
+            pw.showAsDropDown(anchor, xoff, yoff);
         } else {
-            pw.showAsDropDown(anchor, xoff, yoff,Gravity.BOTTOM);
+            pw.showAsDropDown(anchor, xoff, yoff);
         }
     }
 
-    //获取宝箱内容
+        //获取宝箱内容
     @SuppressLint({"InflateParams", "SetTextI18n"})
     private void getBoxView(SingsBean result){
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.AlertDialogStyle);
         builder.setCancelable(false);
         builder.create();
-
         View view=LayoutInflater.from(this).inflate(R.layout.layout_bar_getbox,null);
         SimpleDraweeView sdvGget=view.findViewById(R.id.sdv_Get);
         AppCompatTextView info=view.findViewById(R.id.acTv_Info);
         builder.setView(view);
-
         AlertDialog dialog=builder.show();
-
         sdvGget.setOnClickListener(v-> {
             mBoxView.setVisibility(View.GONE);
             mBoxView.setBackgroundResource(R.drawable.icon_bar_box_default);
@@ -270,6 +325,59 @@ public class MurphyBarActivity extends BaseActivity {
                 result.getExp()+"经验");
     }
 
+    private class PropCallBack implements OnPresenterListeners.OnViewListener<PropsBean> {
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void onSuccess(PropsBean result) {
+            Log.i(TAG, "onSuccess: " + result.toString());
+            if (result.getProps() != null && result.getProps().size() > 0) {
+                for (PropsBean.ChildPropsBean childPropsBean : result.getProps()) {
+                    if (childPropsBean.getProp() != null) {
+                        switch (childPropsBean.getProp().getIndex()) {
+                            //粑粑
+                            case 300: {
+                                acTvGiftOneNum.setText(childPropsBean.getNumber()+"");
+                                if (!TextUtils.isEmpty(childPropsBean.getProp().getImage_url())) {
+                                    sdvGiftOneNum.setImageURI(Uri.parse(childPropsBean.getProp().getImage_url()));
+                                }
+                            }break;
+                            //LOVE
+                            case 301: {
+                                acTvGiftTwoNum.setText(childPropsBean.getNumber()+"");
+                                if (!TextUtils.isEmpty(childPropsBean.getProp().getImage_url())) {
+                                    sdvGiftTwoNum.setImageURI(Uri.parse(childPropsBean.getProp().getImage_url()));
+                                }
+                            }break;
+                            //草泥马
+                            case 302: {
+                                acTvGiftThreeNum.setText(childPropsBean.getNumber()+"");
+                                if (!TextUtils.isEmpty(childPropsBean.getProp().getImage_url())) {
+                                    sdvGiftThreeNum.setImageURI(Uri.parse(childPropsBean.getProp().getImage_url()));
+                                }
+                                ;
+                            }break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            if (!TextUtils.isEmpty(error.getToast())) {
+                Toast(error.getToast());
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e != null) {
+                Logger(e.getMessage());
+                Toast(e.getMessage());
+            }
+        }
+    }
 
 
     @SuppressLint("InflateParams")
@@ -308,6 +416,7 @@ public class MurphyBarActivity extends BaseActivity {
                 register=0;
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.VISIBLE);
+                mCount.start();
                 break;
             case JOIN_FAILED:
                 Log.i(TAG, "onEvent: JOIN_FAILED");
@@ -323,25 +432,33 @@ public class MurphyBarActivity extends BaseActivity {
                 break;
             case VIDEO_CHAT_START:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_START");
-                mCount.start();
                 break;
             case VIDEO_CHAT_FINISH:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FINISH");
                 break;
             case VIDEO_CHAT_TERMINATE:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_TERMINATE");
+                    removeView();
+                    isStartChat=false;
+                    AlterDialogBuilder dialogFail=new AlterDialogBuilder(this,new DialogTextView(MurphyBarActivity.this,"对方已下线!")).hideClose();
+                    dialogFail.getRootSure().setOnClickListener(v -> {
+                        dialogFail.dismiss();
+                    });
                 break;
             case VIDEO_CHAT_FAIL:  //流断
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
-                AlterDialogBuilder dialogFail=new AlterDialogBuilder(this,new DialogTextView(MurphyBarActivity.this,"对方已下线!")).hideClose();
-                dialogFail.getRootSure().setOnClickListener(v -> {
-                    isStartChat=false;
-                    removeView();
-                    dialogFail.dismiss();
-                });
                 break;
             case GOT_GIFT:
-                Log.i(TAG, "onEvent: GOT_GIFT");
+                Log.i(TAG, "onEvent: GOT_GIFT"+event.getLong());
+                if (event.getLong() == 300) {
+                    Toast("对方向你扔了一个粑粑x1");
+                }
+                if (event.getLong() == 301) {
+                    Toast("对方向你赠送了一个爱心x1");
+                }
+                if (event.getLong() == 302) {
+                    Toast("对方向你赠送了一个草尼玛x1");
+                }else
                 break;
             case ERROR_MESSAGE:
                 Log.i(TAG, "onEvent: ERROR_MESSAGE");
@@ -385,6 +502,12 @@ public class MurphyBarActivity extends BaseActivity {
             Log.i(TAG, "onDestroy: ->>>");
             removeView();
         }
+
+        if (mGetMyPropPresenter != null) {
+            mGetMyPropPresenter.detachPresenter();
+            mGetMyPropPresenter=null;
+        }
+        
         super.onDestroy();
     }
 

@@ -22,6 +22,8 @@
             android:layout_height="?android:attr/actionBarSize"
             android:background="@drawable/radius_10_stroke_gray"
             android:gravity="center_vertical"
+            android:singleLine="true"
+            android:lines="1"
             android:paddingStart="5dp"
             android:paddingEnd="0dp"
             android:textSize="14sp"
@@ -33,6 +35,8 @@
             android:layout_height="?android:attr/actionBarSize"
             android:layout_marginTop="12dp"
             android:background="@drawable/radius_10_stroke_gray"
+            android:singleLine="true"
+            android:lines="1"
             android:gravity="center"
             android:hint="请选择年龄"
             app:layout_constraintTop_toBottomOf="@+id/acEt_NewNickName"/>
@@ -78,10 +82,12 @@
             android:layout_marginTop="24dp"
             android:background="@drawable/radius_10_stroke_gray"
             android:gravity="center_vertical"
+            android:singleLine="true"
+            android:lines="1"
             android:paddingStart="5dp"
             android:paddingEnd="0dp"
             android:textSize="14sp"
-            android:inputType="textPassword"
+            android:inputType="textPassword|number"
             android:hint="@string/hint_set_password"/>
 
         <android.support.v7.widget.AppCompatCheckBox

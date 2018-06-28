@@ -45,7 +45,16 @@
                 android:textStyle="bold"
                 android:text="null"/>
         </android.support.v7.widget.LinearLayoutCompat>
-
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/acTv_Sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="30dp"
+            android:text="确认"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

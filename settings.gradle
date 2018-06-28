@@ -1,3 +1,3 @@
-include ':app', ':tes_module', ":lib-data"
+include ':app',  ":lib-data"
 
-// , ":network"
+// , ':tes_module',

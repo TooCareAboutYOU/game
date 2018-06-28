@@ -18,6 +18,7 @@
             android:layout_marginEnd="508dp"
             android:layout_marginBottom="721.5dp"
             android:background="@drawable/selector_map_relic"/>
+        <!--研究院-->
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_GraduateSchool"
             android:layout_width="111dp"
@@ -27,6 +28,7 @@
             android:layout_marginEnd="174dp"
             android:layout_marginBottom="660.5dp"
             android:background="@drawable/selector_map_graduate"/>
+        <!--游戏-->
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_GameTower"
             android:layout_width="114.5dp"
@@ -36,6 +38,7 @@
             android:layout_marginEnd="378.5dp"
             android:layout_marginBottom="378.5dp"
             android:background="@drawable/selector_map_game"/>
+        <!--商店-->
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_Shop"
             android:layout_width="165dp"
@@ -45,6 +48,7 @@
             android:layout_marginEnd="723dp"
             android:layout_marginBottom="474.5dp"
             android:background="@drawable/selector_map_shop"/>
+        <!--公园-->
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_Science"
             android:layout_width="195dp"
@@ -54,6 +58,7 @@
             android:layout_marginEnd="526dp"
             android:layout_marginBottom="286.5dp"
             android:background="@drawable/selector_map_science"/>
+        <!--酒吧-->
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_Bar"
             android:layout_width="164dp"

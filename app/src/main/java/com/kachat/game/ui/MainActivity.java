@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvView;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -91,6 +93,7 @@ public class MainActivity extends BaseActivity {
 
     private SignsStatusPresenter mStatusPresenter=null;
     private SignsPresenter mSignsPresenter=null;
+    private LinearLayoutManager mLinearLayoutManager=null;
 
     public static void getInstance(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -156,7 +159,8 @@ public class MainActivity extends BaseActivity {
 
     private void initMap(){
         RecyclerView recyclerView=findViewById(R.id.rv_Map);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        mLinearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        recyclerView.setLayoutManager(mLinearLayoutManager);
         recyclerView.setAdapter(new MapAdapter());
     }
     private class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
@@ -218,6 +222,7 @@ public class MainActivity extends BaseActivity {
                 mSdvRelic=itemView.findViewById(R.id.sdv_Relic);
                 mSdvGraduateSchool=itemView.findViewById(R.id.sdv_GraduateSchool);
                 mSdvGameTower=itemView.findViewById(R.id.sdv_GameTower);
+                mSdvGameTower.requestFocus();
                 mSdvShop=itemView.findViewById(R.id.sdv_Shop);
                 mSdvScience=itemView.findViewById(R.id.sdv_Science);
                 mSdvBar=itemView.findViewById(R.id.sdv_Bar);
@@ -226,6 +231,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    // 检查用户是否签到
     private class SignsStatusCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
         @SuppressLint("InflateParams")
         @Override
@@ -245,7 +251,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
             if (error != null && !TextUtils.isEmpty(error.getToast())) {
-                Logger(error.getToast());
                 Toast(error.getToast());
             }
         }
@@ -253,18 +258,19 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onError(Throwable e) {
             if (e != null) {
-                Logger(e.getMessage());
                 Toast(e.getMessage());
             }
         }
     }
 
+    //签到
     private class SignsInCallBack implements OnPresenterListeners.OnViewListener<SingsBean>{
         @SuppressLint("InflateParams")
         @Override
         public void onSuccess(SingsBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
-            dialogView(result);
+            dialogView();
+
         }
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
@@ -282,25 +288,29 @@ public class MainActivity extends BaseActivity {
     }
 
     @SuppressLint({"InflateParams", "SetTextI18n"})
-    private void dialogView(SingsBean result){
+    private void dialogView(){
 
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.AlertDialogStyle);
         builder.setCancelable(false);
         builder.create();
-
         View view=LayoutInflater.from(this).inflate(R.layout.layout_signin,null);
         SimpleDraweeView closeView=view.findViewById(R.id.acIV_Close);
         AppCompatTextView info=view.findViewById(R.id.acTv_Info);
+        AppCompatTextView sureView=view.findViewById(R.id.acTv_Sure);
+
         builder.setView(view);
-
         AlertDialog dialog=builder.show();
-
         closeView.setOnClickListener(v-> dialog.dismiss());
-
-        info.setText(result.getDiamond()+"钻石\n"+
-                result.getGold()+"金币\n"+
-                result.getHp()+"体力\n"+
-                result.getExp()+"经验");
+        info.setText("600钻石\n100金币\n100体力\n50EXP");
+        sureView.setOnClickListener(new OnCheckNetClickListener() {
+            @Override
+            public void onMultiClick(View v) {
+//                if (mStatusPresenter != null) {
+//                    mStatusPresenter.attachPresenter();
+//                }
+                dialog.dismiss();
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -320,7 +330,23 @@ public class MainActivity extends BaseActivity {
             mAcTvUserLevel.setText("LV" + dbUserBean.getLevel());
             mAcTvUserDiamonds.setText("钻石:" + dbUserBean.getDiamond());
             mAcTvUserGold.setText("金币:" + dbUserBean.getGold());
-            mAcTvUserSport.setText("体力:" + dbUserBean.getCharm());
+            mAcTvUserSport.setText("体力:" + dbUserBean.getHp());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mLinearLayoutManager != null) {
+            new Handler().postDelayed(() -> {
+                View view=mLinearLayoutManager.findViewByPosition(0);
+                LinearLayout linearLayout= (LinearLayout) view;
+                SimpleDraweeView gameView=linearLayout.findViewById(R.id.sdv_GameTower);
+                gameView.requestFocus();
+                gameView.requestFocus();
+
+                Log.i(TAG, "onResume: ");
+            },500);
         }
     }
 

@@ -21,6 +21,7 @@ import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.LoginPresenter;
 import com.kachat.game.ui.MainActivity;
 import com.kachat.game.ui.user.ResetPwdActivity;
+import com.kachat.game.ui.user.ResetPwdCaptchaActivity;
 import com.kachat.game.utils.OnCheckNetClickListener;
 
 import java.util.Objects;
@@ -74,6 +75,7 @@ public class CheckPwdActivity extends BaseActivity {
     protected void onInitView() {
         getToolBarBack().setOnClickListener(v -> {LoginActivity.newInstance(this);finish();});
         getToolBarTitle().setVisibility(View.GONE);
+
     }
 
     @Override
@@ -82,7 +84,7 @@ public class CheckPwdActivity extends BaseActivity {
         String mobile= Config.getMobile();
         Log.i(TAG, "onInitView: "+mobile);
         mAcTvMobile.setText(mobile);
-        mAcEtPwd.setText("qwer1234");
+        mAcEtPwd.setText("123456");
 
         mPresenter=new LoginPresenter(new LoginCallBack());
 
@@ -103,14 +105,13 @@ public class CheckPwdActivity extends BaseActivity {
         findViewById(R.id.acTv_ResetPwd).setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
-
-                ResetPwdActivity.newInstance(CheckPwdActivity.this);
+                ResetPwdCaptchaActivity.newInstance(CheckPwdActivity.this);
+                CheckPwdActivity.this.finish();
             }
         });
     }
 
     private class LoginCallBack implements OnPresenterListeners.OnViewListener<UserBean>{
-
         @Override
         public void onSuccess(UserBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
@@ -142,10 +143,10 @@ public class CheckPwdActivity extends BaseActivity {
             Log.i(TAG, "onError: "+e.getMessage());
             mClContainer.setBackgroundResource(R.drawable.img_bg_login_wrong);
             mAcTvErrorMsg.setVisibility(View.VISIBLE);
-            mAcTvErrorMsg.setText(e.getMessage());
+            mAcTvErrorMsg.setText("密码有误，请输入正确密码！");
             mSdvGo.setEnabled(true);
             Log.e(TAG, "onError: "+e.getMessage());
-            Toast(e.getMessage());
+//            Toast(e.getMessage());
         }
     }
 

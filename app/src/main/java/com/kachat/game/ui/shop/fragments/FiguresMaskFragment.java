@@ -17,6 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseFragment;
 import com.kachat.game.events.PublicEventMessage;
+import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.model.CategoryListBean;
 import com.kachat.game.libdata.model.ErrorBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
@@ -98,7 +99,13 @@ public class FiguresMaskFragment extends BaseFragment {
             holder.mAcTvPrice.setText(mGoodsBeanList.get(position).getPrice()+"");
             holder.mAcTvMark.setText("每日限购10个");
             holder.mSdvSmall.setImageResource(R.drawable.icon_diamond);
-            holder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new PublicEventMessage.ShopBuy(mGoodsBeanList.get(position))));
+            holder.itemView.setOnClickListener(v -> {
+                if (DaoQuery.queryUserData().getDiamond() != 0) {
+                    EventBus.getDefault().post(new PublicEventMessage.ShopBuy(mGoodsBeanList.get(position)));
+                }else {
+                    Toast("金币不足！");
+                }
+            });
 
         }
 
@@ -133,7 +140,6 @@ public class FiguresMaskFragment extends BaseFragment {
 
         @Override
         public void onSuccess(CategoryListBean result) {
-            Log.i(TAG, "onSuccess: " + result.toString());
             if (result != null && result.getGoods() != null && result.getGoods().size() > 0) {
                 if (mGoodsBeanList != null) {
                     mGoodsBeanList.clear();

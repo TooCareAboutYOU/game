@@ -90,7 +90,10 @@ public class SdkApi {
     }
 
     public BridgeWebView getBridgeWebView() {
-        if (this.mBridgeWebView == null) { throw new NullPointerException("mBridgeWebView is null"); }
+        if (this.mBridgeWebView == null) {
+            ToastUtils.showShort("BridgeWebView初始化异常");
+            return null;
+        }
         return this.mBridgeWebView;
     }
 
@@ -130,16 +133,10 @@ public class SdkApi {
         localContainer.addView(this.localView);
     }
 
-    public RenderProxy getLocalProxy() {
-        if (this.localProxy == null) {
-            throw new NullPointerException("the localProxy  is null");
-        }
-        return this.localProxy;
-    }
-
     public SurfaceView getLocalView() {
         if (this.localView == null) {
-            throw new NullPointerException("the localView  is null");
+            ToastUtils.showShort("提示：本地视图获取失败！");
+            return null;
         }
         return this.localView;
     }
@@ -158,20 +155,23 @@ public class SdkApi {
         Log.i(TAG, "enableVideoView: ");
         VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localProxy, remoteProxy); }
 
-    public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName, int pitch,int matchType) {
+    public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName, int matchType) {
         Log.i(TAG, "loadFaceRigItf: ");
 
         if (TextUtils.isEmpty(fileName)) {
-            throw new NullPointerException("the fileName is null");
+            ToastUtils.showShort("警告：Live2D人物为空！");
+            return;
         }
 
         if (TextUtils.isEmpty(bgName)) {
-            throw new NullPointerException("the bgName is null");
+            ToastUtils.showShort("警告：Live2D背景为空！");
+            return;
         }
 
         this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
         if (this.videoProcessorToCamera == null) {
-            throw new NullPointerException("videoProcessorToCamera is null");
+            ToastUtils.showShort("提示：Camera异常");
+            return;
         }
 
         boolean isEnabled = this.videoProcessorToCamera.native_faceRigEnabled();
@@ -196,7 +196,6 @@ public class SdkApi {
             });
 //            this.faceRigItf.native_setModelZoomFraction(1.0f); // 缩放
 //            this.faceRigItf.native_setModelBackgroundImage(bgPath, bgName);
-            setAudioPitch(pitch);
             setModelBackgroundImage(bgPath, bgName);
 //            save();
         }
@@ -207,19 +206,19 @@ public class SdkApi {
         mDbLive2DBean.setPitchLevel(pitch);
     }
 
-    public void setModelBackgroundImage(String filePath, String fileName) {
-        if (this.faceRigItf == null || TextUtils.isEmpty(fileName)) {
+    public void setModelBackgroundImage(String bgPath, String bgName) {
+        if (this.faceRigItf == null || TextUtils.isEmpty(bgName)) {
             ToastUtils.showShort("faceRigItf or fileName is null");
             return;
         }
-        mDbLive2DBean.setBgFilePath(filePath);
-        mDbLive2DBean.setBgFileName(fileName);
-        this.faceRigItf.native_setModelBackgroundImage(filePath, fileName );
+        mDbLive2DBean.setBgFilePath(bgPath);
+        mDbLive2DBean.setBgFileName(bgName);
+        this.faceRigItf.native_setModelBackgroundImage(bgPath, bgName );
     }
 
     public void setLive2DModel(String filePath, String fileName,int matchType) {
         if (this.faceRigItf == null || TextUtils.isEmpty(fileName)) {
-            ToastUtils.showShort("faceRigItf or fileName is null");
+            ToastUtils.showShort("提示：Camera异常或人物遮罩不存在！");
             return;
         }
         mDbLive2DBean.setLiveFilePath(filePath);
@@ -233,12 +232,13 @@ public class SdkApi {
         chatList=new ArrayList<>();
         gameList=new ArrayList<>();
         if (this.faceRigItf == null) {
-            throw new NullPointerException("faceRigItf is null");
+            ToastUtils.showShort("警告：初始化Live2D异常！");
+            return;
         }
         switch (fileName) {
             case "aLaiKeSi": {
-                chatList.add(1.0f);chatList.add(0f);chatList.add(0f);
-                gameList.add(1.5f);gameList.add(0f);gameList.add(-0.1333f);
+                chatList.add(1.7f);chatList.add(0f);chatList.add(0.0937f);
+                gameList.add(2.5f);gameList.add(0f);gameList.add(-0.2833f);
             } break;
             case "haru": {
                 chatList.add(2.3f);chatList.add(0f);chatList.add(-0.625f);
@@ -289,19 +289,23 @@ public class SdkApi {
         mDbLive2DBean.setChatMask(chatList);
         mDbLive2DBean.setGameMask(gameList);
         if (matchType == 3) {
-            Log.i(TAG, "setFaceRigItf聊天："+chatList.get(0)+"\t\t"+chatList.get(1)+"\t\t"+chatList.get(2)+"\t\t");
+            Log.i("FaceRigItf", "setFaceRigItf聊天："+fileName+"\t\t"+chatList.get(0)+"\t\t"+chatList.get(1)+"\t\t"+chatList.get(2)+"\t\t");
             this.faceRigItf.native_setModelZoomFraction(chatList.get(0));
             this.faceRigItf.native_setModelOffset(chatList.get(1), chatList.get(2));
+            chatList.clear();
+            gameList.clear();
+            chatList=null;
+            gameList=null;
             return;
         }
-
-        Log.i(TAG, "setFaceRigItf: 游戏："+gameList.get(0)+"\t\t"+gameList.get(1)+"\t\t"+gameList.get(2)+"\t\t");
-
+        Log.i("FaceRigItf", "setFaceRigItf: 游戏："+fileName+"\t\t"+gameList.get(0)+"\t\t"+gameList.get(1)+"\t\t"+gameList.get(2)+"\t\t");
         this.faceRigItf.native_setModelZoomFraction(gameList.get(0));
         this.faceRigItf.native_setModelOffset(gameList.get(1),gameList.get(2));
+        chatList.clear();
+        gameList.clear();
+        chatList=null;
+        gameList=null;
     }
-
-
 
     public void setAudioLoopBack(boolean enable){ VAGameAPI.getInstance().setAudioLoopback(enable); }
 
@@ -311,11 +315,11 @@ public class SdkApi {
 
     public boolean save(){
         if (mDbLive2DBean == null) {
-            throw new NullPointerException("the model data is null");
+            return false;
         }
         String fileName=mDbLive2DBean.getLiveFileName();
         if (TextUtils.isEmpty(fileName)) {
-            Toast.makeText(mContext, "保存失败!", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("保存失败!");
             return false;
         }
 
@@ -340,18 +344,18 @@ public class SdkApi {
             this.mBridgeWebView = null;
         }
 
-        this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
-        if (this.videoProcessorToCamera != null) {
-            Log.i(TAG, "destroy: videoProcessorToCamera");
-            this.videoProcessorToCamera.native_stop();
-            this.videoProcessorToCamera = null;
-        }
-
         if (isJoinRoom) {
             Log.i(TAG, "destroy: leave Room");
             VAGameAPI.getInstance().stopGameMatch();
             // TODO: 2018/6/25  离开发送消息
             VAGameAPI.getInstance().leaveGameRoom();
+        }
+
+        this.videoProcessorToCamera = VAGameAPI.getInstance().getVideoProcessorToCamera(); // 摄像头
+        if (this.videoProcessorToCamera != null) {
+            Log.i(TAG, "destroy: videoProcessorToCamera");
+            this.videoProcessorToCamera.native_stop();
+            this.videoProcessorToCamera = null;
         }
 
         VAGameAPI.getInstance().stopPreview();
