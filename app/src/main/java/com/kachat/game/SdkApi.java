@@ -97,13 +97,9 @@ public class SdkApi {
         return this.mBridgeWebView;
     }
 
-    public void sdkLogin(int uid, String token) {
-        Log.i(TAG, "sdkLogin: "); 
-        VAGameAPI.getInstance().login(uid + "", token); }
+    public void sdkLogin(int uid, String token) { VAGameAPI.getInstance().login(uid + "", token); }
 
-    public void sdkExit() {
-        Log.i(TAG, "sdkExit: ");
-        VAGameAPI.getInstance().logout(); }
+    public void sdkExit() { VAGameAPI.getInstance().logout(); }
 
     public void loadGame(String htmlUrl) { this.mBridgeWebView.loadUrl(htmlUrl); }
 
@@ -113,23 +109,19 @@ public class SdkApi {
      * 2：GAME_HEXSTAR,    //六边形  9004
      * 3：GAME_CHAT,       //聊天
      */
-    public void startGameMatch(int gameType) {
-        Log.i(TAG, "startGameMatch: ");
-        VAGameAPI.getInstance().startGameMatch(gameType); }
+    public void startGameMatch(int gameType) { VAGameAPI.getInstance().startGameMatch(gameType); }
 
     public void create(Context context) {
-        Log.i(TAG, "create: ");
         this.mContext=context.getApplicationContext();
         VAGameAPI.getInstance().startPreview();
         mDbLive2DBean =new DbLive2DBean();
     }
 
     public void loadLocalView(Context context, ViewGroup localContainer) {
-        Log.i(TAG, "loadLocalView: ");
         this.localProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
         this.localProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        this.localView = this.localProxy.getDisplay();
         this.localProxy.setEnableMirror(true);
+        this.localView = this.localProxy.getDisplay();
         localContainer.addView(this.localView);
     }
 
@@ -142,22 +134,17 @@ public class SdkApi {
     }
 
     public void loadRemoteView(Context context, ViewGroup remoteContainer) {
-        Log.i(TAG, "loadRemoteView: ");
         this.remoteProxy = VAGameAPI.getInstance().createRenderProxy(context.getApplicationContext());
         this.remoteProxy.setAspectMode(RenderProxy.AspectMode.aspectFill);
-        this.remoteView = this.remoteProxy.getDisplay();
         this.remoteProxy.setEnableMirror(!remoteProxy.enableMirror());
+        this.remoteView = this.remoteProxy.getDisplay();
         remoteContainer.addView(this.remoteView);
     }
 
 
-    public void enableVideoView() {
-        Log.i(TAG, "enableVideoView: ");
-        VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localProxy, remoteProxy); }
+    public void enableVideoView() { VAGameAPI.getInstance().enableVideoChatWithLocalAndRemoteView(localProxy, remoteProxy); }
 
     public void loadFaceRigItf(String filePath, String fileName, String bgPath, String bgName, int matchType) {
-        Log.i(TAG, "loadFaceRigItf: ");
-
         if (TextUtils.isEmpty(fileName)) {
             ToastUtils.showShort("警告：Live2D人物为空！");
             return;
@@ -363,12 +350,12 @@ public class SdkApi {
 
         VAGameAPI.getInstance().stopPreview();
 
-        if (this.localProxy != null) {
-            this.localProxy = null;
-        }
-        if (this.remoteProxy != null) {
-            this.remoteProxy = null;
-        }
+//        if (this.localProxy != null) {
+//            this.localProxy = null;
+//        }
+//        if (this.remoteProxy != null) {
+//            this.remoteProxy = null;
+//        }
 
         if (mDbLive2DBean != null) {
             mDbLive2DBean=null;
