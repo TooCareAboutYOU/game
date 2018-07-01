@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -27,12 +28,13 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.dnion.VAGameAPI;
 import com.kachat.game.events.PublicEventMessage;
-import com.kachat.game.ui.bar.MurphyBarActivity;
+import com.kachat.game.libdata.model.ErrorBean;
+import com.kachat.game.libdata.model.MessageBean;
+import com.kachat.game.libdata.mvp.OnPresenterListeners;
+import com.kachat.game.libdata.mvp.presenters.StatPagesPresenter;
 import com.kachat.game.utils.OnCheckNetClickListener;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.alibaba.fastjson.JSON;
@@ -47,18 +49,19 @@ import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.dbmodel.DbUserBean;
 import com.kachat.game.utils.widgets.DialogTextView;
-
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Objects;
-
 import butterknife.BindView;
+
 
 public class GameRoomActivity extends BaseActivity {
 
-    private static final String TAG = "MyActivity";
+    private static final String TAG = "GameRoomActivity";
 
     public static final String Html_Url = "html_url";
     public static final String GAME_TYPE="game_type";
@@ -67,14 +70,14 @@ public class GameRoomActivity extends BaseActivity {
     FrameLayout mLoadLayout;
     @BindView(R.id.toolbar_base)
     Toolbar mToolbarBase;
+    @BindView(R.id.sdv_RoomBg)
+    SimpleDraweeView roomBG;
     @BindView(R.id.bridgeWebView)
     BridgeWebView mBridgeWebView;
     @BindView(R.id.fl_local)
     FrameLayout flLocalView;
     @BindView(R.id.fl_remote)
     FrameLayout flRemoteView;
-
-    private int register=0;
 
     public static void newInstance(Context context, Bundle bundle) {
         Intent intent = new Intent(context, GameRoomActivity.class);
@@ -86,6 +89,9 @@ public class GameRoomActivity extends BaseActivity {
 
     private DbUserBean mDbUserBean = DaoQuery.queryUserData();
     private int type;
+    private boolean isFinish=false;
+
+    private StatPagesPresenter mStatPagesPresenter;
 
     @Override
     protected int onSetResourceLayout() {
@@ -107,7 +113,10 @@ public class GameRoomActivity extends BaseActivity {
 
     @Override
     protected void onInitView() {
-        getToolBarBack().setOnClickListener(v -> finish());
+        getToolBarBack().setOnClickListener(v -> {
+            exitRoom();
+            finish();
+        });
         getToolbarMenu().setBackgroundResource(R.drawable.icon_report);
         getToolbarMenu().setOnClickListener(new OnCheckNetClickListener() {
             @Override
@@ -121,9 +130,16 @@ public class GameRoomActivity extends BaseActivity {
             public void onMultiClick(View v) {
 //                boolean is=VAGameAPI.getInstance().isAudioEnable();
 //                VAGameAPI.getInstance().switchAudio(!is);
-//               getToolbarMenu().setBackgroundResource( !is ? R.drawable.icon_audio_close : R.drawable.icon_audio_close);
+//               getToolbarMenu().setBackgroundResource( !is ? R.drawable.icon_audio_open : R.drawable.icon_audio_close);
+                boolean enable=SdkApi.getInstance().getAudioEnable();
+                VAGameAPI.getInstance().switchAudio(!enable);
+                getToolbarMenu2().setBackgroundResource(!enable ? R.drawable.icon_audio_open : R.drawable.icon_audio_close);
+
             }
         });
+
+        mStatPagesPresenter= new StatPagesPresenter(new StatPageCallBack());
+        mStatPagesPresenter.attachPresenter(StatPagesPresenter.StatType.GAME);
         mLoadLayout.setVisibility(View.VISIBLE);
         initGameHtml();
     }
@@ -134,22 +150,23 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().getBridgeWebView().setWebChromeClient(new MyWebChromeClient());
         SdkApi.getInstance().getBridgeWebView().setWebViewClient(new BridgeWebViewClient(mBridgeWebView));
 
-        //js发送给按住消息   submitFromWeb 是js调用的方法名    安卓\返回给js
+        //js发送给Android消息   submitFromWeb 是js调用的方法名    安卓\返回给js
         SdkApi.getInstance().getBridgeWebView().registerHandler("ToApp", (data, function) -> {
-            Log.i(TAG, "接受Js消息: ");
+//            Log.i("GAME_STAT", "接受Js消息: "+data.toString());
 //            显示接收的消息
             handleGameRequest(data);
 //            返回给html的消息
             function.onCallBack("返回给//Toast的alert");
         });
+
         loadVideo();
+
     }
 
     private void loadVideo(){
         Bundle bundle = getIntent().getExtras();
         String url = Objects.requireNonNull(bundle).getString(Html_Url);
         if (TextUtils.isEmpty(url)) {
-            Log.i(TAG, "游戏地址为空");
             Toast("游戏异常!");
             this.finish();
         }
@@ -161,17 +178,24 @@ public class GameRoomActivity extends BaseActivity {
         SdkApi.getInstance().loadRemoteView(this, flRemoteView);
         SdkApi.getInstance().enableVideoView();
         DbLive2DBean dbLive2DBean= Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
+        Log.i(TAG, "loadVideo: "+dbLive2DBean.getLiveFilePath()+ dbLive2DBean.getLiveFileName()+ dbLive2DBean.getBgFilePath()+ dbLive2DBean.getBgFileName()+type);
         SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(),type);//
         SdkApi.getInstance().startGameMatch(type);
     }
 
     public void handleGameRequest(String msg) {
-
-        Log.w(TAG, "发送消息 handleGameRequest: "+msg);
+        Log.i(TAG, "handleGameRequest: "+msg);
         SdkApi.getInstance().sendMessage(msg);
-        DNGameEventMessage.OnGameMessageBean gameBean= JSON.parseObject(msg,DNGameEventMessage.OnGameMessageBean.class);
-        if (!TextUtils.isEmpty(gameBean.getType()) && gameBean.getType().equals("leave")) {
-            finish();
+        if (!TextUtils.isEmpty(msg)) {
+            try {
+                JSONObject object=new JSONObject(msg);
+                String type=object.getString("type");
+                if (type.equals("leave")) {
+                    exitRoom();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -181,31 +205,6 @@ public class GameRoomActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(DNGameEventMessage event) {
         switch (event.getEvent()) {
-            case SESSION_READY:
-                Logger("onEvent:SESSION_READY");
-                break;
-            case SESSION_BROKEN:
-                Log.i(TAG, "onEvent: SESSION_BROKEN");
-                register++;
-                if (register == 7) {
-                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this,new DialogTextView(GameRoomActivity.this,"连接异常，请重新登录！"),"退出").hideClose();
-                    dialogBroken.getRootSure().setOnClickListener(v -> {
-                        PublicEventMessage.ExitAccount(this);
-                        dialogBroken.dismiss();
-                        finish();
-                    });
-
-                }
-                break;
-            case SESSION_OCCUPY:  // 同一个账号登录
-                Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
-                dialogOccupy.getRootSure().setOnClickListener(v -> {
-                    dialogOccupy.dismiss();
-                    PublicEventMessage.ExitAccount(this);
-                    finish();
-                });
-                break;
             case SESSION_KEEP_ALIVE:
                 Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
                 break;
@@ -220,33 +219,23 @@ public class GameRoomActivity extends BaseActivity {
                 Log.i(TAG, "onEvent: MATCH_SUCCESS");
                 break;
             case GAME_MESSAGE:
-                Log.i(TAG, "onEvent: GAME_MESSAGE");
+                // {"type":"leave","data":{},"game":"towerGame"}
+                Log.i(TAG, "onEvent: GAME_MESSAGE"+event.getString());
                 mBridgeWebView.callHandler("ToJS", event.getString(), data -> handleGameResponse(data));
-                if (!TextUtils.isEmpty(event.getString())) {
-                    DNGameEventMessage.OnBoxsMessageBean boxBean=JSON.parseObject(event.getString(),DNGameEventMessage.OnBoxsMessageBean.class);
-                    if (boxBean!= null) {
-
-                        View boxRootView= LayoutInflater.from(this).inflate(R.layout.dialog_box,null);
-                        ImageView sdvViewBG=boxRootView.findViewById(R.id.sdv_Box_bg);
-                        ImageView sdvView=boxRootView.findViewById(R.id.sdv_Box);
-                        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(sdvViewBG);
-                        switch (boxBean.getBox()) {
-                            case 0: Glide.with(this).asGif().load(R.drawable.gif_box_white).into(sdvView);break;//白色
-                            case 1: Glide.with(this).asGif().load(R.drawable.gif_box_blue).into(sdvView);break;//蓝色
-                            case 2: Glide.with(this).asGif().load(R.drawable.gif_box_purple).into(sdvView);break;//紫色
-                            case 3: Glide.with(this).asGif().load(R.drawable.gif_box_orange).into(sdvView);break;//橙色
-                            case 4: Glide.with(this).asGif().load(R.drawable.gif_box_yellow).into(sdvView);break;//金色
-                        }
-                        AlterDialogBuilder builderView=new AlterDialogBuilder(this,boxRootView).hideRootSure();
-                        boxRootView.setOnClickListener(v -> {
-                            builderView.dismiss();
-                            DialogView(boxBean);
-                        });
-                    }
-                }
                 break;
             case GAME_STAT:
-                Log.i(TAG, "onEvent: GAME_STAT");
+                Log.i(TAG, "onEvent: GAME_STAT"+event.getString());
+                // {"Data": {"box": 1, "chipsList": [], "game": 900, "props": [{"number": 2, "prop": 3},{"number": 1, "prop": 301}, {"number": 1, "prop": 0},{"number": 1, "prop": 1}], "user": 236}, "Method": "GameReward", "MsgID": 10103}\
+                try {
+                    JSONObject object=new JSONObject(event.getString());
+                    int msgID=object.getInt("MsgID");
+                    if (msgID == 10103) {
+
+                        dialogGetGift(event.getString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case VIDEO_CHAT_START:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_START");
@@ -259,16 +248,15 @@ public class GameRoomActivity extends BaseActivity {
                 if (flRemoteView.getChildCount() > 0) {
                     flRemoteView.removeAllViews();
                 }
-                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
-                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！"),"退出游戏");
-                dialogBuilder1.getRootSure().setOnClickListener(v -> {
-                    dialogBuilder1.dismiss();
-                    finish();
-                });
+//                AlterDialogBuilder dialogBuilder1=new AlterDialogBuilder(GameRoomActivity.this,
+//                        new DialogTextView(GameRoomActivity.this,"对方已下线！！！"),"退出游戏");
+//                dialogBuilder1.getRootSure().setOnClickListener(v -> {
+//                    dialogBuilder1.dismiss();
+//                    finish();
+//                });
                 break;
             case VIDEO_CHAT_FAIL:
                 Log.i(TAG, "onEvent: VIDEO_CHAT_FAIL");
-
                 break;
             case GOT_GIFT:
                 Log.i(TAG, "onEvent: GOT_GIFT");
@@ -481,107 +469,225 @@ public class GameRoomActivity extends BaseActivity {
         }
     }
 
-    @SuppressLint("InflateParams")
-    private void DialogView(DNGameEventMessage.OnBoxsMessageBean boxBean){
-        android.support.v7.app.AlertDialog.Builder builder=new android.support.v7.app.AlertDialog.Builder(this,R.style.AlertDialogStyle);
-        View view=LayoutInflater.from(this).inflate(R.layout.dialog_box_info,null);
-        ImageView imgBG=view.findViewById(R.id.imgBG);
-        SimpleDraweeView propOneView=view.findViewById(R.id.sdv_one);
-        AppCompatTextView propOneTvView=view.findViewById(R.id.acTv_One);
-        SimpleDraweeView propTwoView=view.findViewById(R.id.sdv_two);
-        AppCompatTextView propTwoTvView=view.findViewById(R.id.acTv_Two);
-        SimpleDraweeView chipsThreeView=view.findViewById(R.id.sdv_three);
-        AppCompatTextView chipsThreeTvView=view.findViewById(R.id.acTv_Three);
-        SimpleDraweeView getView=view.findViewById(R.id.sdv_Get);
-        Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(imgBG);
-        if (boxBean != null && boxBean.getChips() != null && boxBean.getChips().size() != 0
-                && boxBean.getProps() != null && boxBean.getProps().size() != 0) {
-            propOneView.setImageResource(getDrawableView(boxBean.getProps().get(0).getProp()));
-            propOneTvView.setText("X"+boxBean.getProps().get(0).getNumber());
-            propTwoView.setImageResource(getDrawableView(boxBean.getProps().get(1).getProp()));
-            propTwoTvView.setText("X"+boxBean.getProps().get(1).getNumber());
-            chipsThreeView.setImageResource(getDrawableView(boxBean.getChips().get(0).getChip()));
-            chipsThreeTvView.setText("X"+boxBean.getChips().get(0).getNumber());
-
+    private void dialogGetGift(String msg){
+        Log.i("GAME_STAT", "dialogGetGift: "+msg);
+        DNGameEventMessage.GameDataBean boxbean=JSON.parseObject(msg,DNGameEventMessage.GameDataBean.class);
+        if (boxbean.getData() != null) {
+            roomBG.setVisibility(View.VISIBLE);
+            View boxRootView= LayoutInflater.from(this).inflate(R.layout.dialog_box,null);
+            ImageView sdvViewBG=boxRootView.findViewById(R.id.sdv_Box_bg);
+            ImageView sdvView=boxRootView.findViewById(R.id.sdv_Box);
+            Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(sdvViewBG);
+            switch (boxbean.getData().getBox()) {
+                case 0: Glide.with(this).asGif().load(R.drawable.gif_box_white).into(sdvView);break;//白色
+                case 1: Glide.with(this).asGif().load(R.drawable.gif_box_blue).into(sdvView);break;//蓝色
+                case 2: Glide.with(this).asGif().load(R.drawable.gif_box_purple).into(sdvView);break;//紫色
+                case 3: Glide.with(this).asGif().load(R.drawable.gif_box_orange).into(sdvView);break;//橙色
+                case 4: Glide.with(this).asGif().load(R.drawable.gif_box_yellow).into(sdvView);break;//金色
+            }
+            if (boxbean.getData().getProps().size() >0) {
+                AlterDialogBuilder builderView=new AlterDialogBuilder(this,boxRootView).hideRootSure();
+                boxRootView.setOnClickListener(v -> {
+                    builderView.dismiss();
+                    DialogView(boxbean.getData().getChips(),boxbean.getData().getProps()).show();
+                });
+                builderView.getRootClose().setOnClickListener(v -> {
+                    builderView.dismiss();
+                    finish();
+                });
+            }
+        }else {
+            finish();
         }
-        builder.setView(view);
-        builder.setCancelable(false);
-        builder.create();
-        android.support.v7.app.AlertDialog dialog=builder.show();
-        getView.setOnClickListener(v -> dialog.dismiss());
     }
 
-    private @DrawableRes int getDrawableView(int index){
-        @DrawableRes int drawable=R.mipmap.ic_launcher;
+    @SuppressLint({"InflateParams", "SetTextI18n"})
+    private AlertDialog.Builder DialogView(List<DNGameEventMessage.GameDataBean.DataBean.ChipsBean> chipsList,List<DNGameEventMessage.GameDataBean.DataBean.PropsBean> propsList){
+        if (propsList != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_box_info, null);
+            builder.setView(view);
+            builder.setCancelable(false);
+            AlertDialog dialog = builder.create();
+
+            ImageView imgBG = view.findViewById(R.id.imgBG);
+            SimpleDraweeView propOneView = view.findViewById(R.id.sdv_one);
+            AppCompatTextView propOneTvView = view.findViewById(R.id.acTv_One);
+            SimpleDraweeView propTwoView = view.findViewById(R.id.sdv_two);
+            AppCompatTextView propTwoTvView = view.findViewById(R.id.acTv_Two);
+            SimpleDraweeView propThreeView = view.findViewById(R.id.sdv_three);
+            AppCompatTextView propThreeTvView = view.findViewById(R.id.acTv_Three);
+            SimpleDraweeView propFourView = view.findViewById(R.id.sdv_four);
+            AppCompatTextView propFourTvView = view.findViewById(R.id.acTv_Four);
+            SimpleDraweeView getView = view.findViewById(R.id.sdv_Get);
+            Glide.with(this).asGif().load(R.drawable.gif_game_box_bg).into(imgBG);
+            getView.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
+
+            int chipSize=chipsList.size();
+            int propSize=propsList.size();
+
+            if (chipSize > 0) {
+                int golds=0;
+                for (int i = 0; i < chipSize; i++) {
+                    golds+=chipsList.get(i).getNumber();
+                }
+                propOneView.setImageURI(getDrawableView(chipsList.get(0).getChip()));
+                propOneTvView.setText("x"+golds);
+
+                if (propSize != 0) {
+                    for (int i = 0; i < propSize; i++) {
+                        switch (i) {
+                            case 0:
+                                propTwoView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propTwoTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                            case 1:
+                                propThreeView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propThreeTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                            case 2:
+                                propFourView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propFourTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                        }
+                    }
+                }
+            }else {
+                if (propSize > 0) {
+                    for (int i = 0; i < propSize; i++) {
+                        switch (i) {
+                            case 0:
+                                propOneView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propOneTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                            case 1:
+                                propTwoView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propTwoTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                            case 2:
+                                propThreeView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propThreeTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                            case 3:
+                                propFourView.setImageURI(getDrawableView(propsList.get(i).getProp()));
+                                propFourTvView.setText("x"+propsList.get(i).getNumber());
+                                break;
+                        }
+                    }
+                }
+            }
+            return builder;
+        }else {
+            Toast("服务器异常！");
+        }
+        return null;
+    }
+
+    private Uri getDrawableView(int index){
+        String str="";
         switch (index) {
-            case 0: drawable= R.drawable.img_000_strong;break;
-            case 1: drawable= R.drawable.img_001_xiaofei;break;
-            case 2: drawable= R.drawable.img_002_shaizi;break;
-            case 3: drawable= R.drawable.img_003_gold;break;
-            case 100: drawable= R.drawable.img_100_yanjing;break;
-            case 101: drawable= R.drawable.img_101_wawaquan;break;
-            case 300: drawable= R.drawable.img_300_baba; break;
-            case 301: drawable= R.drawable.img_301_love;break;
-            case 302: drawable= R.drawable.img_302_caonima;break;
-            case 400: drawable= R.drawable.img_400_weikeda;break;
-            case 401: drawable= R.drawable.img_401_tiyana;break;
-            case 402: drawable= R.drawable.img_402_alaikesi;break;
-            case 403: drawable= R.drawable.img_403_niezheng;break;
-            case 404: drawable= R.drawable.img_404_kapa;break;
-            case 405: drawable= R.drawable.img_405_landiya;break;
-            case 406: drawable= R.drawable.img_406_mingqu;break;
-            case 407:drawable= R.drawable.img_407_chun;break;
-            case 408:drawable= R.drawable.img_408_cunhua;break;
-//            case 409:break;
+            case 0: str= "res://"+getPackageName()+"/"+R.drawable.img_000_strong;break;
+            case 1: str= "res://"+getPackageName()+"/"+R.drawable.img_001_xiaofei;break;
+            case 2: str= "res://"+getPackageName()+"/"+R.drawable.img_002_shaizi;break;
+            case 3: str= "res://"+getPackageName()+"/"+R.drawable.img_003_gold;break;
+            case 100: str= "res://"+getPackageName()+"/"+R.drawable.img_100_yanjing;break;
+            case 101: str= "res://"+getPackageName()+"/"+R.drawable.img_101_wawaquan;break;
+            case 300: str= "res://"+getPackageName()+"/"+R.drawable.img_300_baba; break;
+            case 301: str= "res://"+getPackageName()+"/"+R.drawable.img_301_love;break;
+            case 302: str= "res://"+getPackageName()+"/"+R.drawable.img_302_caonima;break;
+            case 400: str= "res://"+getPackageName()+"/"+R.drawable.img_400_weikeda;break;
+            case 401: str= "res://"+getPackageName()+"/"+R.drawable.img_401_tiyana;break;
+            case 402: str= "res://"+getPackageName()+"/"+R.drawable.img_402_alaikesi;break;
+            case 403: str= "res://"+getPackageName()+"/"+R.drawable.img_403_niezheng;break;
+            case 404: str= "res://"+getPackageName()+"/"+R.drawable.img_404_kapa;break;
+            case 405: str= "res://"+getPackageName()+"/"+R.drawable.img_405_landiya;break;
+            case 406: str= "res://"+getPackageName()+"/"+R.drawable.img_406_mingqu;break;
+            case 407:str= "res://"+getPackageName()+"/"+R.drawable.img_407_chun;break;
+            case 408:str= "res://"+getPackageName()+"/"+R.drawable.img_408_cunhua;break;
         }
-        return drawable;
+        return Uri.parse(str);
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "onStart: ");
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        SdkApi.getInstance().getBridgeWebView().resumeTimers();
-        SdkApi.getInstance().getBridgeWebView().onResume();
+//        SdkApi.getInstance().getBridgeWebView().resumeTimers();
+//        SdkApi.getInstance().getBridgeWebView().onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause: ");
-        SdkApi.getInstance().getBridgeWebView().pauseTimers();
-        SdkApi.getInstance().getBridgeWebView().onPause();
+//        SdkApi.getInstance().getBridgeWebView().pauseTimers();
+//        SdkApi.getInstance().getBridgeWebView().onPause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.i(TAG, "onStop: ");
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitRoom();
+        super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
+        roomBG.setVisibility(View.GONE);
 
+        if (mStatPagesPresenter != null) {
+            mStatPagesPresenter.detachPresenter();
+            mStatPagesPresenter=null;
+        }
+
+        finish();
+        super.onDestroy();
+    }
+
+    private void exitRoom(){
         SdkApi.getInstance().destroy(true);
-
         if (flLocalView.getChildCount() > 0) {
             flLocalView.removeAllViews();
         }
         if (flRemoteView.getChildCount() > 0) {
             flRemoteView.removeAllViews();
         }
-
-        super.onDestroy();
     }
+
+    private class StatPageCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
+
+        @Override
+        public void onSuccess(MessageBean result) {
+            Log.i(TAG, "onSuccess: ");
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            Log.i(TAG, "onFailed: ");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.i(TAG, "onError: ");
+        }
+    }
+
 
 }

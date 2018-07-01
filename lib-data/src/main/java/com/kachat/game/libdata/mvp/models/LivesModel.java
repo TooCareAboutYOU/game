@@ -1,6 +1,7 @@
 package com.kachat.game.libdata.mvp.models;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kachat.game.libdata.apiServices.GameApi;
 import com.kachat.game.libdata.apiServices.UserApi;
@@ -16,12 +17,16 @@ import rx.Subscription;
 
 public class LivesModel extends BaseModel {
 
+    private static final String TAG = "GraduateSchoolActivity";
+
     private Subscription mSubscription;
 
     public void getUserLives(final OnPresenterListeners.OnModelListener<BaseBean<LivesBean>> listener){
         mSubscription= GameApi.getUserLives(new Observer<BaseBean<LivesBean>>() {
             @Override
-            public void onCompleted() { }
+            public void onCompleted() {
+                Log.i(TAG, "onCompleted: ");
+            }
 
             @Override
             public void onError(final Throwable e) {

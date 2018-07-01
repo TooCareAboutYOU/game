@@ -29,9 +29,18 @@ import com.gyf.barlibrary.ImmersionBar;
 import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.application.KaChatApplication;
+import com.kachat.game.events.DNGameEventMessage;
+import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.events.services.NetConnectService;
+import com.kachat.game.ui.user.login.LoginActivity;
 import com.kachat.game.utils.manager.ActivityManager;
+import com.kachat.game.utils.widgets.AlterDialogBuilder;
+import com.kachat.game.utils.widgets.DialogTextView;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,6 +49,8 @@ import butterknife.Unbinder;
  *
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private static final String TAG = "BaseActivity";
 
     protected abstract int onSetResourceLayout();
     protected abstract boolean onSetStatusBar();
@@ -115,10 +126,60 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    private AlterDialogBuilder dialogOccupy;
+    private int broken=0;
+    @SuppressLint("InflateParams")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(DNGameEventMessage event) {
+        switch (event.getEvent()) {
+            case SESSION_BROKEN: {
+                Log.i(TAG, "onEvent: SESSION_BROKEN");
+                broken++;
+                if (broken==7) {
+                    dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
+                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+                        broken=0;
+                        dialogOccupy.dismiss();
+                        LoginActivity.newInstance(this);
+                        finish();
+                        PublicEventMessage.ExitAccount(this);
+                    });
+                }
+                break;
+            }
+            case SESSION_OCCUPY: {
+                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+
+                dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+                dialogOccupy.getRootSure().setOnClickListener(v -> {
+                    dialogOccupy.dismiss();
+                    LoginActivity.newInstance(this);
+                    finish();
+                    PublicEventMessage.ExitAccount(this);
+                });
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (dialogOccupy != null) {
+            dialogOccupy=null;
+        }
         if (unbinder != null) {
             unbinder.unbind();
         }

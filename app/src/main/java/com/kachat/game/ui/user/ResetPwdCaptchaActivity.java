@@ -132,9 +132,6 @@ public class ResetPwdCaptchaActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count == 1 && !TextUtils.isEmpty(s)) {
-//                    mAcEtCaptcha2.setFocusable(true);
-//                    mAcEtCaptcha2.setFocusableInTouchMode(true);
-//                    mAcEtCaptcha2.findFocus();
                     mAcEtCaptcha2.requestFocus();
                 }
             }

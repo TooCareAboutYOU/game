@@ -12,10 +12,12 @@ import android.util.EventLog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.PermissionUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.kachat.game.Config;
 import com.kachat.game.R;
 import com.kachat.game.base.BaseActivity;
 import com.kachat.game.libdata.controls.DaoQuery;
@@ -41,7 +43,6 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA
-
     };
     private int PERMISSION_REQUEST_CODE = 1;
 
@@ -49,9 +50,6 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     private static final int UI_ANIMATION_DELAY = 100;
     private static final int UI_TO_MAIN_ACTIVITY = 500;
     private final Handler mHideHandler = new Handler();
-
-    @BindView(R.id.img_bg)
-    SimpleDraweeView imgBg;
 
     private final Runnable mHidePart2Runnable = () -> mHideHandler.postDelayed(() -> {
         Log.e(TAG, "mHidePart2Runnable：");
@@ -92,10 +90,31 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
         }
     }
 
-
+    private FrameLayout mFlContainer;
+    private SimpleDraweeView sdvGuideOne,sdvGuideTwo,sdvGuideThree;
     @Override
     protected void onInitView() {
+        mFlContainer=findViewById(R.id.fl_Container);
+        sdvGuideOne=findViewById(R.id.sdv_GuideOne);
+        sdvGuideTwo=findViewById(R.id.sdv_GuideTwo);
+        sdvGuideThree=findViewById(R.id.sdv_GuideThree);
+        if (Config.getFirstIn()) {
+            LoadIn();
+        }else {
+            mFlContainer.setVisibility(View.VISIBLE);
+            sdvGuideOne.setOnClickListener(v -> {
+                sdvGuideOne.setVisibility(View.GONE);
 
+            });
+            sdvGuideTwo.setOnClickListener(v -> {
+                sdvGuideTwo.setVisibility(View.GONE);
+            });
+            sdvGuideThree.setOnClickListener(v -> {
+                Config.setFirstIn(true);
+                LoadIn();
+            });
+
+        }
     }
 
     @Override
@@ -104,7 +123,7 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
 
     }
 
-    private void RequestNetWork() {
+    private void LoadIn() {
 //        imgBg.setVisibility(View.VISIBLE);
 //        Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527142320408&di=0e0d05696c62396158e3b0c2f5a37fa3&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171108%2Fa8edcc511a1e4471a5dc2b0d73c48479.jpeg");
 //        imgBg.setImageURI(uri);
@@ -130,7 +149,7 @@ public class SplashActivity extends BaseActivity implements PermissionUtils.OnPe
     @Override
     public void onPermissionGranted() {  //用户同意时调用
         Log.e(TAG, "onPermissionGranted: ");
-        RequestNetWork();
+//        RequestNetWork();
 //        UpLoadBugLogService.startActionBaz(this,"1","2");
 //        int i=0;
 //        Log.i(TAG, "onPermissionGranted: "+(i/0));

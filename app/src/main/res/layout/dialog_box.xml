@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp">
-
-    <ImageView
-        android:id="@+id/sdv_Box_bg"
-        android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:layout_gravity="center_vertical">
+    <FrameLayout
+        android:layout_width="300dp"
         android:layout_height="300dp"
-        android:scaleType="fitXY"
-        android:layout_gravity="center"/>
-    <ImageView
-        android:id="@+id/sdv_Box"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"/>
-    <android.support.v7.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:layout_gravity="center|bottom"
-        android:text="来自对方的礼物，拆开看看吧!"/>
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/sdv_Box_bg"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"/>
+        <ImageView
+            android:id="@+id/sdv_Box"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_gravity="center"/>
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center|bottom"
+            android:text="来自对方的礼物，拆开看看吧!"/>
+
+    </FrameLayout>
 </FrameLayout>

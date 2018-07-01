@@ -47,9 +47,10 @@ public interface GameService {
     Observable<BaseBean<ToyRoomsBean>> getToyRooms();
 
     // 统计进入游戏主页次数
+    // http://api.e3webrtc.com:8004/stats/pages
     @FormUrlEncoded
     @POST("/stats/pages")
-    Observable<BaseBean<MessageBean>> postStatPages( @Field("user") String user, @Field("type") String type);
+    Observable<BaseBean<MessageBean>> postStatPages(@Field("type") String type,@Field("user") int user);
 
     //查询商品类别列表  http://api.e3webrtc.com:8004/v2/shop/categories
     @GET("v2/shop/categories")

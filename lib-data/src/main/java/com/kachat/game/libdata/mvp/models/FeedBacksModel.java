@@ -25,27 +25,16 @@ public class FeedBacksModel extends BaseModel {
                                  final OnPresenterListeners.OnModelListener<BaseBean<FeedBacksBean>> listener){
         mSubscription= UserApi.requestFeedBacks(type,content, new Observer<BaseBean<FeedBacksBean>>() {
             @Override
-            public void onCompleted() {
-            }
+            public void onCompleted() { }
 
             @Override
             public void onError(final Throwable e) {
-//                LocalHandler().post(() -> {
-                    if (listener != null) {
-                        listener.onError(e);
-                    }
-//                });
-
+                if (listener != null) { listener.onError(e); }
             }
 
             @Override
             public void onNext(final BaseBean<FeedBacksBean> result) {
-                Log.i(TAG, "onNext: "+result.getResult().toString());
-//                LocalHandler().post(() -> {
-                    if (listener != null) {
-                        listener.onSuccess(result);
-                    }
-//                });
+                if (listener != null) { listener.onSuccess(result); }
             }
         });
 

@@ -85,6 +85,7 @@ public class LivePersonModeListFragment extends BaseFragment {
     private class MaskCallBack implements OnPresenterListeners.OnViewListener<LivesBean> {
         @Override
         public void onSuccess(LivesBean result) {
+            mListOnline.clear();
             if (result != null && result.getLives() != null && result.getLives().size() > 0) {
 
                 int size=result.getLives().size();

@@ -23,26 +23,25 @@ public class PublicEventMessage {
 
             if (DaoDelete.deleteUserAll()) {
 //                    CleanUtils.cleanInternalDbByName(ApplicationHelper.DB_NAME);
-                ActivityManager.getInstance().removeActivity("MainActivity");
                 DaoDelete.deleteUserAll();
                 if (Config.getIsFiguresMask()) {
                     DaoDelete.deleteLiveModelAll();
                 }
                 SdkApi.getInstance().sdkExit();
+                ActivityManager.getInstance().removeActivity("MainActivity");
                 ActivityManager.getInstance().removeActivity("MurphyBarActivity");
                 ActivityManager.getInstance().removeActivity("GameActivity");
                 ActivityManager.getInstance().removeActivity("GameRoomActivity");
                 ActivityManager.getInstance().removeActivity("RankListActivity");
                 ActivityManager.getInstance().removeActivity("GraduateSchoolActivity");
                 ActivityManager.getInstance().removeActivity("ShopActivity");
-                ActivityManager.getInstance().removeActivity("MainActivity");
+                ActivityManager.getInstance().removeActivity("MeActivity");
                 ActivityManager.getInstance().removeActivity("NewGuidesLineActivity");
-                ActivityManager.getInstance().removeActivity("ResetPwdActivity");
-                ActivityManager.getInstance().removeActivity("ResetPwdCaptchaActivity");
-                ActivityManager.getInstance().removeActivity("PersonInfoActivity");
-                ActivityManager.getInstance().removeActivity("RegisterActivity");
-                ActivityManager.getInstance().removeActivity("CheckPwdActivity");
-                LoginActivity.newInstance(context);
+//                ActivityManager.getInstance().removeActivity("ResetPwdActivity");
+//                ActivityManager.getInstance().removeActivity("ResetPwdCaptchaActivity");
+//                ActivityManager.getInstance().removeActivity("PersonInfoActivity");
+//                ActivityManager.getInstance().removeActivity("RegisterActivity");
+//                ActivityManager.getInstance().removeActivity("CheckPwdActivity");
             }
     }
 

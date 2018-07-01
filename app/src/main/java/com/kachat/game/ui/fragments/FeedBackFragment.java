@@ -66,7 +66,7 @@ public class FeedBackFragment extends BaseDialogFragment{
     SimpleDraweeView mSdvCharm;
 
 
-    private int type=0;
+    private int type = 1;
     private FeedBacksPresenter mFeedBacksPresenter=null;
     private AppCompatEditText acDt;
     
@@ -93,10 +93,12 @@ public class FeedBackFragment extends BaseDialogFragment{
         RadioGroup rgFeedBack=childView.findViewById(R.id.rg_FeedBack);
         rgFeedBack.setVisibility(View.VISIBLE);
         acDt=childView.findViewById(R.id.ac_Dt);
+
+
         rgFeedBack.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
-                case R.id.acRbtn_Question: type=0; acDt.setHint("请输入你的问题");break;
-                case R.id.acRbtn_Idea: type=1; acDt.setHint("请输入你的意见");break;
+                case R.id.acRbtn_Question: type =1; acDt.setHint("请输入你的问题");break;
+                case R.id.acRbtn_Idea: type =0; acDt.setHint("请输入你的意见");break;
             }
         });
         mFlContainer.addView(childView);
@@ -115,7 +117,6 @@ public class FeedBackFragment extends BaseDialogFragment{
                 Toast("超出内容最大数量");
                 return;
             }
-            Toast.makeText(getContext(), "type："+type, Toast.LENGTH_SHORT).show();
             mFeedBacksPresenter.attachPresenter(type,acDt.getText().toString());
         });
     }

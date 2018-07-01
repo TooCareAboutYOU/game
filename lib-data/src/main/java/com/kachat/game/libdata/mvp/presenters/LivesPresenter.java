@@ -2,6 +2,7 @@ package com.kachat.game.libdata.mvp.presenters;
 
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kachat.game.libdata.CodeType;
 import com.kachat.game.libdata.model.BaseBean;
@@ -13,6 +14,7 @@ import com.kachat.game.libdata.mvp.models.TicketModel;
 
 public class LivesPresenter {
 
+    private static final String TAG = "GraduateSchoolActivity";
     private LivesModel mModel;
     private OnPresenterListeners.OnViewListener<LivesBean> mView;
 
@@ -26,6 +28,7 @@ public class LivesPresenter {
             @Override
             public void onSuccess(BaseBean<LivesBean> result) {
                 if (mView != null) {
+
                     if (result.getCode() == CodeType.CODE_RESPONSE_SUCCESS) {
                         LivesPresenter.this.mView.onSuccess(result.getResult());
                     }else {
@@ -37,6 +40,7 @@ public class LivesPresenter {
             @Override
             public void onError(Throwable throwable) {
                 if (throwable != null) {
+                    Log.i(TAG, "onError: ");
                     if (mView != null) mView.onError(throwable);
                 }
             }

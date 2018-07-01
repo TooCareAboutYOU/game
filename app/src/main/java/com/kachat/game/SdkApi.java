@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class SdkApi {
 
-    private static final String TAG = "SdkApi";
+    private static final String TAG = "MurphyBarActivity";
     
     private Context mContext;
     private WebSettings mWebSettings = null;
@@ -184,7 +184,7 @@ public class SdkApi {
 //            this.faceRigItf.native_setLive2DModel(filePath, fileName);
             setLive2DModel(filePath, fileName,matchType);
             this.faceRigItf.native_showFaceTrack(false);
-            this.faceRigItf.native_setModelOuputSize(320, 640);
+            this.faceRigItf.native_setModelOuputSize(368, 640);
             this.faceRigItf.native_setDetectFPS(1);
 //            float[] floats=faceRigItf.native_modelOffset();
             this.faceRigItf.native_setOnFaceDetectListener(have -> {
@@ -205,6 +205,8 @@ public class SdkApi {
         VAGameAPI.getInstance().setAudioPitch(pitch);
         mDbLive2DBean.setPitchLevel(pitch);
     }
+
+    public boolean getAudioEnable(){ return VAGameAPI.getInstance().isAudioEnable(); }
 
     public void setModelBackgroundImage(String bgPath, String bgName) {
         if (this.faceRigItf == null || TextUtils.isEmpty(bgName)) {
@@ -237,7 +239,7 @@ public class SdkApi {
         }
         switch (fileName) {
             case "aLaiKeSi": {
-                chatList.add(1.7f);chatList.add(0f);chatList.add(0.0937f);
+                chatList.add(1.5f);chatList.add(0f);chatList.add(-0.0937f);
                 gameList.add(2.5f);gameList.add(0f);gameList.add(-0.2833f);
             } break;
             case "haru": {
@@ -278,7 +280,8 @@ public class SdkApi {
             } break;
             case "yuLu": {
                 chatList.add(1.0f);chatList.add(0f);chatList.add(-0.05f);
-                gameList.add(1.5f);gameList.add(0f);gameList.add(-0.1333f);
+                gameList.add(1.0f);gameList.add(-0f);gameList.add(0.0333f);
+                //  1.5 0f -0.1333f
             } break;
             case "yangYan":{
                 chatList.add(1.0f);chatList.add(0f);chatList.add(-0.1f);

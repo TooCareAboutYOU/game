@@ -28,14 +28,18 @@ public class GamesBean implements Serializable {
              * index : 902
              */
 
-            private String name;
+            private String name; //游戏名称
             private int price;
             private int category;
-            private int index;
+            private int index;  //游戏序列号
             private int image; //图片
             private int imgStart; //开始游戏
             private int imgHint;  //说明
             private int imgTimeLimit;  //显示
+            private String url;  //h5游戏地址
+            private int status; //是否 0 开启 ,1 未开启
+            private int sdk_index;
+
 
             public String getName() {
                 return name;
@@ -99,6 +103,30 @@ public class GamesBean implements Serializable {
 
             public void setImgTimeLimit(int imgTimeLimit) {
                 this.imgTimeLimit = imgTimeLimit;
+            }
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+
+            public int getStatus() {
+                return status;
+            }
+
+            public void setStatus(int status) {
+                this.status = status;
+            }
+
+            public int getSdk_index() {
+                return sdk_index;
+            }
+
+            public void setSdk_index(int sdk_index) {
+                this.sdk_index = sdk_index;
             }
 
             @Override

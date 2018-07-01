@@ -9,30 +9,34 @@
     <!--底层-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
+
         <RelativeLayout
             android:layout_width="110dp"
             android:layout_height="56dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="260.33dp"
+            android:layout_above="@+id/sdv1"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="76dp"
             android:background="@drawable/icon_bar_info">
+
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10.67dp"
                 android:text="找人喝一杯？"
                 android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
         </RelativeLayout>
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv1"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:layout_marginStart="52.67dp"
-            android:layout_marginTop="412dp"
-            android:layout_marginEnd="235.33dp"
-            android:background="@drawable/icon_bar_start"  />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="76dp"
+            android:layout_marginBottom="250.67dp"
+            android:background="@drawable/icon_bar_start" />
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv2"
@@ -40,7 +44,7 @@
             android:layout_height="72dp"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/sdv1"
-            android:background="@drawable/icon_bar_rangklist"/>
+            android:background="@drawable/icon_bar_rangklist" />
     </RelativeLayout>
 
     <include layout="@layout/layout_loading"/>

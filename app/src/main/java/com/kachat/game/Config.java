@@ -13,6 +13,9 @@ public class Config {
     // debug版调试开关
     public static final boolean isDebug=true;
 
+    private static String firstIn="firstIn";
+    public static void setFirstIn(boolean value){ SharedPreferencesHelper.getInstance().setBooleanValue(firstIn,value); }
+    public static boolean getFirstIn(){ return SharedPreferencesHelper.getInstance().getBooleanValueByKey(firstIn); }
 
     private static String mobile="MOBILE";
     public static void setMobile(String value){ SharedPreferencesHelper.getInstance().setStringValue(mobile,value); }

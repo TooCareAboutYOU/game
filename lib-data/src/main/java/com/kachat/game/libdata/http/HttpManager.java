@@ -75,7 +75,7 @@ public class HttpManager {
 
 //        Gson mGson=new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
         HttpLoggingInterceptor mHttpLoggingInterceptor = new HttpLoggingInterceptor(message -> {
-//            Log.w("MyLogin","--->>" + message.toString());
+            Log.w("MyLogin","--->>" + message.toString());
         });
         mHttpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 

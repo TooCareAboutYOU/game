@@ -9,7 +9,6 @@ public class Constant {
     public static final String HTTP_URL="http://api.e3webrtc.com:8004";
     public static final String SDK_URL="ws://gw.e3webrtc.com"; // ws://47.96.24.93:8899
 
-
     public static final int MATCH_TYPE_TOWER=0;
     public static final String GAME_TOWER="https://h5.e3webrtc.com:8000/tower";    //盖房子
     public static final int MATCH_TYPE_POPSTART=1;

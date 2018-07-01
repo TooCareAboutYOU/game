@@ -11,7 +11,7 @@ import com.kachat.game.libdata.mvp.models.HpModel;
 import com.kachat.game.libdata.mvp.models.StatsPagesModel;
 
 public class StatPagesPresenter {
-    private enum StatType{ GAME,CHAT }
+    public enum StatType{ GAME,CHAT }
 
     private StatsPagesModel mModel;
     private OnPresenterListeners.OnViewListener<MessageBean> mView;
@@ -21,14 +21,14 @@ public class StatPagesPresenter {
         this.mView = view;
     }
 
-    public void attachPresenter(@NonNull StatType type, @NonNull String uid){
+    public void attachPresenter(@NonNull StatType type){
         String param="-1";
         switch (type) {
             case GAME:param="0";break;
             case CHAT:param="1";break;
         }
 
-        this.mModel.postStatPages(param,uid, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
+        this.mModel.postStatPages(param, new OnPresenterListeners.OnModelListener<BaseBean<MessageBean>>() {
             @Override
             public void onSuccess(BaseBean<MessageBean> result) {
                 if (mView != null) {

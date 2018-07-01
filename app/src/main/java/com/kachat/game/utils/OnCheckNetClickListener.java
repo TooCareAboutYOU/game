@@ -19,21 +19,21 @@ public abstract class OnCheckNetClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+//
 //        if (VAGameAPI.getInstance().signalConnected()) {
 //            onMultiClick(v);
 //        }else {
 //            ToastUtils.showShort("网络已断开！");
 //        }
-
-        if (NetworkUtils.isConnected()) {
-            if (NetworkUtils.isAvailableByPing()) {
+//
+//        if (NetworkUtils.isConnected()) {
+//            if (NetworkUtils.isAvailableByPing()) {
                 onMultiClick(v);
-            }else {
-                ToastUtils.showShort("当前网络不可用！");
-            }
-        }else {
-            ToastUtils.showShort("网络已断开！");
-        }
+//            }else {
+//                ToastUtils.showShort("当前网络不可用！");
+//            }
+//        }else {
+//            ToastUtils.showShort("网络已断开！");
+//        }
     }
 }

@@ -23,7 +23,7 @@ public class FeedBacksPresenter {
     }
 
     public void attachPresenter(int type, @NonNull String content){
-        Log.i(TAG, "type== "+type+"\t\t"+content);
+        Log.e("MyLogin", "attachPresenter: "+type+"\t\t"+content);
         this.mModel.requestFeedBacks(type,content, new OnPresenterListeners.OnModelListener<BaseBean<FeedBacksBean>>() {
             @Override
             public void onSuccess(BaseBean<FeedBacksBean> result) {

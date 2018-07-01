@@ -48,8 +48,8 @@ public class GameApi extends HttpManager{
     }
 
     //统计
-    public static Subscription postStatPages(String type, String user, Observer<BaseBean<MessageBean>> observer){
-        return setSubscribe(mGameService.postStatPages(type,user),observer);
+    public static Subscription postStatPages(String type,Observer<BaseBean<MessageBean>> observer){
+        return setSubscribe(mGameService.postStatPages(type,uid()),observer);
     }
 
     //查询商品类别
@@ -84,6 +84,7 @@ public class GameApi extends HttpManager{
 
     //人物遮罩
     public static Subscription getUserLives(Observer<BaseBean<LivesBean>> observer) {
+        Log.i("GraduateSchoolActivity", "uid: "+uid());
         return setSubscribe(mGameService.getUserLives(uid()), observer);
     }
 }

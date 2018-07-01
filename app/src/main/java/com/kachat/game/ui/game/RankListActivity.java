@@ -271,46 +271,45 @@ public class RankListActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
-    int broken = 0;
-
-    @SuppressLint("InflateParams")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(DNGameEventMessage event) {
-        switch (event.getEvent()) {
-            case SESSION_BROKEN: {
-                Log.i(TAG, "onEvent: SESSION_BROKEN");
-                broken++;
-                if (broken == 7) {
-                    AlterDialogBuilder dialogOccupy = new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"), "退出").hideClose();
-                    dialogOccupy.getRootSure().setOnClickListener(v -> {
-                        broken = 0;
-                        dialogOccupy.dismiss();
-                        PublicEventMessage.ExitAccount(this);
-                        finish();
-                    });
-                }
-                break;
-            }
-            case SESSION_OCCUPY: {
-                Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogOccupy = new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"), "退出").hideClose();
-                dialogOccupy.getRootSure().setOnClickListener(v -> {
-                    dialogOccupy.dismiss();
-                    PublicEventMessage.ExitAccount(this);
-                    finish();
-                });
-                break;
-            }
-        }
-    }
+//    int broken = 0;
+//    @SuppressLint("InflateParams")
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEvent(DNGameEventMessage event) {
+//        switch (event.getEvent()) {
+//            case SESSION_BROKEN: {
+//                Log.i(TAG, "onEvent: SESSION_BROKEN");
+//                broken++;
+//                if (broken == 7) {
+//                    AlterDialogBuilder dialogOccupy = new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"), "退出").hideClose();
+//                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+//                        broken = 0;
+//                        dialogOccupy.dismiss();
+//                        PublicEventMessage.ExitAccount(this);
+//                        finish();
+//                    });
+//                }
+//                break;
+//            }
+//            case SESSION_OCCUPY: {
+//                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+//                AlterDialogBuilder dialogOccupy = new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"), "退出").hideClose();
+//                dialogOccupy.getRootSure().setOnClickListener(v -> {
+//                    dialogOccupy.dismiss();
+//                    PublicEventMessage.ExitAccount(this);
+//                    finish();
+//                });
+//                break;
+//            }
+//        }
+//    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override

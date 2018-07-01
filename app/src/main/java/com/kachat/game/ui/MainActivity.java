@@ -7,6 +7,7 @@ import android.media.tv.TvView;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -128,33 +129,15 @@ public class MainActivity extends BaseActivity {
         mSignsPresenter=new SignsPresenter(new SignsInCallBack());
 
         checkLogin();
-        findViewById(R.id.sdv_UserLogo).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                MeActivity.newInstance(MainActivity.this);
-            }
-        });
+        findViewById(R.id.sdv_UserLogo).setOnClickListener(v -> MeActivity.newInstance(MainActivity.this));
 
-        findViewById(R.id.sdv_RankingList).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                HomeRankListFragment.getInstance().show(getSupportFragmentManager(),HomeRankListFragment.TAG);
+        findViewById(R.id.sdv_RankingList).setOnClickListener(v -> HomeRankListFragment.getInstance().show(getSupportFragmentManager(),HomeRankListFragment.TAG));
+        findViewById(R.id.sdv_SignIn).setOnClickListener(v -> {
+            if (mStatusPresenter != null) {
+                mStatusPresenter.attachPresenter();
             }
         });
-        findViewById(R.id.sdv_SignIn).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                if (mStatusPresenter != null) {
-                    mStatusPresenter.attachPresenter();
-                }
-            }
-        });
-        findViewById(R.id.sdv_Shop).setOnClickListener(new OnCheckNetClickListener() {
-            @Override
-            public void onMultiClick(View v) {
-                ShopActivity.newInstance(MainActivity.this);
-            }
-        });
+        findViewById(R.id.sdv_Shop).setOnClickListener(v -> ShopActivity.newInstance(MainActivity.this));
     }
 
     private void initMap(){
@@ -163,7 +146,9 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(mLinearLayoutManager);
         recyclerView.setAdapter(new MapAdapter());
     }
+
     private class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
+        @SuppressLint("InflateParams")
         @NonNull
         @Override
         public MapViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -173,43 +158,18 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull MapViewHolder holder, int position) {
             //遗迹
-            holder.mSdvRelic.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure();
-                }
-            });
+            holder.mSdvRelic.setOnClickListener(v -> new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure());
             //研究院
-            holder.mSdvGraduateSchool.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    GraduateSchoolActivity.newInstance(MainActivity.this);
-                }
-            });
-            holder.mSdvGameTower.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    GameActivity.newInstance(MainActivity.this);
-                }
-            });
-            holder.mSdvShop.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    ShopActivity.newInstance(MainActivity.this);
-                }
-            });
-            holder.mSdvScience.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure();
-                }
-            });
-            holder.mSdvBar.setOnClickListener(new OnCheckNetClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    MurphyBarActivity.newInstance(MainActivity.this);
-                }
-            });
+            holder.mSdvGraduateSchool.setOnClickListener(v -> GraduateSchoolActivity.newInstance(MainActivity.this));
+            //游戏
+            holder.mSdvGameTower.setOnClickListener(v -> GameActivity.newInstance(MainActivity.this));
+            //商店
+            holder.mSdvShop.setOnClickListener(v -> ShopActivity.newInstance(MainActivity.this));
+            //科技馆
+            holder.mSdvScience.setOnClickListener(v -> new AlterDialogBuilder(MainActivity.this,new DialogTextView(MainActivity.this,"功能暂未开放，敬请期待!")).hideRootSure());
+            //酒吧
+            holder.mSdvBar.setOnClickListener(v -> MurphyBarActivity.newInstance(MainActivity.this));
+
         }
 
         @Override
@@ -228,8 +188,8 @@ public class MainActivity extends BaseActivity {
                 mSdvBar=itemView.findViewById(R.id.sdv_Bar);
             }
         }
-    }
 
+    }
 
     // 检查用户是否签到
     private class SignsStatusCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
@@ -242,11 +202,8 @@ public class MainActivity extends BaseActivity {
                 AlterDialogBuilder dialogBuilder=new AlterDialogBuilder(MainActivity.this, new DialogTextView(MainActivity.this,"今天已经签到，请明天继续继续!"));
                 dialogBuilder.getRootSure().setOnClickListener(v -> dialogBuilder.dismiss());
             }else {
-                if (mSignsPresenter != null) {
-                    mSignsPresenter.attachPresenter(DeviceUtils.getAndroidID());
-                }
+                dialogView();
             }
-
         }
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
@@ -269,8 +226,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onSuccess(SingsBean result) {
             Log.i(TAG, "onSuccess: "+result.toString());
-            dialogView();
-
+            Toast.makeText(MainActivity.this, "签到成功!", Toast.LENGTH_SHORT).show();
         }
         @Override
         public void onFailed(int errorCode, ErrorBean error) {
@@ -305,9 +261,9 @@ public class MainActivity extends BaseActivity {
         sureView.setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
-//                if (mStatusPresenter != null) {
-//                    mStatusPresenter.attachPresenter();
-//                }
+                if (mSignsPresenter != null) {
+                    mSignsPresenter.attachPresenter(DeviceUtils.getAndroidID());
+                }
                 dialog.dismiss();
             }
         });
@@ -317,7 +273,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
         Log.i(TAG, "onStart: ");
         DbUserBean dbUserBean = DaoQuery.queryUserData();
         if (dbUserBean != null) {
@@ -365,45 +320,6 @@ public class MainActivity extends BaseActivity {
         SdkApi.getInstance().sdkLogin(mDbUserBean.getUid(), mDbUserBean.getToken());
     }
 
-    int broken=0;
-    @SuppressLint("InflateParams")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(DNGameEventMessage event) {
-        switch (event.getEvent()) {
-            case SESSION_BROKEN: {
-                Log.i(TAG, "onEvent: SESSION_BROKEN");
-                broken++;
-                if (broken==7) {
-                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "连接异常，请重新登录！"),"退出").hideClose();
-                    dialogOccupy.getRootSure().setOnClickListener(v -> {
-                        broken=0;
-                        dialogOccupy.dismiss();
-                        PublicEventMessage.ExitAccount(this);
-                        finish();
-                    });
-                }
-                break;
-            }
-            case SESSION_OCCUPY: {
-                Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
-                dialogOccupy.getRootSure().setOnClickListener(v -> {
-                    dialogOccupy.dismiss();
-                    PublicEventMessage.ExitAccount(this);
-                    finish();
-                });
-                break;
-            }
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-
     @Override
     protected void onDestroy() {
 
@@ -423,7 +339,6 @@ public class MainActivity extends BaseActivity {
     private long firstTime = 0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        broken=0;
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - firstTime > 2000) {
                 Toast("再按一次退出程序");

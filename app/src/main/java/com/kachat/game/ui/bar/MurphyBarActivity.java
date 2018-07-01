@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kachat.game.Config;
@@ -36,12 +38,15 @@ import com.kachat.game.events.PublicEventMessage;
 import com.kachat.game.libdata.controls.DaoQuery;
 import com.kachat.game.libdata.dbmodel.DbLive2DBean;
 import com.kachat.game.libdata.model.ErrorBean;
+import com.kachat.game.libdata.model.MessageBean;
 import com.kachat.game.libdata.model.PropsBean;
 import com.kachat.game.libdata.model.SingsBean;
 import com.kachat.game.libdata.mvp.OnPresenterListeners;
 import com.kachat.game.libdata.mvp.presenters.PropsPresenter;
+import com.kachat.game.libdata.mvp.presenters.StatPagesPresenter;
 import com.kachat.game.ui.bar.fragments.CharmRankListFragment;
 import com.kachat.game.utils.OnCheckNetClickListener;
+import com.kachat.game.utils.manager.ThreadManager;
 import com.kachat.game.utils.widgets.AlterDialogBuilder;
 import com.kachat.game.utils.widgets.DialogTextView;
 import org.greenrobot.eventbus.EventBus;
@@ -73,11 +78,10 @@ public class MurphyBarActivity extends BaseActivity {
 
     private AppCompatTextView mAcTvTimer;
     private View containerView=null;
-    private PopupWindow popupWindow=null;
+//    private PopupWindow popupWindow=null;
     private AppCompatTextView acTvGiftOneNum,acTvGiftTwoNum,acTvGiftThreeNum;
     private SimpleDraweeView sdvGiftOneNum,sdvGiftTwoNum,sdvGiftThreeNum;
 
-    private int register=0;
     private boolean isStartChat=false,timerRunning=false;
 
     private CountDownTimer mCount=null;
@@ -100,7 +104,9 @@ public class MurphyBarActivity extends BaseActivity {
             }
         };
     }
+    private BottomSheetDialog bottomSheetDialog=null;
     private PropsPresenter mGetMyPropPresenter = null;
+    private StatPagesPresenter mStatPagesPresenter = null;
     
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, MurphyBarActivity.class);
@@ -131,18 +137,21 @@ public class MurphyBarActivity extends BaseActivity {
             if (mFlLoading.getVisibility() == View.VISIBLE) {
                 Log.i(TAG, "onInitView: VISIBLE");
                 removeView();
-                isStartChat=false;
+                isStartChat = false;
             } else {
                 if (isStartChat) {
                     Log.i(TAG, "onInitView: GONE--> true");
                     removeView();
-                    isStartChat=false;
+                    isStartChat = false;
                     return;
                 }
                 Log.i(TAG, "onInitView: GONE--> false");
                 finish();
             }
         });
+
+        mStatPagesPresenter = new StatPagesPresenter(new StatPageCallBack());
+        mStatPagesPresenter.attachPresenter(StatPagesPresenter.StatType.CHAT);
 
         //开启聊天
         findViewById(R.id.sdv1).setOnClickListener(new OnCheckNetClickListener() {
@@ -161,10 +170,10 @@ public class MurphyBarActivity extends BaseActivity {
                     DbLive2DBean dbLive2DBean = Objects.requireNonNull(DaoQuery.queryModelListData()).get(0);
                     SdkApi.getInstance().loadFaceRigItf(dbLive2DBean.getLiveFilePath(), dbLive2DBean.getLiveFileName(), dbLive2DBean.getBgFilePath(), dbLive2DBean.getBgFileName(), Constant.MATCH_TYPE_CHAT);
                     SdkApi.getInstance().startGameMatch(Constant.MATCH_TYPE_CHAT);
-                    isStartChat=true;
+                    isStartChat = true;
                     timerView();
-                }else {
-                    new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
+                } else {
+                    new AlterDialogBuilder(MurphyBarActivity.this, new DialogTextView(MurphyBarActivity.this, "暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
                 }
             }
         });
@@ -173,17 +182,17 @@ public class MurphyBarActivity extends BaseActivity {
         findViewById(R.id.sdv2).setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
-                CharmRankListFragment.getInstance().show(getSupportFragmentManager(),CharmRankListFragment.TAG);
+                CharmRankListFragment.getInstance().show(getSupportFragmentManager(), CharmRankListFragment.TAG);
             }
         });
 
         //开宝箱
-        mAcTvTimer =findViewById(R.id.acTv_Timer);
+        mAcTvTimer = findViewById(R.id.acTv_Timer);
         mBoxView.setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
                 if (mAcTvTimer.getVisibility() == View.GONE) {
-                    getBoxView(new SingsBean(1,1,1,1));
+                    getBoxView(new SingsBean(1, 1, 1, 1));
                 }
             }
         });
@@ -193,52 +202,25 @@ public class MurphyBarActivity extends BaseActivity {
         findViewById(R.id.sdv_Report).setOnClickListener(new OnCheckNetClickListener() {
             @Override
             public void onMultiClick(View v) {
-                new AlterDialogBuilder(MurphyBarActivity.this,new DialogTextView(MurphyBarActivity.this,"举报成功!")).hideRootSure();
+                new AlterDialogBuilder(MurphyBarActivity.this, new DialogTextView(MurphyBarActivity.this, "举报成功!")).hideRootSure();
             }
         });
 
         mGetMyPropPresenter = new PropsPresenter(new PropCallBack());
-
+        bottomSheetDialog = new BottomSheetDialog(this);
         //赠送礼物
         findViewById(R.id.sdv_ChoiceGift).setOnClickListener(v -> {
-            Toast("触发");
 //            createOwnGiftView();
-//            SendGift();
             createOwnGiftView();
         });
     }
 
-    @SuppressLint("InflateParams")
-    private void SendGift(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setView(LayoutInflater.from(this).inflate(R.layout.layout_bar_owngift,null));
-        builder.setCancelable(true);
-        AlertDialog dialog=builder.create();
-        Window window=dialog.getWindow();
-        Objects.requireNonNull(window).setAttributes(new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        Objects.requireNonNull(window).setDimAmount(0);
-        Objects.requireNonNull(window).setGravity(Gravity.BOTTOM);
-        builder.show();
-    }
-
     @SuppressLint({"ClickableViewAccessibility", "InflateParams"})
     private void createOwnGiftView(){
-        if (containerView == null) {
             containerView= LayoutInflater.from(this).inflate(R.layout.layout_bar_owngift,null);
-            popupWindow=new PopupWindow(containerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            popupWindow.setContentView(containerView);
-            popupWindow.setTouchInterceptor((v, event) -> {
-//                popupWindow.dismiss();
-                return false;
-            });
-            popupWindow.setOnDismissListener(() -> containerView=null);
-            popupWindow.update();
-            popupWindow.setBackgroundDrawable(null);
-            popupWindow.setFocusable(true);
-            popupWindow.setOutsideTouchable(false);
-//            showAsDropDown(popupWindow,mLayout, 0,0);
-//            showAsDropDown(popupWindow,mLayout, 0,0);
-            popupWindow.showAsDropDown(mLayout, 0,0,Gravity.BOTTOM);
+            bottomSheetDialog.setContentView(containerView,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            bottomSheetDialog.setCancelable(true);
+            bottomSheetDialog.show();
 
             acTvGiftOneNum=containerView.findViewById(R.id.acTv_OneNum);
             acTvGiftTwoNum=containerView.findViewById(R.id.acTv_TwoNum);
@@ -280,29 +262,10 @@ public class MurphyBarActivity extends BaseActivity {
                     }
                 }
             });
-        }
+
     }
 
-    /**
-     *
-     * @param pw     popupWindow
-     * @param anchor v
-     * @param xoff   x轴偏移
-     * @param yoff   y轴偏移
-     */
-    public static void showAsDropDown(final PopupWindow pw, final View anchor, final int xoff, final int yoff) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            Rect visibleFrame = new Rect();
-            anchor.getGlobalVisibleRect(visibleFrame);
-            int height = anchor.getResources().getDisplayMetrics().heightPixels - visibleFrame.bottom;
-            pw.setHeight(height);
-            pw.showAsDropDown(anchor, xoff, yoff);
-        } else {
-            pw.showAsDropDown(anchor, xoff, yoff);
-        }
-    }
-
-        //获取宝箱内容
+    //获取宝箱内容
     @SuppressLint({"InflateParams", "SetTextI18n"})
     private void getBoxView(SingsBean result){
         AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.AlertDialogStyle);
@@ -387,33 +350,11 @@ public class MurphyBarActivity extends BaseActivity {
             case SESSION_READY:
                 Log.i(TAG, "onEvent: SESSION_READY");
                 break;
-            case SESSION_BROKEN:
-                Log.i(TAG, "onEvent: SESSION_BROKEN");
-                register++;
-                if (register == 7) {
-                    AlterDialogBuilder dialogBroken=new AlterDialogBuilder(this,"退出",new DialogTextView(MurphyBarActivity.this,"连接异常，请重新登录！")).hideClose();
-                    dialogBroken.getRootSure().setOnClickListener(v -> {
-                        dialogBroken.dismiss();
-                        PublicEventMessage.ExitAccount(this);
-                        finish();
-                    });
-                }
-                break;
-            case SESSION_OCCUPY:
-                Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
-                dialogOccupy.getRootSure().setOnClickListener(v -> {
-                    dialogOccupy.dismiss();
-                    PublicEventMessage.ExitAccount(this);
-                    finish();
-                });
-                break;
             case SESSION_KEEP_ALIVE:
                 Log.i(TAG, "onEvent: SESSION_KEEP_ALIVE");
                 break;
             case JOIN_SUCCESS:
                 Log.i(TAG, "onEvent: JOIN_SUCCESS");
-                register=0;
                 mFlLoading.setVisibility(View.GONE);
                 mContainer.setVisibility(View.VISIBLE);
                 mCount.start();
@@ -465,18 +406,7 @@ public class MurphyBarActivity extends BaseActivity {
                 break;
         }
     }
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 
     @Override
     public void onBackPressed() {
@@ -507,19 +437,26 @@ public class MurphyBarActivity extends BaseActivity {
             mGetMyPropPresenter.detachPresenter();
             mGetMyPropPresenter=null;
         }
+
+        if (mStatPagesPresenter != null) {
+            mStatPagesPresenter.detachPresenter();
+            mStatPagesPresenter=null;
+        }
         
         super.onDestroy();
     }
 
     private void removeView(){
-
+        Log.i(TAG, "removeView: ");
         mFlLoading.setVisibility(View.GONE);
         mContainer.setVisibility(View.GONE);
 
-        if (popupWindow != null) {
-            if (popupWindow.isShowing()) {
-                popupWindow.dismiss();
-            }
+        if (containerView != null) {
+            containerView=null;
+        }
+
+        if (bottomSheetDialog != null) {
+            bottomSheetDialog=null;
         }
 
         if (timerRunning) {
@@ -527,7 +464,6 @@ public class MurphyBarActivity extends BaseActivity {
             timerRunning=false;
             mCount=null;
         }
-        register=0;
         SdkApi.getInstance().destroy(true);
         if (mRemoteView.getChildCount() > 0) {
             Log.i(TAG, "removeView: ");
@@ -537,6 +473,24 @@ public class MurphyBarActivity extends BaseActivity {
             mLocalView.removeAllViews();
         }
 
-
     }
+
+    private class StatPageCallBack implements OnPresenterListeners.OnViewListener<MessageBean>{
+
+        @Override
+        public void onSuccess(MessageBean result) {
+            Log.i(TAG, "onSuccess: ");
+        }
+
+        @Override
+        public void onFailed(int errorCode, ErrorBean error) {
+            Log.i(TAG, "onFailed: ");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.i(TAG, "onError: ");
+        }
+    }
+
 }

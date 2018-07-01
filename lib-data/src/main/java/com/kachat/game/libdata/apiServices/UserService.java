@@ -69,7 +69,7 @@ public interface UserService {
     //用户反馈
     @FormUrlEncoded
     @POST("/feedbacks")
-    Observable<BaseBean<FeedBacksBean>> postFeedBacks(@Header("Authorization") String token,@Field("type") int type, @Field("content") String content);
+    Observable<BaseBean<FeedBacksBean>> postFeedBacks(@Header("Authorization") String token,@Field("category") int type, @Field("content") String content);
 
 
     //用户券数

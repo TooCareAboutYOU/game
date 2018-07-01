@@ -109,6 +109,9 @@ public class DNGameEventMessage {
 
 
     //  SDK
+    // {"Data": {"box": 1, "chips": [], "game": 900, "props": [{"number": 2, "prop": 3},{"number": 1, "prop": 301},
+    // {"number": 1, "prop": 0},{"number": 1, "prop": 1}], "user": 236}, "Method": "GameReward", "MsgID": 10103}\
+
     public static class OnGameMessageBean{
         private String type;
         private DataBean data;
@@ -148,7 +151,6 @@ public class DNGameEventMessage {
              * score : 25
              * count : 1
              */
-
             private int score;
             private int count;
 
@@ -259,6 +261,154 @@ public class DNGameEventMessage {
 
             public void setNumber(int number) {
                 this.number = number;
+            }
+        }
+    }
+
+    public static class GameDataBean{
+
+        /**
+         * Data : {"box":1,"chips":[],"game":900,"props":[{"number":2,"prop":3},{"number":1,"prop":301},{"number":1,"prop":0},{"number":1,"prop":1}],"user":236}
+         * Method : GameReward
+         * MsgID : 10103
+         */
+
+        private DataBean Data;
+        private String Method;
+        private int MsgID;
+
+        public DataBean getData() {
+            return Data;
+        }
+
+        public void setData(DataBean Data) {
+            this.Data = Data;
+        }
+
+        public String getMethod() {
+            return Method;
+        }
+
+        public void setMethod(String Method) {
+            this.Method = Method;
+        }
+
+        public int getMsgID() {
+            return MsgID;
+        }
+
+        public void setMsgID(int MsgID) {
+            this.MsgID = MsgID;
+        }
+
+        public static class DataBean {
+
+            private int box;
+            private int game;
+            private int user;
+            private List<ChipsBean> chips;
+            private List<PropsBean> props;
+
+            public int getBox() {
+                return box;
+            }
+
+            public void setBox(int box) {
+                this.box = box;
+            }
+
+            public int getGame() {
+                return game;
+            }
+
+            public void setGame(int game) {
+                this.game = game;
+            }
+
+            public int getUser() {
+                return user;
+            }
+
+            public void setUser(int user) {
+                this.user = user;
+            }
+
+            public List<ChipsBean> getChips() {
+                return chips;
+            }
+
+            public void setChips(List<ChipsBean> chips) {
+                this.chips = chips;
+            }
+
+            public List<PropsBean> getProps() {
+                return props;
+            }
+
+            public void setProps(List<PropsBean> props) {
+                this.props = props;
+            }
+
+            public static class PropsBean {
+                /**
+                 * number : 2
+                 * prop : 3
+                 */
+
+                private int number;
+                private int prop;
+
+                public int getNumber() {
+                    return number;
+                }
+
+                public void setNumber(int number) {
+                    this.number = number;
+                }
+
+                public int getProp() {
+                    return prop;
+                }
+
+                public void setProp(int prop) {
+                    this.prop = prop;
+                }
+
+                @Override
+                public String toString() {
+                    return JSON.toJSONString(this);
+                }
+            }
+
+            public static class ChipsBean{
+                private int chip;
+                private int number;
+
+                public int getChip() {
+                    return chip;
+                }
+
+                public void setChip(int chip) {
+                    this.chip = chip;
+                }
+
+                public int getNumber() {
+                    return number;
+                }
+
+                public void setNumber(int number) {
+                    this.number = number;
+                }
+
+                @Override
+                public String toString() {
+                    return JSON.toJSONString(this);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return JSON.toJSONString(this);
             }
         }
     }

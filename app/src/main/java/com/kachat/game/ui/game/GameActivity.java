@@ -128,7 +128,7 @@ public class GameActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
         DbUserBean dbUserBean = DaoQuery.queryUserData();
         if (dbUserBean != null) {
             if (dbUserBean.getGender().equals("male")) {
@@ -142,6 +142,10 @@ public class GameActivity extends BaseActivity {
             mAcTvUserDiamonds.setText(dbUserBean.getDiamond() + "");
             mAcTvUserGold.setText(dbUserBean.getGold() + "");
         }
+
+        if (mList != null) {
+            mList.clear();
+        }
         mPresenter.attachPresenter();
     }
 
@@ -154,27 +158,28 @@ public class GameActivity extends BaseActivity {
                 for (int i = 0; i < size; i++) {
                     switch (result.getGames().get(i).getIndex()) {
                         case 903: //  娃娃机
-                            result.getGames().get(0).setImage(R.drawable.icon_game_bg_chat);
-                            result.getGames().get(0).setImgStart(R.drawable.icon_game_start);
-                            result.getGames().get(0).setImgTimeLimit(R.drawable.icon_game_slice);
+                            result.getGames().get(i).setImage(R.drawable.icon_game_bg_chat);
+                            result.getGames().get(i).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(i).setImgTimeLimit(R.drawable.icon_game_slice);
                             break;
                         case 902: //  晕头转向
-                            result.getGames().get(1).setImage(R.drawable.icon_game_bg_fourytzx);
-                            result.getGames().get(1).setImgHint(R.drawable.icon_game_hint);
-                            result.getGames().get(1).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(i).setImage(R.drawable.icon_game_bg_fourytzx);
+                            result.getGames().get(i).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(i).setImgStart(R.drawable.icon_game_start);
                             break;
                         case 901:  //  消灭星星
-                            result.getGames().get(2).setImage(R.drawable.icon_game_bg_star);
-                            result.getGames().get(2).setImgHint(R.drawable.icon_game_hint);
-                            result.getGames().get(2).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(i).setImage(R.drawable.icon_game_bg_star);
+                            result.getGames().get(i).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(i).setImgStart(R.drawable.icon_game_start);
                             break;
                         case 900:  //  盖房子
-                            result.getGames().get(3).setImage(R.drawable.icon_game_bg_house);
-                            result.getGames().get(3).setImgHint(R.drawable.icon_game_hint);
-                            result.getGames().get(3).setImgStart(R.drawable.icon_game_start);
+                            result.getGames().get(i).setImage(R.drawable.icon_game_bg_house);
+                            result.getGames().get(i).setImgHint(R.drawable.icon_game_hint);
+                            result.getGames().get(i).setImgStart(R.drawable.icon_game_start);
                             break;
                     }
                 }
+                Log.i(TAG, "onSuccess: "+result.toString());
                 mList.addAll(result.getGames());
                 mAdapter.notifyDataSetChanged();
             }
@@ -236,10 +241,14 @@ public class GameActivity extends BaseActivity {
                 @Override
                 public void onMultiClick(View v) {
                     if (Config.getIsFiguresMask()) {
-                        if (mList.get(position).getIndex() != 903) {
-                            loadGame(mList.get(position).getIndex());
+                        if (mList.size() > 0) {
+                            if (mList.get(position).getStatus() == 0 &&  !TextUtils.isEmpty(mList.get(position).getUrl())) {
+                                loadGame(mList.get(position).getIndex(),mList.get(position).getUrl(),mList.get(position).getSdk_index());
+                            }else {
+                                new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"限时游戏，敬请期待!")).hideRootSure();
+                            }
                         }else {
-                            new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"限时游戏，敬请期待!")).hideRootSure();
+                            Toast("网络异常！");
                         }
                     }else {
                         new AlterDialogBuilder(GameActivity.this,new DialogTextView(GameActivity.this,"暂无人物形象，请前往 '研究院' 创建人物！")).hideRootSure();
@@ -265,61 +274,60 @@ public class GameActivity extends BaseActivity {
         }
     }
 
-    private void loadGame(int index){
+    private void loadGame(int index, String url,int matchType){
         Bundle bundle = new Bundle();
-        switch (index) {
-            case 902: //晕头转向
-                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_HEXTRIS);
-                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_HEXTRIS);
-                break;
-            case 901://消灭星星
-                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_POPSTART);
-                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_POPSTART);
-                break;
-            case 900:  //盖房子
-                bundle.putString(GameRoomActivity.Html_Url, Constant.GAME_TOWER);
-                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_TOWER);
-                break;
-        }
+        bundle.putString(GameRoomActivity.Html_Url, url);
+        bundle.putInt(GameRoomActivity.GAME_TYPE, matchType);
+//        switch (index) {
+//            case 902: //晕头转向
+//                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_HEXTRIS);
+//                break;
+//            case 901://消灭星星
+//                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_POPSTART);
+//                break;
+//            case 900:  //盖房子
+//                bundle.putInt(GameRoomActivity.GAME_TYPE, Constant.MATCH_TYPE_TOWER);
+//                break;
+//        }
         GameRoomActivity.newInstance(GameActivity.this, bundle);
     }
 
-    int broken=0;
-    @SuppressLint("InflateParams")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(DNGameEventMessage event) {
-        switch (event.getEvent()) {
-            case SESSION_BROKEN: {
-                Log.i(TAG, "onEvent: SESSION_BROKEN");
-                broken++;
-                if (broken==7) {
-                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "数据连接异常，请重新登录！"),"退出").hideClose();
-                    dialogOccupy.getRootSure().setOnClickListener(v -> {
-                        broken=0;
-                        dialogOccupy.dismiss();
-                        PublicEventMessage.ExitAccount(this);
-                        finish();
-                    });
-                }
-                break;
-            }
-            case SESSION_OCCUPY: {
-                Log.i(TAG, "onEvent: SESSION_OCCUPY");
-                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
-                dialogOccupy.getRootSure().setOnClickListener(v -> {
-                    dialogOccupy.dismiss();
-                    PublicEventMessage.ExitAccount(this);
-                    finish();
-                });
-                break;
-            }
-        }
-    }
+//    int broken=0;
+//    @SuppressLint("InflateParams")
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEvent(DNGameEventMessage event) {
+//        switch (event.getEvent()) {
+//            case SESSION_BROKEN: {
+//                Log.i(TAG, "onEvent: SESSION_BROKEN");
+//                broken++;
+//                if (broken==7) {
+//                    AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "数据连接异常，请重新登录！"),"退出").hideClose();
+//                    dialogOccupy.getRootSure().setOnClickListener(v -> {
+//                        broken=0;
+//                        dialogOccupy.dismiss();
+//                        PublicEventMessage.ExitAccount(this);
+//                        finish();
+//                    });
+//                }
+//                break;
+//            }
+//            case SESSION_OCCUPY: {
+//                Log.i(TAG, "onEvent: SESSION_OCCUPY");
+//                AlterDialogBuilder dialogOccupy=new AlterDialogBuilder(this, new DialogTextView(this, "账号异地登录，请重新登录！"),"退出").hideClose();
+//                dialogOccupy.getRootSure().setOnClickListener(v -> {
+//                    dialogOccupy.dismiss();
+//                    PublicEventMessage.ExitAccount(this);
+//                    finish();
+//                });
+//                break;
+//            }
+//        }
+//    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         mList.clear();
     }
 
