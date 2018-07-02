@@ -50,7 +50,6 @@ public class ApplicationHelper {
         SharedPreferencesHelper.init(application.getApplicationContext(),"JX",Context.MODE_PRIVATE);
     }
 
-
     private static void initImageLoader(@NonNull Context context){   Fresco.initialize(context);   }
 
     private static void initNetWork(@NonNull Context context){  HttpLocalDataHelper.init(context, Constant.HTTP_URL,DB_NAME,DB_PASSWORD);  }

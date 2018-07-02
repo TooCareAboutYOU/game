@@ -6,25 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.SplashActivity">
 
-    <FrameLayout
-        android:id="@+id/fl_Container"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/img_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/sdv_GuideThree"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/img_splash_three"/>
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/sdv_GuideTwo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/img_splash_two"/>
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/sdv_GuideOne"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/img_splash_one"/>
-    </FrameLayout>
+        android:visibility="gone"/>
 </FrameLayout>
